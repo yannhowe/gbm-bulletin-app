@@ -1,0 +1,117 @@
+{% extends 'newswire/__base.html' %}
+{% block title %}Newswire{% endblock %}
+{% block content %}
+
+<div class="container">
+  {% if orderofservice %}
+  <div id="order-of-service" class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+      <h1 class="">Order of Service</h1>
+      <h3 class="post-subtitle">
+        <strong>{{ orderofservice.date }}</strong>
+      </h3>
+      <div class="post-preview">
+        <div class="">
+          {{ orderofservice.text|linebreaks }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-end"/>
+  {% endif %}
+  {% if posts %}
+  <div id="posts" class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <h1 class="text-center">Announcements</h1>
+      {% for post in posts %}
+      <div class="post-preview">
+        <p class="post-meta pull-right">
+          <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ post.category.color }}; border: 1px solid  {{ post.category.color }};">{{ post.category }}</small>
+        </button>
+      </p>
+      <a href="{{ post.link }}">
+        <h2 class="post-title">
+          {{ post.title }}
+        </h2>
+        <h3 class="post-subtitle">
+          {{ post.body }}
+        </h3>
+      </a>
+    </div>
+    <hr>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% if events %}
+<div id="upcoming-events" class="row">
+  <div class="col-lg-10 col-lg-offset-1 col-md-12 col-md-offset-0 text-center">
+    <h1 class="text-center">Upcoming Events</h1>
+    <table class="table table-striped">
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td class="text-right">
+            <strong>{{ event.title }}</strong>
+          </td>
+          <td class="text-left">
+            <i>{{ event.date_display }}</i>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<hr class="section-end"/>
+{% endif %}
+{% if birthdays %}
+<div id="birthday-greetings" class="row">
+  <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+    <h1 class="text-center">Birthday Greetings</h1>
+  </div>
+</div>
+<hr class="section-end"/>
+{% endif %}
+{% if weeklysummary %}
+<div id="weekly-summary" class="row">
+  <div class="col-lg-10 col-lg-offset-1 col-md-12 col-md-offset-0 text-center">
+    <h1 class="text-center">Weekly Summary</h1>
+    <div class="post-preview">
+      <h3 class="post-subtitle">
+        <strong>{{ weeklysummary.date }}</strong>
+      </h3>
+      <br/>
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <td class="text-right"><strong>Attendance:</strong></td>
+            <td class="text-left">{{ weeklysummary.attendance|floatformat:"0" }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>Tithes:</strong></td>
+            <td class="text-left">${{ weeklysummary.tithe_amt }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>Building Fund:</strong></td>
+            <td class="text-left">${{ weeklysummary.building_amt }}
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>Building Pledge Form:</strong></td>
+            <td class="text-left">${{ weeklysummary.building_pledge_form_amt }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>Monthly Loan Servicing:</strong>
+            </td>
+            <td class="text-left">${{ weeklysummary.monthly_loan_servicing_amt }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+</div>
+
+{% endblock %}

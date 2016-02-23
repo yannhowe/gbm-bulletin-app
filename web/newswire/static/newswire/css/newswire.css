@@ -1,0 +1,49 @@
+.btn-xs {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: normal;
+  letter-spacing: normal;
+  border-radius: 0;
+  padding: 1px 5px;
+}
+
+.btn-light {
+  color: #cccccc;
+}
+
+.h1, h1 {
+    margin-bottom: 54px;
+}
+
+.row {
+    margin-bottom: 60px;
+}
+
+.section-end {
+    margin-bottom: 70px;
+}
+
+.btn-default,
+.btn-default {
+  background-color: #D07373;
+  border: 1px solid #D07373;
+  color: white;
+}
+
+.xbtn-default:hover,
+.xbtn-default:focus {
+  background-color: white;
+  border: 1px solid #0085a1;
+  color: #0085a1;
+}
+
+.churchwide {
+  background-color: red;
+  border: 1px solid red;
+  color: white;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+  width: 50%;
+}
