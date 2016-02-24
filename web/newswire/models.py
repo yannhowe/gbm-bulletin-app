@@ -94,7 +94,7 @@ class ReadPost(models.Model):
     post = models.ForeignKey(Post, db_index=True)
 
     def __str__(self):
-        return '%s %s' % (self.user, self.post)
+        return 'User "%s" read "%s"' % (self.user, self.post)
 
 # Stores user unsubscribed categories
 

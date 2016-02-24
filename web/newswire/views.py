@@ -14,7 +14,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from django.contrib.auth.models import User
 from datetime import datetime
 
-from .models import Post, Category, WeeklySummary, OrderOfService, Event
+from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription
 
 from django.views.generic.edit import FormView
 
@@ -34,8 +34,11 @@ class HomePageView(ListView):
         except OrderOfService.DoesNotExist:
             upcoming_service = None
         context['orderofservice'] = upcoming_service
-        context['posts'] = Post.objects.filter(
+        active_posts = Post.objects.filter(
             publish_start_date__lte=now, publish_end_date__gte=now)
+        unread_active_posts = Post.objects.exclude(
+            readpost__post__id__in=active_posts)
+        context['posts'] = unread_active_posts
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
         except WeeklySummary.DoesNotExist:

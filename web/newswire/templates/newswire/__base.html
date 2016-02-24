@@ -11,8 +11,6 @@
   <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
-  <!-- Custom Theme JavaScript -->
-  <script src="{% static "newswire/js/xclean-blog.min.js" %}"></script>
 {% endblock %}
 
 {% block bootstrap3_content %}
@@ -62,7 +60,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="site-heading">
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated and user.first_name %}
           <h2 class="text-uppercase">Hi, {{ request.user.first_name }}.</h2>
           {% endif %}
           <p>it is a</p>
@@ -70,7 +68,7 @@
           <hr class="small">
           <span class="subheading">{% now "g:i A / j F o" %}</span>
         </div>
-        <p class="welcome-text">Hey {% if user.is_authenticated %} {{ request.user.first_name }}{% endif %}, welcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
+        <p class="welcome-text">{% if  user.is_authenticated and user.first_name %}Hey {{ request.user.first_name }}, w{% else %}W{% endif %}elcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
       </div>
     </div>
   </div>
@@ -108,7 +106,7 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <ul class="list-inline text-center">
           <li>
-            <a href="#">
+            <a href="https://twitter.com/gracebaptistmin">
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
@@ -116,18 +114,10 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="https://www.facebook.com/gbmsg/">
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
               </span>
             </a>
           </li>
