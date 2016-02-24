@@ -6,14 +6,13 @@
   {% load staticfiles %}
   <link rel="stylesheet" href="{% static "newswire/css/clean-blog.min.css" %}">
   <link rel="stylesheet" href="{% static "newswire/css/newswire.css" %}">
-
   <!-- Custom Fonts -->
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
   <!-- Custom Theme JavaScript -->
-  <script src="{% static "newswire/js/clean-blog.min.js" %}"></script>
+  <script src="{% static "newswire/js/xclean-blog.min.js" %}"></script>
 {% endblock %}
 
 {% block bootstrap3_content %}
@@ -28,12 +27,24 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'home' %}">Newswire</a>
+            <a class="navbar-brand" href="{% url 'home' %}">Grace Baptist Ministries</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li>
+                  <a href="{% url 'account_logout' %}">Sign Out</a>
+                </li>
+                {% else %}
+                <li>
+                  <a href="{% url 'account_login' %}">Log In</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <!-- /.navbar-collapse -->
@@ -41,21 +52,31 @@
     <!-- /.container -->
 </nav>
 
+{% block bootstrap3_content_header %}
 <!-- Page Header -->
 <!-- Set your background image for this header on the line below. -->
-<header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpg' %} ')">
+<header class="intro-header">
+  <div>
+<!-- <header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpgx' %} ')">-->
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="site-heading">
-          <h1>{% block title %}(no title){% endblock %}</h1>
+          {% if user.is_authenticated %}
+          <h2 class="text-uppercase">Hi, {{ request.user.first_name }}.</h2>
+          {% endif %}
+          <p>it is a</p>
+          <h1>{% now "l" %}</h1>
           <hr class="small">
-          <span class="subheading">A Simple Bulletin for Churches</span>
+          <span class="subheading">{% now "g:i A / j F o" %}</span>
         </div>
+        <p class="welcome-text">Hey {% if user.is_authenticated %} {{ request.user.first_name }}{% endif %}, welcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
       </div>
     </div>
   </div>
+</div>
 </header>
+{% endblock %}
 
 {% if messages %}
 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -71,8 +92,53 @@
 </div>
 {% endif %}
 
+
+<div class="container">
 {% block content %}
 {% endblock %}
+</div>
+
+
+<hr>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center">
+          <li>
+            <a href="#">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <p class="copyright text-muted">Copyright &copy; Grace Baptist Ministries</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
 {% block extra_body %}
 {% endblock %}
 

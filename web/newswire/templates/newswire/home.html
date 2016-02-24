@@ -2,7 +2,6 @@
 {% block title %}Newswire{% endblock %}
 {% block content %}
 
-<div class="container">
   {% if orderofservice %}
   <div id="order-of-service" class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
@@ -29,7 +28,7 @@
           <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ post.category.color }}; border: 1px solid  {{ post.category.color }};">{{ post.category }}</small>
         </button>
       </p>
-      <a href="{{ post.link }}">
+      <a href="{% if post.link %}{{ post.link }}{% else %}#{% endif %}">
         <h2 class="post-title">
           {{ post.title }}
         </h2>
@@ -112,6 +111,5 @@
   </div>
 </div>
 {% endif %}
-</div>
 
 {% endblock %}
