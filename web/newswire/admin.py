@@ -4,8 +4,9 @@ from import_export.admin import ImportExportMixin, ExportActionModelAdmin, Impor
 from django.contrib import admin
 from .models import Post, Category, Setting, WeeklySummary, ReadPost, Event, OrderOfService, Unsubscription
 
-from django.forms import ModelForm,TextInput,DateInput
+from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
+
 
 class PostForm(ModelForm):
 
@@ -14,8 +15,8 @@ class PostForm(ModelForm):
         fields = {'title', 'body', 'publish_start_date',
                   'publish_end_date', 'category', 'link', 'hidden', 'contact'}
         widgets = {
-            'publish_start_date': SuitDateWidget,
-            'publish_end_date': SuitDateWidget,
+            #'publish_start_date': SuitDateWidget,
+            #'publish_end_date': SuitDateWidget,
         }
 
 
@@ -28,6 +29,8 @@ class PostResource(resources.ModelResource):
 class PostAdmin(ImportExportModelAdmin):
     form = PostForm
     resource_class = PostResource
+    ordering = ('-publish_start_date',)
+
     pass
 
 
@@ -100,6 +103,7 @@ class EventForm(ModelForm):
         widgets = {
             'date_start': DateInput,
         }
+
 
 class EventAdmin(ImportExportModelAdmin):
     resource_class = EventResource

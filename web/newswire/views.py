@@ -35,16 +35,18 @@ class HomePageView(ListView):
             upcoming_service = None
         context['orderofservice'] = upcoming_service
         active_posts = Post.objects.filter(
-            publish_start_date__lte=now, publish_end_date__gte=now)
+            publish_start_date__lte=now).filter(publish_end_date__gte=now)
         unread_active_posts = Post.objects.exclude(
             readpost__post__id__in=active_posts)
-        context['posts'] = unread_active_posts
+        context['posts'] = unread_active_posts.extra(
+            order_by=['-publish_start_date'])
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
         except WeeklySummary.DoesNotExist:
             latest_weeklysummary = None
         context['weeklysummary'] = latest_weeklysummary
         context['events'] = Event.objects.all()
+        context['categories'] = Category.objects.all()
         return context
 
     def get_queryset(self):

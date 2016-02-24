@@ -35,8 +35,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = [
-    'vine.gbm.sg',
-    'vine.dedicatedsolutions.com.sg'
+    'bulletin.gbm.sg',
+    'bulletin.dedicatedsolutions.com.sg'
 ]
 
 SITE_ID = 1

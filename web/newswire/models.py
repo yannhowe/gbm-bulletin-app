@@ -42,7 +42,7 @@ class Post(models.Model):
     contact = models.CharField(max_length=200, blank=True, default='')
 
     def __str__(self):
-        return '%s %s' % (self.publish_start_date, self.title)
+        return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
 
 # Stores Weekly Summayry
 
