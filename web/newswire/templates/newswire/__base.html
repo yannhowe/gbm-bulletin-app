@@ -4,8 +4,8 @@
 
 {% block bootstrap3_extra_head %}
   {% load staticfiles %}
-  <link rel="stylesheet" href="{% static "newswire/css/clean-blog.min.css" %}">
-  <link rel="stylesheet" href="{% static "newswire/css/newswire.css" %}">
+  <link rel="stylesheet" href="{% static 'newswire/css/clean-blog.min.css' %}">
+  <link rel="stylesheet" href="{% static 'newswire/css/newswire.css' %}">
   <!-- Custom Fonts -->
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
   <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
@@ -14,122 +14,122 @@
 {% endblock %}
 
 {% block bootstrap3_content %}
-<!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{% url 'home' %}">Grace Baptist Ministries</a>
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <div id="logo">
+          <a class="navbar-brand" href="{% url 'home' %}">Grace Baptist Ministries</a>
         </div>
+      </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="{% url 'home' %}">Home</a>
-                </li>
-                {% if user.is_authenticated %}
-                <li>
-                  <a href="{% url 'account_logout' %}">Sign Out</a>
-                </li>
-                {% else %}
-                <li>
-                  <a href="{% url 'account_login' %}">Log In</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-        <!-- /.navbar-collapse -->
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="{% url 'home' %}">Home</a>
+          </li>
+          {% if user.is_authenticated %}
+            <li>
+              <a href="{% url 'account_logout' %}">Sign Out</a>
+            </li>
+          {% else %}
+            <li>
+              <a href="{% url 'account_login' %}">Log In</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
     </div>
     <!-- /.container -->
-</nav>
+  </nav>
 
-{% block bootstrap3_content_header %}
-<!-- Page Header -->
-<!-- Set your background image for this header on the line below. -->
-<header class="intro-header">
-  <div>
-<!-- <header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpgx' %} ')">-->
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <div class="site-heading">
-          {% if user.is_authenticated and user.first_name %}
-          <h2 class="text-uppercase">Hi, {{ request.user.first_name }}.</h2>
-          {% endif %}
-          <p>it is a</p>
-          <h1>{% now "l" %}</h1>
-          <hr class="small">
-          <span class="subheading">{% now "g:i A / j F o" %}</span>
+  {% block bootstrap3_content_header %}
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header">
+        <!-- <header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpgx' %} ')">-->
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              <div class="site-heading">
+                {% if user.is_authenticated and user.first_name %}
+                  <h2 class="text-uppercase">Hi,
+                    {{ request.user.first_name }}.</h2>
+                {% endif %}
+                <p>it is a</p>
+                <h1>{% now "l" %}</h1>
+                <hr class="small">
+                <span class="subheading">{% now "g:i A / j F o" %}</span>
+              </div>
+              <p class="welcome-text">
+                {% if  user.is_authenticated and user.first_name %}Hey
+                  {{ request.user.first_name }}, w{% else %}W{% endif %}elcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
+            </div>
+          </div>
         </div>
-        <p class="welcome-text">{% if  user.is_authenticated and user.first_name %}Hey {{ request.user.first_name }}, w{% else %}W{% endif %}elcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
-      </div>
-    </div>
-  </div>
-</div>
-</header>
-{% endblock %}
+    </header>
+  {% endblock %}
 
-{% if messages %}
-<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-  <div class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>Messages:</strong>
-    <ul>
-      {% for message in messages %}
-      <li>{{message}}</li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-{% endif %}
-
-
-<div class="container">
-{% block content %}
-{% endblock %}
-</div>
-
-
-<hr>
-
-<!-- Footer -->
-<footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center">
-          <li>
-            <a href="https://twitter.com/gracebaptistmin">
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="https://www.facebook.com/gbmsg/">
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
+  {% if messages %}
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>Messages:</strong>
+        <ul>
+          {% for message in messages %}
+            <li>{{message}}</li>
+          {% endfor %}
         </ul>
-        <p class="copyright text-muted">Copyright &copy; Grace Baptist Ministries</p>
       </div>
     </div>
+  {% endif %}
+
+  <div class="container">
+    {% block content %}{% endblock %}
   </div>
-</footer>
 
+  <hr>
 
-{% block extra_body %}
-{% endblock %}
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <ul class="list-inline text-center">
+            <li>
+              <a href="https://twitter.com/gracebaptistmin">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/gbmsg/">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; Grace Baptist Ministries</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_body %}{% endblock %}
 
 {% endblock %}

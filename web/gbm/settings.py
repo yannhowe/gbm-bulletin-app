@@ -35,8 +35,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = [
-    'bulletin.gbm.sg',
-    'bulletin.dedicatedsolutions.com.sg'
+    'vine.gbm.sg',
+    'vine.dedicatedsolutions.com.sg'
 ]
 
 SITE_ID = 1
@@ -153,7 +153,7 @@ AUTHENTICATION_BACKENDS = (
 
 # auth and allauth settings
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/account/login/'
+LOGIN_URL = '/accounts/login/'
 
 ABSOLUTE_URL_OVERRIDES = {
     #    'auth.user': lambda u: "/members/profile/%s/" % u.profile.pk,
@@ -242,3 +242,8 @@ BOOTSTRAP3 = {
     'required_css_class': 'bootstrap3-required',
     'javascript_in_head': True,
 }
+
+
+MANDRILL_API_KEY = os.environ['MANDRILL_API_KEY']
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
