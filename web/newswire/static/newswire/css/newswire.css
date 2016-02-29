@@ -61,6 +61,7 @@ p.welcome-text {
 .omb_login .omb_authTitle {
   text-align: center;
   line-height: 300%;
+  margin-bottom: 0px;
 }
 .omb_login .omb_authTitle a {
   text-decoration: underline;

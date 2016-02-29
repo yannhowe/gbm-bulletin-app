@@ -37,6 +37,9 @@
             <a href="{% url 'home' %}">Home</a>
           </li>
           {% if user.is_authenticated %}
+          	<li>
+              <a href="{% url 'profile-detail' %}">My Profile</a>
+            </li>
             <li>
               <a href="{% url 'account_logout' %}">Sign Out</a>
             </li>
@@ -76,6 +79,7 @@
             </div>
           </div>
         </div>
+        <br />
     </header>
   {% endblock %}
 

@@ -1,0 +1,25 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+  <div id="profile-update" class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <h1>Your Profile
+        <small>Update your details</small>
+      </h1>
+
+      <form action="{% url 'profile-update' %}" method="post">
+        {% crispy form %}
+        <a type="submit" class="btn btn-primary" role="button" value="Save">Update</a>
+        <a href="{% url 'profile-detail' %}" class="btn btn-secondary" role="button">Cancel</a>
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

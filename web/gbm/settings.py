@@ -152,7 +152,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # auth and allauth settings
-LOGIN_REDIRECT_URL = '/'
+#LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
 ABSOLUTE_URL_OVERRIDES = {

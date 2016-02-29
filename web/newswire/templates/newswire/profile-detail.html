@@ -1,0 +1,41 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+  <div id="profile-details" class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <h1>Your Profile <small>Verify your details</small></h1>
+      <table class="table table-hover">
+        <colgroup>
+          <col class="col-xs-1">
+          <col class="col-xs-7">
+        </colgroup>
+        <tbody>
+          <tr>
+            <th class="text-right" scope="row">Last Name:</th>
+            <td>{{ object.last_name }}</td>
+          </tr>
+          <tr>
+            <th class="text-right" scope="row">First Name:</th>
+            <td>{{ object.first_name }}</td>
+          </tr>
+          <tr>
+            <th class="text-right" scope="row">Email:</th>
+            <td>{{ object.email }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="{% url 'home' %}" class="btn btn-primary" role="button">Looks Good</a>
+      <a href="{% url 'profile-update' %}" class="btn btn-secondary" role="button">Edit</a>
+      <p>
+        <small>*We use this information to send you important updates, keep up with changes in our membership as well as provide basic functionality on this website.</small>
+      </p>
+    </div>
+  </div>
+
+{% endblock %}

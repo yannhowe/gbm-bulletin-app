@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.core.files.storage import default_storage
 
@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.views.generic.list import ListView
 
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
 
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -53,6 +53,29 @@ class HomePageView(ListView):
         # do not show archived instances.
         qs = super(ListView, self).get_queryset()
         return qs
+
+
+class ProfileDetail(DetailView):
+    #model = User
+    template_name = 'newswire/profile-detail.html'
+
+    def get_object(self):
+        return get_object_or_404(User, pk=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileDetail, self).get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context
+
+
+class ProfileUpdate(UpdateView):
+    model = User
+    template_name = 'newswire/profile-update.html'
+
+    def get_object(self):
+        return get_object_or_404(User, pk=self.request.user.id)
+
+    fields = ['first_name', 'last_name', 'email']
 
 
 def post_list(request):
