@@ -13,11 +13,7 @@
         <small>Update your details</small>
       </h1>
 
-      <form action="{% url 'profile-update' %}" method="post">
-        {% crispy form %}
-        <a type="submit" class="btn btn-primary" role="button" value="Save">Update</a>
-        <a href="{% url 'profile-detail' %}" class="btn btn-secondary" role="button">Cancel</a>
-      </form>
+      {% crispy form %}
 
     </div>
   </div>

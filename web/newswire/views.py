@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, get_object_or_404
+from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.core.files.storage import default_storage
 
@@ -15,6 +16,7 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription
+from .forms import ProfileUpdateForm
 
 from django.views.generic.edit import FormView
 
@@ -55,27 +57,22 @@ class HomePageView(ListView):
         return qs
 
 
-class ProfileDetail(DetailView):
-    #model = User
+class ProfileDetailView(DetailView):
     template_name = 'newswire/profile-detail.html'
 
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
 
-    def get_context_data(self, **kwargs):
-        context = super(ProfileDetail, self).get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
 
-
-class ProfileUpdate(UpdateView):
-    model = User
+class ProfileUpdateView(UpdateView):
+    form_class = ProfileUpdateForm
     template_name = 'newswire/profile-update.html'
+
+    def get_success_url(self):
+        return reverse('profile-detail')
 
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
-
-    fields = ['first_name', 'last_name', 'email']
 
 
 def post_list(request):
