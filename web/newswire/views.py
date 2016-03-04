@@ -6,7 +6,7 @@ from django.core.files.storage import default_storage
 
 from django.contrib import messages
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.views.generic.list import ListView
 
@@ -19,6 +19,8 @@ from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPo
 from .forms import ProfileUpdateForm
 
 from django.views.generic.edit import FormView
+
+from django.core.mail import send_mail, EmailMultiAlternatives
 
 
 class HomePageView(ListView):
@@ -75,13 +77,15 @@ class ProfileUpdateView(UpdateView):
         return get_object_or_404(User, pk=self.request.user.id)
 
 
-def post_list(request):
-    selected_category_list = ['Chinese Ministry', 'Children\'s Ministry']
-    posts = Post.objects.order_by('publish_start_date')
-    return render(request, 'newswire/home.html', {'posts': posts})
-
-
-def get_context_data(self, **kwargs):
-    context = super(HomePageView, self).get_context_data(**kwargs)
-    messages.info(self.request, 'This is a demo of a message.')
-    return context
+def send_bulletin(request):
+    error = ''
+    content = ''
+    subject, from_email, to = 'hello', 'bulletin@gbm.sg', 'yannhowe@gmail.com'
+    text_content = 'This is an important message in TXT.'
+    html_content = '<p>This is an <strong>important</strong> message in HTML.</p>'
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    messages.add_message(request, messages.INFO,
+                         'Emailed the bulletin to you.')
+    return HttpResponseRedirect(reverse('home'))

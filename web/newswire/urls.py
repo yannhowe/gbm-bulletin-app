@@ -9,4 +9,5 @@ urlpatterns = (
         login_required(ProfileUpdateView.as_view()), name='profile-update'),
     url(r'^accounts/profile/$',
         login_required(ProfileDetailView.as_view()), name='profile-detail'),
+    url(r'^send/bulletin/', login_required(views.send_bulletin), name='send-bulletin'),
 )

@@ -41,6 +41,17 @@ ALLOWED_HOSTS = [
 
 SITE_ID = 1
 
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'AKIAJJMEJ5JC6YVHGHFA'
+EMAIL_HOST_PASSWORD = 'AiPhtBtJmCq3pJsT9uj5nIjtWCHrMGldha8dH9fw30Z1'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'bulletin@gbm.sg'
+
+# Django allauth
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
@@ -61,7 +72,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
 
     'bootstrap3',
     'newswire',
@@ -164,10 +174,6 @@ SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
         'SCOPE': ['email'],
         'METHOD': 'js_sdk'  # instead of 'oauth2'
-    },
-    'google':{
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'}
     }
 }
 
@@ -175,13 +181,6 @@ WSGI_APPLICATION = 'gbm.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
 
 DATABASES = {
     'default': {
@@ -232,7 +231,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-#STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Settings for django-bootstrap3
@@ -242,8 +240,3 @@ BOOTSTRAP3 = {
     'required_css_class': 'bootstrap3-required',
     'javascript_in_head': True,
 }
-
-
-MANDRILL_API_KEY = os.environ['MANDRILL_API_KEY']
-EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']

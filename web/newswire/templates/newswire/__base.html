@@ -33,11 +33,14 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href="{% url 'home' %}">Home</a>
-          </li>
           {% if user.is_authenticated %}
-          	<li>
+            <li>
+              <a href="{% url 'send-bulletin' %}">
+                <i class="fa fa-paper-plane"></i>
+                Email This to Me
+              </a>
+            </li>
+            <li>
               <a href="{% url 'profile-detail' %}">My Profile</a>
             </li>
             <li>
@@ -59,27 +62,27 @@
     <!-- Page Header -->
     <!-- Set your background image for this header on the line below. -->
     <header class="intro-header">
-        <!-- <header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpgx' %} ')">-->
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-              <div class="site-heading">
-                {% if user.is_authenticated and user.first_name %}
-                  <h2 class="text-uppercase">Hi,
-                    {{ request.user.first_name }}.</h2>
-                {% endif %}
-                <p>it is a</p>
-                <h1>{% now "l" %}</h1>
-                <hr class="small">
-                <span class="subheading">{% now "g:i A / j F o" %}</span>
-              </div>
-              <p class="welcome-text">
-                {% if  user.is_authenticated and user.first_name %}Hey
-                  {{ request.user.first_name }}, w{% else %}W{% endif %}elcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
+      <!-- <header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpgx' %} ')">-->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="site-heading">
+              {% if user.is_authenticated and user.first_name %}
+                <h2 class="text-uppercase">Hi,
+                  {{ request.user.first_name }}.</h2>
+              {% endif %}
+              <p>it is a</p>
+              <h1>{% now "l" %}</h1>
+              <hr class="small">
+              <span class="subheading">{% now "g:i A / j F o" %}</span>
             </div>
+            <p class="welcome-text">
+              {% if  user.is_authenticated and user.first_name %}Hey
+                {{ request.user.first_name }}, w{% else %}W{% endif %}elcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
           </div>
         </div>
-        <br />
+      </div>
+      <br/>
     </header>
   {% endblock %}
 
