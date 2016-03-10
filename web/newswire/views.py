@@ -12,7 +12,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.template import RequestContext, loader
+from django.template import RequestContext
+from django.template.loader import select_template, get_template
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, FormView
 from email.Utils import formataddr
@@ -82,12 +83,14 @@ def send_bulletin(request):
     )
     message.send()
     messages.add_message(request, messages.INFO,
-                         'Emailed the bulletin to you.')
+                         'Bulletin emailed to you.')
     return HttpResponseRedirect(reverse('home'))
 
 
 def template_email(template_name, extra_context=None, *args, **kwargs):
     """
+    Thanks to https://gist.github.com/SmileyChris/5881290
+
     Return an :cls:`~django.core.mail.EmailMessage` with the body (and
     optionally, the subject) set from django templates.
     :param template_name: The template name, or partial template name.
