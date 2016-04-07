@@ -1,7 +1,7 @@
 server {
 
     listen 80;
-    server_name localhost 192.168.99.100 vine.gbm.sg vine.gbm.sg.local;
+    server_name localhost 192.168.99.100 gbm.sg bulletin.gbm.sg ;
     charset utf-8;
 
     access_log  /var/log/nginx/access.log;

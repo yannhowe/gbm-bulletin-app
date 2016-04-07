@@ -35,21 +35,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = [
-    'vine.gbm.sg',
-    'vine.dedicatedsolutions.com.sg'
+    'gbm.sg',
+    'bulletin.gbm.sg',
+    'preview.gbm.sg'
 ]
 
 SITE_ID = 1
-
-# Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'AKIAJJMEJ5JC6YVHGHFA'
-EMAIL_HOST_PASSWORD = 'AiPhtBtJmCq3pJsT9uj5nIjtWCHrMGldha8dH9fw30Z1'
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-DEFAULT_FROM_EMAIL = 'bulletin@gbm.sg'
 
 # Django allauth
 ACCOUNT_EMAIL_REQUIRED = True
@@ -85,7 +76,6 @@ INSTALLED_APPS = [
     'paintstore',
     'crispy_forms',
 
-    'djrill',
     'widget_tweaks',
     'import_export',  # inport/export CSV function
 ]

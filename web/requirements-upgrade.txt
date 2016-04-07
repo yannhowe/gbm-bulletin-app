@@ -6,7 +6,6 @@ django-import-export
 django-paintstore
 django-suit
 django-widget-tweaks
-djrill
 factory-boy
 fake-factory
 gunicorn

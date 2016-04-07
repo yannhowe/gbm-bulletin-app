@@ -5,8 +5,9 @@ from paintstore.fields import ColorPickerField
 from datetime import datetime, timedelta
 import calendar
 
-from django.forms import ModelForm,TextInput,DateInput
+from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
+
 
 class Category(models.Model):
 
@@ -124,6 +125,14 @@ class Event(models.Model):
 
     def __str__(self):
         return '%s - %s to %s' % (self.title, self.date_start, self.date_end)
+
+
+class Signup(models.Model):
+    user = models.ForeignKey(User, db_index=True)
+    event = models.ForeignKey(Event, db_index=True)
+
+    def __str__(self):
+        return '%s %s' % (self.event, self.user)
 
 
 # Stores posts for newsvine

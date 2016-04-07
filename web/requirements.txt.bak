@@ -7,7 +7,6 @@ django-import-export==0.4.2
 django-paintstore==0.2
 django-suit==0.2.16
 django-widget-tweaks==1.4.1
-djrill==2.0
 factory-boy==2.6.1
 fake-factory==0.5.3
 gunicorn==19.4.5

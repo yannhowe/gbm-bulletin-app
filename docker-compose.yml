@@ -6,6 +6,8 @@ web:
   links:
     - postgres:postgres
     - redis:redis
+#
+#
   env_file: .env
   command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 -b :8000
 
@@ -32,6 +34,8 @@ nginx:
 postgres:
   restart: always
   image: postgres:latest
+  environment:
+    - POSTGRES_PASSWORD=hjYUfuKG5676tr1FDvb!!!
   volumes_from:
     - data
   ports:
@@ -40,10 +44,15 @@ postgres:
 redis:
   restart: always
   image: redis:latest
+#
+#
 
 data:
   restart: always
   image: postgres:latest
+  environment:
+    - POSTGRES_PASSWORD=hjYUfuKG5676tr1FDvb!!!
   volumes:
     - /var/lib/postgresql
+  env_file: .env
   command: "true"
