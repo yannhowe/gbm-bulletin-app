@@ -128,8 +128,20 @@ class Event(models.Model):
 
 
 class Signup(models.Model):
+    # Service Names
+    YES = 'Yes'
+    NO = 'No'
+    MAYBE = 'Maybe'
+    CHOICES = (
+        (YES, 'Yes'),
+        (NO, 'No'),
+        (MAYBE, 'Maybe')
+    )
+
     user = models.ForeignKey(User, db_index=True)
     event = models.ForeignKey(Event, db_index=True)
+    rsvp = models.CharField(
+        max_length=30, choices=CHOICES, default=CHOICES[0][0])
 
     def __str__(self):
         return '%s %s' % (self.event, self.user)

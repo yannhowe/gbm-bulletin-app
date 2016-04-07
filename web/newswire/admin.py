@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Post, Category, Setting, WeeklySummary, ReadPost, Event, OrderOfService, Unsubscription
+from .models import Post, Category, Setting, WeeklySummary, ReadPost, Event, Signup, OrderOfService, Unsubscription
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -110,6 +110,19 @@ class EventAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(Event, EventAdmin)
+
+
+class SignupResource(resources.ModelResource):
+
+    class Meta:
+        model = Signup
+
+
+class SignupAdmin(ImportExportModelAdmin):
+    resource_class = SignupResource
+    pass
+
+admin.site.register(Signup, SignupAdmin)
 
 
 class OrderOfServiceResource(resources.ModelResource):
