@@ -114,6 +114,7 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     date_start = models.DateField(default=datetime.now)
     date_end = models.DateField(blank=True, null=True)
+    track_rsvp = models.BooleanField(default=False)
 
     def _get_date_display(self):
         if self.date_end == None:
@@ -129,13 +130,13 @@ class Event(models.Model):
 
 class Signup(models.Model):
     # Service Names
-    YES = 'Yes'
-    NO = 'No'
-    MAYBE = 'Maybe'
+    NOTGOING = 'Not Going'
+    INTERESTED = 'Interested'
+    GOING = 'Going'
     CHOICES = (
-        (YES, 'Yes'),
-        (NO, 'No'),
-        (MAYBE, 'Maybe')
+        (NOTGOING, 'Not Going'),
+        (INTERESTED, 'Interested'),
+        (GOING, 'Going')
     )
 
     user = models.ForeignKey(User, db_index=True)

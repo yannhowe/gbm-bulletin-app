@@ -35,15 +35,15 @@
 
             <h2 class="post-title">
               {{ post.title }}
-              {% if post.link %}
-                <a href="{{ post.link }}">
-                  <i class="fa fa-link"></i>
-                </a>
-              {% endif %}
             </h2>
 
             <h3 class="post-subtitle">
               {{ post.body }}
+              {% if post.link %}
+                <a href="{{ post.link }}">
+                  <i class="fa fa-link small"></i>
+                </a>
+              {% endif %}
             </h3>
             <hr>
           </div>
@@ -68,6 +68,41 @@
               </td>
               <td class="text-left">
                 <i>{{ event.date_display }}</i>
+                {% if event.track_rsvp %}
+                  <button type="button" class="btn btn-default btn-xs rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                    <i class="fa fa-plus"></i>
+                    RSVP
+                  </button>
+
+                  <div class="modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          <h4 class="modal-title" id="myModalLabel">{{ event.title }}</h4>
+                        </div>
+                        <div class="modal-body">
+                          <p>
+                            <strong>Date:</strong>
+                            {{ event.date_display }}</p>
+                        </div>
+                        <div class="modal-footer">
+
+                          <form action="{% url 'home' %}" method="POST" id="rsvp-form">
+                            {% csrf_token %}
+                            <div class="fieldWrapper">
+                            </div>
+                            <input type="submit" value="Not Going" Name="Not Going" form="rsvp-form" class="btn btn-secondary pull-left"></input>
+                            <input type="submit" value="Interested" form="rsvp-form" class="btn btn-primary pull-left"></input>
+                            <input type="submit" value="Going" form="rsvp-form" class="btn btn-success pull-left"></input>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
