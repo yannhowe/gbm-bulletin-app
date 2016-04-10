@@ -94,9 +94,9 @@
                             {% csrf_token %}
                             <div class="fieldWrapper">
                             </div>
-                            <input id="btn-not-going" type="submit" value="Not Going" form="rsvp-form" class="rsvp-response btn btn-secondary pull-left"></input>
-                            <input id="btn-interested" type="submit" value="Interested" form="rsvp-form" class="rsvp-response btn btn-primary pull-left"></input>
-                            <input id="btn-going" type="submit" value="Going" form="rsvp-form" class="rsvp-response btn btn-success pull-left"></input>
+                            <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-secondary pull-left">Not Going</button>
+                            <button id="btn-interested-{{event.pk}}" type="submit" value="interested-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-primary pull-left">Interested</button>
+                            <button id="btn-going-{{event.pk}}" type="submit" value="going-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-success pull-left">Going</button>
                           </form>
                         </div>
                       </div>

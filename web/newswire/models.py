@@ -130,9 +130,9 @@ class Event(models.Model):
 
 class Signup(models.Model):
     # Service Names
-    NOTGOING = 'Not Going'
-    INTERESTED = 'Interested'
-    GOING = 'Going'
+    NOTGOING = 'notgoing'
+    INTERESTED = 'interested'
+    GOING = 'going'
     CHOICES = (
         (NOTGOING, 'Not Going'),
         (INTERESTED, 'Interested'),

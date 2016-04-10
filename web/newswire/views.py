@@ -17,7 +17,8 @@ from django.template.loader import select_template, get_template
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, FormView
 from email.Utils import formataddr
-import os, json
+import os
+import json
 
 
 class HomePageView(ListView):
@@ -90,10 +91,8 @@ class RsvpUpdateView(DetailView):
             signup = Signup(user=the_user, event=the_event, rsvp=the_rsvp)
             signup.save()
 
-            response_data['result'] = 'Create RSVP successful!'
-            response_data['the_user'] = signup.user.pk
-            response_data['the_rsvp'] = signup.event.pk
-            response_data['the_event'] = signup.pk
+            response_data['the_rsvp'] = signup.rsvp
+            response_data['the_event'] = signup.event.pk
 
             return HttpResponse(
                 json.dumps(response_data),

@@ -1,27 +1,32 @@
 $(function() {
 
+  //Get the button value on submit
   $('#rsvpModal').on('shown.bs.modal', function() {
     $('#myInput').focus()
   })
 
-  // Submit rsvp on submit
+  $('form').on('click', 'button[type=submit]', function(e) {
+    $(this.form).data('clicked', this.value);
+  });
+
+  // Update rsvp on submit
   $('#rsvp-form').on('submit', function(event) {
     event.preventDefault();
-    console.log("rsvp submitted!") // sanity check
-    update_rsvp();
+    var the_rsvp = $(this).data('clicked').split('-')[0]; // get the_rsvp from button value
+    var the_event = $(this).data('clicked').split('-')[1]; // get the_event_id from button value
+    update_rsvp(the_rsvp, the_event);
     $('.modal').modal('hide');
   });
 
   // AJAX for rsvp
-  function update_rsvp() {
-    console.log("create rsvp is working!") // sanity check
+  function update_rsvp(the_rsvp, the_event) {
 
     $.ajax({
       url: "rsvp/update/", // the endpoint
       type: "POST", // http method
       data: {
-        the_rsvp: "Goingxxx",
-        the_event: "7"
+        the_rsvp,
+        the_event
       }, // data sent with the post request
 
       // handle a successful response
