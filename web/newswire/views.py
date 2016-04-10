@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileUpdateForm
-from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription
+from .forms import ProfileUpdateForm, RsvpUpdateForm
+from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription, Signup
 from datetime import datetime
 from django import template
 from django.conf import settings
@@ -17,7 +17,7 @@ from django.template.loader import select_template, get_template
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, FormView
 from email.Utils import formataddr
-import os
+import os, json
 
 
 class HomePageView(ListView):
@@ -46,7 +46,8 @@ class HomePageView(ListView):
         except WeeklySummary.DoesNotExist:
             latest_weeklysummary = None
         context['weeklysummary'] = latest_weeklysummary
-        context['events'] = Event.objects.all()
+        context['events'] = Event.objects.extra(
+            order_by=['date_start'])
         context['categories'] = Category.objects.all()
         return context
 
@@ -69,6 +70,43 @@ class ProfileUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('profile-detail')
+
+    def get_object(self):
+        return get_object_or_404(User, pk=self.request.user.id)
+
+
+class RsvpUpdateView(DetailView):
+
+    model = Signup
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+
+            the_user = request.user
+            the_rsvp = request.POST.get('the_rsvp')
+            the_event = Event.objects.get(pk=request.POST.get('the_event'))
+            response_data = {}
+
+            signup = Signup(user=the_user, event=the_event, rsvp=the_rsvp)
+            signup.save()
+
+            response_data['result'] = 'Create RSVP successful!'
+            response_data['the_user'] = signup.user.pk
+            response_data['the_rsvp'] = signup.event.pk
+            response_data['the_event'] = signup.pk
+
+            return HttpResponse(
+                json.dumps(response_data),
+                content_type="application/json"
+            )
+        else:
+            return HttpResponse(
+                json.dumps({"nothing to see": "this isn't happening"}),
+                content_type="application/json"
+            )
+
+    def get_success_url(self):
+        return reverse('home')
 
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)

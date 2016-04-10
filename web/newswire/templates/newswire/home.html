@@ -81,7 +81,7 @@
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
-                          <h4 class="modal-title" id="myModalLabel">{{ event.title }}</h4>
+                          <h4 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h4>
                         </div>
                         <div class="modal-body">
                           <p>
@@ -94,9 +94,9 @@
                             {% csrf_token %}
                             <div class="fieldWrapper">
                             </div>
-                            <input type="submit" value="Not Going" Name="Not Going" form="rsvp-form" class="btn btn-secondary pull-left"></input>
-                            <input type="submit" value="Interested" form="rsvp-form" class="btn btn-primary pull-left"></input>
-                            <input type="submit" value="Going" form="rsvp-form" class="btn btn-success pull-left"></input>
+                            <input id="btn-not-going" type="submit" value="Not Going" form="rsvp-form" class="rsvp-response btn btn-secondary pull-left"></input>
+                            <input id="btn-interested" type="submit" value="Interested" form="rsvp-form" class="rsvp-response btn btn-primary pull-left"></input>
+                            <input id="btn-going" type="submit" value="Going" form="rsvp-form" class="rsvp-response btn btn-success pull-left"></input>
                           </form>
                         </div>
                       </div>
