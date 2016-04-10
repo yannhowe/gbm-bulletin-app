@@ -145,7 +145,7 @@ class Signup(models.Model):
         max_length=30, choices=CHOICES, default=CHOICES[0][0])
 
     def __str__(self):
-        return '%s %s' % (self.event, self.user)
+        return '%s - %s - %s' % (self.event, self.user, self.rsvp)
 
 
 # Stores posts for newsvine
