@@ -19,6 +19,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView,
 from email.Utils import formataddr
 import os
 import json
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 
 class HomePageView(ListView):
@@ -86,18 +87,36 @@ class RsvpUpdateView(DetailView):
             the_user = request.user
             the_rsvp = request.POST.get('the_rsvp')
             the_event = Event.objects.get(pk=request.POST.get('the_event'))
+            the_pk = ""
             response_data = {}
+            signup = Signup()
 
-            signup = Signup(user=the_user, event=the_event, rsvp=the_rsvp)
+            try:
+                the_pk = Signup.objects.get(event=the_event, user=the_user).pk
+                signup.pk = the_pk
+            except:
+                pass
+            signup.user = the_user
+            signup.event = the_event
+            signup.rsvp = the_rsvp
             signup.save()
 
             response_data['the_rsvp'] = signup.rsvp
             response_data['the_event'] = signup.event.pk
 
-            return HttpResponse(
-                json.dumps(response_data),
-                content_type="application/json"
-            )
+            if the_pk:
+                response_data['record'] = "updated"
+                return HttpResponse(
+                    json.dumps(response_data),
+                    content_type="application/json"
+                )
+            else:
+                response_data['record'] = "created"
+                return HttpResponse(
+                    json.dumps(response_data),
+                    content_type="application/json"
+                )
+
         else:
             return HttpResponse(
                 json.dumps({"nothing to see": "this isn't happening"}),
