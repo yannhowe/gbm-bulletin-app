@@ -10,6 +10,7 @@ from django.core import mail
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
@@ -30,6 +31,7 @@ class HomePageView(ListView):
         context = super(HomePageView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
         now = datetime.now()
+
         upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.filter(
@@ -37,19 +39,28 @@ class HomePageView(ListView):
         except OrderOfService.DoesNotExist:
             upcoming_service = None
         context['orderofservice'] = upcoming_service
+
         active_posts = Post.objects.filter(
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
         unread_active_posts = Post.objects.exclude(
             readpost__post__id__in=active_posts)
         context['posts'] = unread_active_posts.extra(
             order_by=['-publish_start_date'])
+
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
         except WeeklySummary.DoesNotExist:
             latest_weeklysummary = None
         context['weeklysummary'] = latest_weeklysummary
-        context['events'] = Event.objects.extra(
+
+        try:
+            active_events = Event.objects.filter(
+                Q(date_end__gte=now) | Q(date_start__gte=now))
+        except Event.DoesNotExist:
+            active_events = None
+        context['events'] = active_events.extra(
             order_by=['date_start'])
+
         context['categories'] = Category.objects.all()
         return context
 
@@ -129,6 +140,21 @@ class RsvpUpdateView(DetailView):
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
 
+
+class RsvpListView(ListView):
+
+    model = Post
+    template_name = 'newswire/event-rsvp.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RsvpListView, self).get_context_data(**kwargs)
+        messages.info(self.request, '')
+
+        try:
+            context['signups'] = Signup.objects.all()
+        except Event.DoesNotExist:
+            pass
+        return context
 
 def send_bulletin(request):
 
