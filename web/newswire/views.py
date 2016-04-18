@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileUpdateForm, RsvpUpdateForm
+from .forms import ProfileUpdateForm
 from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription, Signup
 from datetime import datetime
 from django import template
