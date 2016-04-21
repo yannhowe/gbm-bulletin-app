@@ -68,12 +68,18 @@
               </td>
               <td class="text-left">
                 <i>{{ event.date_display }}</i>
+                {# OH MY GOODNESS THIS CODE IS SO UGLY, COME BACK FIX ME WHEN YOU CAN. #}
                 {% if event.track_rsvp %}
                   {% if event.signup_set.all %}
                     {% for signup in event.signup_set.all %}
                       {% if signup.rsvp and signup.user.pk == request.user.pk %}
                         <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
                           {{ signup.rsvp }}
+                        </button>
+                      {% else %}
+                        <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                          <i class="fa fa-plus"></i>
+                          RSVP
                         </button>
                       {% endif %}
                     {% endfor %}
@@ -98,7 +104,6 @@
                             {{ event.date_display }}</p>
                         </div>
                         <div class="modal-footer">
-
                           <form action="{% url 'home' %}" method="POST" id="rsvp-form">
                             {% csrf_token %}
                             <div class="fieldWrapper"></div>
