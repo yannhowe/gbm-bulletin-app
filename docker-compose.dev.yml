@@ -25,6 +25,7 @@ nginx:
     - "80:80"
   volumes:
     - /www/static
+    - /var/www
   volumes_from:
     - web
     - web-static

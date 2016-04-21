@@ -1,0 +1,72 @@
+body {
+  background-color: #2e3141;
+  background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../../images/bg.jpg");
+  background-size: auto, cover;
+  background-attachment: fixed, fixed;
+  background-position: center, center;
+}
+@media screen and (max-width: 1280px) {
+  #banner {
+    padding: 7em 0 8.25em 0;
+    background-color: #2e3141;
+    background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../images/bg.jpg");
+    background-size: auto, cover;
+    background-position: center, center;
+    margin-bottom: -6.5em;
+  }
+}
+@media screen and (max-width: 1280px) {
+  #footer {
+    background-color: #2e3141;
+    background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../images/bg.jpg");
+    background-size: auto, cover;
+    background-position: center, center;
+    margin-top: -6.5em;
+    padding-top: 6.5em;
+  }
+}
+@media screen and (max-width: 1280px) {
+  #wrapper > header {
+    padding: 9em 0 6.25em 0;
+    background-color: #2e3141;
+    background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../images/bg.jpg");
+    background-size: auto, cover;
+    background-position: center, 0% 30%;
+    margin-bottom: -6.5em;
+  }
+}
+@media screen and (max-width: 1280px) {
+  #footer {
+    background-color: #2e3141;
+    background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("../../images/bg.jpg");
+    background-size: auto, cover;
+    background-position: center, center;
+    margin-top: -6.5em;
+    padding-top: 6.5em;
+  }
+}
+#banner > div > div > img {
+  background-image: url(../images/gbm_logo_2016.png);
+  cursor: default;
+  display: inline-block;
+  height: 5em;
+  line-height: 5em;
+  text-align: center;
+  width: 6.20em;
+}
+#header > h1 > a > img {
+  background-image: url(../images/gbm_logo_2016.png);
+  cursor: default;
+  display: inline-block;
+  height: 1.8em;
+  line-height: 1.8em;
+  text-align: center;
+  width: 2.232em;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+#header > h1 > a {}
+h1, h2, h3, h4, h5, h6 {
+  padding-bottom: 1em;
+  border-bottom: solid 2px rgba(255, 255, 255, 0.125);
+}

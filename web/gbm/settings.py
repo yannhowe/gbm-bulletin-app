@@ -49,7 +49,6 @@ EMAIL_PORT = os.getenv('EMAIL_PORT', '')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', '')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', '')
 
 # Django allauth
@@ -81,8 +80,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.twitter',
+
     'paintstore',
     'crispy_forms',
 
@@ -154,16 +152,14 @@ SUIT_CONFIG = {
     'LIST_PER_PAGE': 15
 }
 
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-)
+AUTHENTICATION_BACKENDS = {
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+}
 
 # auth and allauth settings
-#LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/bulletin/accounts/profile/'
+LOGIN_URL = '/bulletin/accounts/login/'
 
 ABSOLUTE_URL_OVERRIDES = {
     #    'auth.user': lambda u: "/members/profile/%s/" % u.profile.pk,
