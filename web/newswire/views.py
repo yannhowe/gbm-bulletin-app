@@ -143,18 +143,18 @@ class RsvpUpdateView(DetailView):
 
 class RsvpListView(ListView):
 
-    model = Post
+    model = Signup
     template_name = 'newswire/event-rsvp.html'
 
     def get_context_data(self, **kwargs):
         context = super(RsvpListView, self).get_context_data(**kwargs)
-        messages.info(self.request, '')
-
+        event_signups = []
         try:
             context['signups'] = Signup.objects.all()
         except Event.DoesNotExist:
             pass
         return context
+
 
 def send_bulletin(request):
 

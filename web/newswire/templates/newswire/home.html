@@ -72,22 +72,20 @@
                 {% if event.track_rsvp %}
                   {% if event.signup_set.all %}
                     {% for signup in event.signup_set.all %}
-                      {% if signup.rsvp and signup.user.pk == request.user.pk %}
-                        <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                          {{ signup.rsvp }}
-                        </button>
+                      {% if signup.user.pk == request.user.pk %}
+                        {% if signup.rsvp %}
+                          <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                            {{ signup.rsvp }}
+                          </button>
+                        {% else %}
+                          <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                            <i class="fa fa-plus"></i>
+                            RSVP
+                          </button>
+                        {% endif %}
                       {% else %}
-                        <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                          <i class="fa fa-plus"></i>
-                          RSVP
-                        </button>
                       {% endif %}
                     {% endfor %}
-                  {% else %}
-                    <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-default btn-xs rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                      <i class="fa fa-plus"></i>
-                      RSVP
-                    </button>
                   {% endif %}
                   <div class="modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                     <div class="modal-dialog" role="document">
