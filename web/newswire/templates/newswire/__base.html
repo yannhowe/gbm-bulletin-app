@@ -1,137 +1,138 @@
-{% extends 'newswire/__bootstrap.html' %}
+<!DOCTYPE HTML>
 
-{% load bootstrap3 %}
+<html>
+  <head>
+    <title>
+      {% block title %}{% endblock %}Grace Baptist Ministries</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    {% load staticfiles %}
 
-{% block bootstrap3_extra_head %}
-  {% load staticfiles %}
-  <link rel="stylesheet" href="{% static 'newswire/css/clean-blog.min.css' %}">
-  <link rel="stylesheet" href="{% static 'newswire/css/newswire.css' %}">
-  <!-- Custom Fonts -->
-  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-{% endblock %}
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
-{% block bootstrap3_content %}
-  <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-    <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header page-scroll">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <div id="logo">
-          <a class="navbar-brand" href="{% url 'home' %}">Grace Baptist Ministries</a>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/assets/css/main.css"/>
+    <link rel="stylesheet" href="/assets/css/gbm.css"/>
+
+  </head>
+  <body>
+
+    <div id="page-wrapper">
+
+      <header id="header">
+        <h1>
+          <a href="/index.html"><img src="/images/gbm_logo_2016_w.png" alt=""/>
+            Grace Baptist Ministries</a>
+        </h1>
+        <nav>
+          <a href="#menu">Menu</a>
+        </nav>
+      </header>
+
+      <nav id="menu">
+        <div class="inner">
+          <h2>Menu</h2>
+          <ul class="links">
+            <li>
+              <a href="/index.html">Home</a>
+            </li>
+            <li>
+              <a href="/bulletin/">Bulletin</a>
+            </li>
+            <li>
+              <a class="sidebar-nav-item" href="/about-us/">About Us</a>
+            </li>
+            <li>
+              <a class="sidebar-nav-item" href="/visit-us/">Visit Us</a>
+            </li>
+            {% if user.is_authenticated %}
+              <li>
+                <a href="{% url 'profile-detail' %}">My Profile</a>
+              </li>
+              <li>
+                <a href="{% url 'account_logout' %}">Sign Out</a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url 'account_login' %}">Log In</a>
+              </li>
+            {% endif %}
+          </ul>
+          <a href="#" class="close">Close</a>
         </div>
-      </div>
+      </nav>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          {% if user.is_authenticated %}
-            <li>
-              <a href="{% url 'profile-detail' %}">My Profile</a>
-            </li>
-            <li>
-              <a href="{% url 'account_logout' %}">Sign Out</a>
-            </li>
-          {% else %}
-            <li>
-              <a href="{% url 'account_login' %}">Log In</a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
-      <!-- /.navbar-collapse -->
-    </div>
-    <!-- /.container -->
-  </nav>
-
-  {% block bootstrap3_content_header %}
-    <!-- Page Header -->
-    <!-- Set your background image for this header on the line below. -->
-    <header class="intro-header">
-      <!-- <header class="intro-header" style="background-image: url(' {% static 'newswire/img/home-bg.jpgx' %} ')">-->
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="site-heading">
-              {% if user.is_authenticated and user.first_name %}
-                <h2 class="text-uppercase">Hi,
-                  {{ request.user.first_name }}.</h2>
-              {% endif %}
-              <p>it is a</p>
-              <h1>{% now "l" %}</h1>
-              <hr class="small">
-              <span class="subheading">{% now "g:i A / j F o" %}</span>
-            </div>
-            <p class="welcome-text">
-              {% if  user.is_authenticated and user.first_name %}Hey
-                {{ request.user.first_name }}, w{% else %}W{% endif %}elcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.</p>
+      <section id="wrapper">
+        {% block hero %}
+        <header>
+          <div class="inner text-center">
+            <h2>The Bulletin</h2>
+            <p>
+              {% now "l" %},
+              {% now "g:i A, j F o" %}</p>
+          </div>
+        </header>
+        {% endblock %}
+        <div class="wrapper">
+          <div class="inner">
+            {% block content %}{% endblock %}
           </div>
         </div>
-      </div>
-      <br/>
-    </header>
-  {% endblock %}
 
-  {% if messages %}
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <div class="alert alert-success alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <strong>Messages:</strong>
-        <ul>
-          {% for message in messages %}
-            <li>{{message}}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-  {% endif %}
+      </section>
 
-  <div class="container">
-    {% block content %}{% endblock %}
-  </div>
-
-  <hr>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-          <ul class="list-inline text-center">
-            <li>
-              <a href="https://twitter.com/gracebaptistmin">
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-circle fa-stack-2x"></i>
-                  <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
+      <section id="footer">
+        <div class="inner">
+          <h2 class="major">Get in touch</h2>
+          <p>If you’re having trouble finding us or need some suggestions on what to attend, do contact us in or call our office at
+            <a href=tel:+6567452887>+65 6745 2887</a>.</p>
+          <ul class="contact">
+            <li class="fa-phone">
+              <a href=tel:+6567452887>+65 6745 2887</a>
             </li>
-            <li>
-              <a href="https://www.facebook.com/gbmsg/">
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-circle fa-stack-2x"></i>
-                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
+            <li class="fa-envelope">
+              <a href="mailto:office@gbm.sg?Subject=gbm.sg%20Contact%20Form">office@gbm.sg</a>
+            </li>
+            <li class="fa-home">
+              <a href="https://goo.gl/maps/55FGkrEbUf72">
+                146B Paya Lebar Road,
+                <br/>
+                ACE Building, #05-01<br/>
+                Singapore 409017</a>
             </li>
           </ul>
-          <p class="copyright text-muted">Copyright &copy; Grace Baptist Ministries</p>
+          <ul class="contact">
+            <li class="fa-twitter">
+              <a href="https://twitter.com/gracebaptistmin">twitter.com/gracebaptistmin</a>
+            </li>
+            <li class="fa-facebook">
+              <a href="https://www.facebook.com/gbmsg">facebook.com/gbmsg</a>
+            </li>
+            <li class="fa-instagram">
+              <a href="https://www.instagram.com/gbmyouth/">instagram.com/gbmyouth/</a>
+            </li>
+          </ul>
+          <ul class="copyright">
+            <li>&copy; Grace Baptist Ministries.</li>
+            <li>Design:
+              <a href="http://html5up.net">HTML5 UP</a>
+            </li>
+          </ul>
         </div>
-      </div>
+      </section>
+
     </div>
-    <script src="{% static 'newswire/js/newswire.js' %}" type="text/javascript"></script>
-  </footer>
 
-  {% block extra_body %}{% endblock %}
-
-{% endblock %}
+    <script src="/assets/js/skel.min.js"></script>
+    <script src="/assets/js/jquery.scrollex.min.js"></script>
+    <script src="/assets/js/util.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="{% static 'newswire/js/gbm.js' %}" type="text/javascript"></script>
+  </body>
+</html>
