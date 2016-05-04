@@ -85,7 +85,7 @@
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
-                      <h4 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h4>
+                      <h2 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h2>
                     </div>
                     <div class="modal-body">
                       <p>
@@ -96,7 +96,7 @@
                       <form action="{% url 'home' %}" method="POST" id="rsvp-form">
                         {% csrf_token %}
                         <div class="fieldWrapper"></div>
-                        <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-secondary pull-left">Not Going</button>
+                        <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-danger pull-left">Not Going</button>
                         <button id="btn-interested-{{event.pk}}" type="submit" value="interested-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-primary pull-left">Interested</button>
                         <button id="btn-going-{{event.pk}}" type="submit" value="going-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-success pull-left">Going</button>
                       </form>

@@ -18,6 +18,6 @@ class ProfileUpdateForm(ModelForm):
         self.helper.layout.append(
             FormActions(
                 Submit('save', 'Update'),
-                HTML("""<a role="button" class="btn btn-default"
-                        href="{% url 'profile-detail' %}">Cancel</a>"""),
+                HTML(
+                    """<a href="{% url 'profile-detail' %}" class="btn btn-secondary" role="button">Cancel</a>"""),
             ))
