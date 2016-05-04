@@ -1,0 +1,27 @@
+{% extends "account/base.html" %}
+
+{% block title %}Your Profile -
+{% endblock %}
+
+{% block hero %}
+  <header>
+    <div class="inner text-center">
+      <h2>Event Signups</h2>
+      <p>RSVPs by Event</p>
+    </div>
+  </header>
+{% endblock %}
+
+{% block content %}
+  {% regroup signups by event as event_list %}
+  {% for event in event_list %}
+    <h3>{{ event.grouper.title }} - {{ event.grouper.date_display }}</h3>
+    <ul>
+      {% for item in event.list %}
+        <li>{{ item.user}}
+          -
+          {{ item.rsvp}}</li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+{% endblock %}

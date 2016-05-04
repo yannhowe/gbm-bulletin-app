@@ -144,13 +144,13 @@ class RsvpUpdateView(DetailView):
 class RsvpListView(ListView):
 
     model = Signup
-    template_name = 'newswire/event-rsvp.html'
+    template_name = 'newswire/event-rsvp-list.html'
 
     def get_context_data(self, **kwargs):
         context = super(RsvpListView, self).get_context_data(**kwargs)
         event_signups = []
         try:
-            context['signups'] = Signup.objects.all()
+            context['signups'] = Signup.objects.order_by('event')
         except Event.DoesNotExist:
             pass
         return context
