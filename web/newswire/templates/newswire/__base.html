@@ -7,19 +7,12 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     {% load staticfiles %}
-
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-    <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-
-    <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
+    {% block header_includes %}{% endblock %}
     <link rel="stylesheet" href="/assets/css/main.css"/>
     <link rel="stylesheet" href="/assets/css/gbm.css"/>
-
   </head>
   <body>
 
@@ -70,14 +63,14 @@
 
       <section id="wrapper">
         {% block hero %}
-        <header>
-          <div class="inner text-center">
-            <h2>The Bulletin</h2>
-            <p>
-              {% now "l" %},
-              {% now "g:i A, j F o" %}</p>
-          </div>
-        </header>
+          <header>
+            <div class="inner text-center">
+              <h2>The Bulletin</h2>
+              <p>
+                {% now "l" %},
+                {% now "g:i A, j F o" %}</p>
+            </div>
+          </header>
         {% endblock %}
         <div class="wrapper">
           <div class="inner">
@@ -134,5 +127,8 @@
     <script src="/assets/js/util.js"></script>
     <script src="/assets/js/main.js"></script>
     <script src="{% static 'newswire/js/gbm.js' %}" type="text/javascript"></script>
+
+    {% block footer_includes %}{% endblock %}
+
   </body>
 </html>

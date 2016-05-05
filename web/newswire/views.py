@@ -150,11 +150,25 @@ class RsvpListView(ListView):
         context = super(RsvpListView, self).get_context_data(**kwargs)
         event_signups = []
         try:
-            context['signups'] = Signup.objects.order_by('event')
+            context['signups'] = Signup.objects.order_by('event', 'rsvp')
         except Event.DoesNotExist:
             pass
         return context
 
+
+class RsvpListViewRaw(ListView):
+
+    model = Signup
+    template_name = 'newswire/event-rsvp-list-raw.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RsvpListViewRaw, self).get_context_data(**kwargs)
+        event_signups = []
+        try:
+            context['signups'] = Signup.objects.order_by('event', 'rsvp')
+        except Event.DoesNotExist:
+            pass
+        return context
 
 def send_bulletin(request):
 
