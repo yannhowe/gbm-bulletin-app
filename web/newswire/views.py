@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileUpdateForm
-from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription, Signup
+from .forms import ProfileUpdateForm, DetailForm
+from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription, Signup, Detail, Relationship
 from datetime import datetime
 from django import template
 from django.conf import settings
@@ -23,7 +23,104 @@ import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 
-class HomePageView(ListView):
+class BaseListView(ListView):
+
+    def get_queryset(self):
+        # do not show archived instances.
+        qs = super(BaseListView, self).get_queryset()
+        return qs.filter(archived=False)
+
+
+class BaseCreateView(CreateView):
+
+    def get_success_message(self):
+        """ Returns message to show to user after object creation. """
+        return 'Created.'
+
+    def get_success_url(self):
+        #        return self.object.absolute_url
+        return '..'
+
+    def form_valid(self, form):
+        response = super(BaseCreateView, self).form_valid(form)
+        self.object.created_by = self.request.user
+        self.object.updated_by = self.request.user
+        self.object.save()
+
+        if self.request.is_ajax():
+            return JsonResponse(self.object.as_dict())
+        else:
+            return response
+
+    def form_invalid(self, form):
+        response = super(BaseCreateView, self).form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
+
+class BaseUpdateView(UpdateView):
+
+    def get_success_message(self):
+        """ Returns message to show to user after object creation. """
+        return 'Updated.'
+
+    def get_success_url(self):
+        #        return self.object.absolute_url
+        return '../..'
+
+    def form_valid(self, form):
+        response = super(BaseUpdateView, self).form_valid(form)
+        self.object.updated_by = self.request.user
+        self.object.save()
+        if 'delete-instance' in self.request.POST:
+            self.object.delete()
+            if self.request.is_ajax():
+                return JsonResponse(self.object.as_dict())
+            else:
+                return redirect(reverse_lazy('couple-list'))
+        else:
+            if self.request.is_ajax():
+                return JsonResponse(self.object.as_dict())
+            else:
+                return response
+
+    def form_invalid(self, form):
+        response = super(BaseUpdateView, self).form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
+    def get_data(self, context):
+        """ Converts context to dict data. """
+        return context['object'].as_dict()
+
+    def render_to_json_response(self, context):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
+        return JsonResponse(self.get_data(context))
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.is_ajax():
+            return self.render_to_json_response(context)
+        return super(BaseUpdateView, self).render_to_response(context)
+
+
+class DetailCreate(BaseCreateView):
+    model = Detail
+    form_class = DetailForm
+
+
+class DetailUpdate(BaseUpdateView):
+    model = Detail
+    form_class = DetailForm
+    template_name = 'members/detail_form.html'
+
+
+class BulletinHomePageView(ListView):
     model = Post
     template_name = 'newswire/home.html'
 
@@ -184,6 +281,17 @@ class ControlPanelHomeView(ListView):
         except Event.DoesNotExist:
             pass
         return context
+
+
+class PeopleDirectoryView(ListView):
+    model = Detail
+    template_name = 'newswire/cp/people-directory.html'
+
+
+class PeopleSummaryView(ListView):
+    model = Detail
+    template_name = 'newswire/cp/people-summary.html'
+
 
 def send_bulletin(request):
 

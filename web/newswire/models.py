@@ -166,3 +166,59 @@ class OrderOfService(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.date, self.service_name)
+
+
+# Add member details
+class Detail(models.Model):
+
+    member = models.OneToOneField(User, related_name='member_detail')
+
+    gender = models.CharField(max_length=1, null=True, blank=True)
+
+    date_record_created = models.DateField(default="2000-01-01")
+
+    # important dates
+    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_marriage = models.DateField(null=True, blank=True)
+    date_of_baptism = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField(null=True, blank=True)
+
+    # phone numbers
+#    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    mobile_number = models.CharField(
+        max_length=15, null=True, blank=True)  # validators should be a list
+    # validators should be a list
+    home_number = models.CharField(max_length=15, null=True, blank=True)
+
+    # address
+    address_block = models.CharField(max_length=12, null=True, blank=True)
+    address_street = models.CharField(max_length=140, null=True, blank=True)
+    address_unit = models.CharField(max_length=12, null=True, blank=True)
+    country = models.CharField(max_length=30, null=True, blank=True)
+    postal_code = models.CharField(max_length=12, null=True, blank=True)
+
+    # other details
+    is_regular = models.BooleanField(default=True)
+    is_member = models.BooleanField(default=False)
+
+# family relationships
+
+
+class Relationship(models.Model):
+    MEMBER_RELATIONSHIP_CHOICES = (
+        ('MO', 'Mother'),
+        ('FA', 'Father'),
+        ('BRO', 'Brother'),
+        ('SIS', 'Sister'),
+        ('SON', 'Son'),
+        ('DAUG', 'Daughter'),
+        ('GRMA', 'Grand Mother'),
+        ('GRFA', 'Grand Father'),
+        ('GRSON', 'Grand Son'),
+        ('GRDAUG', 'Grand Daughter'),
+    )
+
+    member = models.OneToOneField(User, related_name='member_relationship')
+    person = models.ForeignKey(User, related_name='person_relationship')
+    relationship = models.CharField(
+        max_length=10, choices=MEMBER_RELATIONSHIP_CHOICES)

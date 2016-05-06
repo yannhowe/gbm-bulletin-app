@@ -147,27 +147,65 @@
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li class="active">
+                <li class="">
                   <a href="{% url 'cp-home' %}">
                     <i class="fa fa-home"></i>
                     Home</a>
                 </li>
+              </ul>
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-newspaper-o"></i>
+                <span>Bulletin</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
                 <li>
-                  <a href="{% url 'cp-home' %}">
-                    <i class="fa fa-user"></i>
-                    Members</a>
+                  <a href="#">
+                    <i class="fa fa-list-ol"></i>
+                    Order of Service</a>
+                </li>
+                <li class="">
+                  <a href="#">
+                    <i class="fa fa-thumb-tack"></i>
+                    Annoucements</a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="fa fa-line-chart"></i>
+                    Weekly Summary</a>
                 </li>
               </ul>
-            <li class="active treeview">
+            </li>
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-users"></i>
+                <span>People</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li class="">
+                  <a href="{% url 'cp-people-summary' %}">
+                    <i class="fa fa-bar-chart-o"></i>
+                    Summary</a>
+                </li>
+                <li>
+                  <a href="{% url 'cp-people-directory' %}">
+                    <i class="fa fa-sitemap"></i>
+                    Directory</a>
+                </li>
+              </ul>
+            </li>
+            <li class="treeview">
               <a href="#">
                 <i class="fa fa-calendar"></i>
                 <span>Events</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li class="active">
+                <li class="">
                   <a href="{% url 'cp-rsvp-list' %}">
-                    <i class="fa fa-home"></i>
+                    <i class="fa fa-paper-plane"></i>
                     Responses</a>
                 </li>
                 <li>
