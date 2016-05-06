@@ -144,7 +144,7 @@ class RsvpUpdateView(DetailView):
 class RsvpListView(ListView):
 
     model = Signup
-    template_name = 'newswire/event-rsvp-list.html'
+    template_name = 'newswire/cp/event-rsvp-list.html'
 
     def get_context_data(self, **kwargs):
         context = super(RsvpListView, self).get_context_data(**kwargs)
@@ -159,10 +159,25 @@ class RsvpListView(ListView):
 class RsvpListViewRaw(ListView):
 
     model = Signup
-    template_name = 'newswire/event-rsvp-list-raw.html'
+    template_name = 'newswire/cp/event-rsvp-list-raw.html'
 
     def get_context_data(self, **kwargs):
         context = super(RsvpListViewRaw, self).get_context_data(**kwargs)
+        event_signups = []
+        try:
+            context['signups'] = Signup.objects.order_by('event', 'rsvp')
+        except Event.DoesNotExist:
+            pass
+        return context
+
+
+class ControlPanelHomeView(ListView):
+
+    model = Signup
+    template_name = 'newswire/cp/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
         event_signups = []
         try:
             context['signups'] = Signup.objects.order_by('event', 'rsvp')
