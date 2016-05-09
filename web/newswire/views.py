@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileUpdateForm, DetailForm
+from .forms import ProfileForm, OrderOfServiceForm
 from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription, Signup, Detail, Relationship
 from datetime import datetime
 from django import template
@@ -16,7 +16,8 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import select_template, get_template
 from django.utils import timezone
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, FormView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
+from django.core.urlresolvers import reverse_lazy
 from email.Utils import formataddr
 import os
 import json
@@ -28,7 +29,7 @@ class BaseListView(ListView):
     def get_queryset(self):
         # do not show archived instances.
         qs = super(BaseListView, self).get_queryset()
-        return qs.filter(archived=False)
+        return qs
 
 
 class BaseCreateView(CreateView):
@@ -109,30 +110,19 @@ class BaseUpdateView(UpdateView):
         return super(BaseUpdateView, self).render_to_response(context)
 
 
-class DetailCreate(BaseCreateView):
-    model = Detail
-    form_class = DetailForm
-
-
-class DetailUpdate(BaseUpdateView):
-    model = Detail
-    form_class = DetailForm
-    template_name = 'members/detail_form.html'
-
-
 class BulletinHomePageView(ListView):
     model = Post
     template_name = 'newswire/home.html'
 
     def get_context_data(self, **kwargs):
-        context = super(HomePageView, self).get_context_data(**kwargs)
+        context = super(BulletinHomePageView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
         now = datetime.now()
 
         upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.filter(
-                date__gt=datetime.now())[:1].get()
+                date__gte=datetime.now())[:1].get()
         except OrderOfService.DoesNotExist:
             upcoming_service = None
         context['orderofservice'] = upcoming_service
@@ -167,6 +157,31 @@ class BulletinHomePageView(ListView):
         return qs
 
 
+class OrderOfServiceList(ListView):
+    queryset = OrderOfService.objects.order_by('-date')
+    template_name = 'newswire/cp/orderofservice_list.html'
+
+
+class OrderOfServiceCreate(CreateView):
+    model = OrderOfService
+    success_url = reverse_lazy('orderofservice_list')
+    form_class = OrderOfServiceForm
+    template_name = 'newswire/cp/orderofservice_form.html'
+
+
+class OrderOfServiceUpdate(UpdateView):
+    model = OrderOfService
+    success_url = reverse_lazy('orderofservice_list')
+    form_class = OrderOfServiceForm
+    template_name = 'newswire/cp/orderofservice_form.html'
+
+
+class OrderOfServiceDelete(DeleteView):
+    model = OrderOfService
+    success_url = reverse_lazy('orderofservice_list')
+    template_name = 'newswire/cp/orderofservice_confirm_delete.html'
+
+
 class ProfileDetailView(DetailView):
     template_name = 'newswire/profile-detail.html'
 
@@ -175,7 +190,7 @@ class ProfileDetailView(DetailView):
 
 
 class ProfileUpdateView(UpdateView):
-    form_class = ProfileUpdateForm
+    form_class = ProfileForm
     template_name = 'newswire/profile-update.html'
 
     def get_success_url(self):

@@ -154,15 +154,16 @@ class Signup(models.Model):
 class OrderOfService(models.Model):
     # Service Names
     SUN_MORN_ENG = 'sunday-morning-english'
-    SUN_MORN_CHI = 'sunday-morning-chinese'
     CHOICES = (
-        (SUN_MORN_ENG, 'Sunday Morning - English Service'),
-        (SUN_MORN_CHI, 'Sunday Morning - Chinese Service'))
+        (SUN_MORN_ENG, 'Sunday Morning - English Service'),)
 
     date = models.DateField(default=datetime.now)
     text = models.TextField(default='', blank=True)
     service_name = models.CharField(
         max_length=200, choices=CHOICES, default=CHOICES[0][0])
+
+    def get_absolute_url(self):
+        return reverse('orderofservice_edit', kwargs={'pk': self.pk})
 
     def __str__(self):
         return '%s %s' % (self.date, self.service_name)
