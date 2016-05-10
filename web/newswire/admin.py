@@ -2,16 +2,16 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Post, Category, Setting, WeeklySummary, ReadPost, Event, Signup, OrderOfService, Unsubscription
+from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
 
 
-class PostForm(ModelForm):
+class AnnouncementForm(ModelForm):
 
     class Meta:
-        model = Post
+        model = Announcement
         fields = {'title', 'body', 'publish_start_date',
                   'publish_end_date', 'category', 'link', 'hidden', 'contact'}
         widgets = {
@@ -20,21 +20,21 @@ class PostForm(ModelForm):
         }
 
 
-class PostResource(resources.ModelResource):
+class AnnouncementResource(resources.ModelResource):
 
     class Meta:
-        model = Post
+        model = Announcement
 
 
-class PostAdmin(ImportExportModelAdmin):
-    form = PostForm
-    resource_class = PostResource
+class AnnouncementAdmin(ImportExportModelAdmin):
+    form = AnnouncementForm
+    resource_class = AnnouncementResource
     ordering = ('-publish_start_date',)
 
     pass
 
 
-admin.site.register(Post, PostAdmin)
+admin.site.register(Announcement, AnnouncementAdmin)
 
 
 class CategoryResource(resources.ModelResource):
@@ -76,17 +76,17 @@ class WeeklySummaryAdmin(ImportExportModelAdmin):
 admin.site.register(WeeklySummary, WeeklySummaryAdmin)
 
 
-class ReadPostResource(resources.ModelResource):
+class ReadAnnouncementResource(resources.ModelResource):
 
     class Meta:
-        model = ReadPost
+        model = ReadAnnouncement
 
 
-class ReadPostAdmin(ImportExportModelAdmin):
-    resource_class = ReadPostResource
+class ReadAnnouncementAdmin(ImportExportModelAdmin):
+    resource_class = ReadAnnouncementResource
     pass
 
-admin.site.register(ReadPost, ReadPostAdmin)
+admin.site.register(ReadAnnouncement, ReadAnnouncementAdmin)
 
 
 class EventResource(resources.ModelResource):

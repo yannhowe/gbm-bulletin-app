@@ -13,7 +13,6 @@ urlpatterns = (
 
 
     url(r'^people/$', PeopleSummaryView.as_view(), name='cp-people-summary'),
-    
     url(r'^people/directory/$', PeopleDirectoryView.as_view(),
         name='cp-people-directory'),
 
@@ -28,4 +27,14 @@ urlpatterns = (
         views.OrderOfServiceUpdate.as_view(), name='orderofservice_edit'),
     url(r'^bulletin/orderofservice/delete/(?P<pk>\d+)$',
         views.OrderOfServiceDelete.as_view(), name='orderofservice_delete'),
+
+    # Announcement
+    url(r'^bulletin/announcement/$',
+        views.AnnouncementList.as_view(), name='announcement_list'),
+    url(r'^bulletin/announcement/new$',
+        views.AnnouncementCreate.as_view(), name='announcement_new'),
+    url(r'^bulletin/announcement/edit/(?P<pk>\d+)$',
+        views.AnnouncementUpdate.as_view(), name='announcement_edit'),
+    url(r'^bulletin/announcement/delete/(?P<pk>\d+)$',
+        views.AnnouncementDelete.as_view(), name='announcement_delete'),
 )

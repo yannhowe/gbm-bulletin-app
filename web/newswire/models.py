@@ -13,6 +13,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = "categories"
+
     name = models.CharField(max_length=80)
     description = models.TextField(max_length=1200)
     color = ColorPickerField()
@@ -26,11 +27,10 @@ class Category(models.Model):
 def get_default_publish_end_date():
     return datetime.now() + timedelta(days=7)
 
-# Stores posts for newsvine
+# Stores announcements for newsvine
 
 
-class Post(models.Model):
-
+class Announcement(models.Model):
     title = models.CharField(max_length=200, default='')
     body = models.TextField(max_length=1200, default='')
     publish_start_date = models.DateField(
@@ -42,6 +42,13 @@ class Post(models.Model):
     hidden = models.BooleanField(default=False)
     contact = models.CharField(max_length=200, blank=True, default='')
 
+    def is_published(self):
+        import datetime
+        today = datetime.date.today()
+        if self.publish_start_date <= today <= self.publish_end_date:
+            return True
+        return False
+
     def __str__(self):
         return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
 
@@ -52,6 +59,7 @@ class WeeklySummary(models.Model):
 
     class Meta:
         verbose_name_plural = "weekly summaries"
+
     date = models.DateField(default=datetime.now)
     attendance = models.SmallIntegerField(
         blank=True, default='')
@@ -87,15 +95,15 @@ class Setting(models.Model):
     def __str__(self):
         return '%s %s %s' % (self.user, self.key, self.value)
 
-# Stores read posts
+# Stores read announcements
 
 
-class ReadPost(models.Model):
+class ReadAnnouncement(models.Model):
     user = models.ForeignKey(User, db_index=True)
-    post = models.ForeignKey(Post, db_index=True)
+    announcement = models.ForeignKey(Announcement, db_index=True)
 
     def __str__(self):
-        return 'User "%s" read "%s"' % (self.user, self.post)
+        return 'User "%s" read "%s"' % (self.user, self.announcement)
 
 # Stores user unsubscribed categories
 
@@ -148,7 +156,7 @@ class Signup(models.Model):
         return '%s - %s - %s' % (self.event, self.user, self.rsvp)
 
 
-# Stores posts for newsvine
+# Stores announcements for newsvine
 
 
 class OrderOfService(models.Model):
@@ -161,6 +169,13 @@ class OrderOfService(models.Model):
     text = models.TextField(default='', blank=True)
     service_name = models.CharField(
         max_length=200, choices=CHOICES, default=CHOICES[0][0])
+
+    def is_upcoming(self):
+        import datetime
+        today = datetime.date.today()
+        if today <= self.date:
+            return True
+        return False
 
     def get_absolute_url(self):
         return reverse('orderofservice_edit', kwargs={'pk': self.pk})

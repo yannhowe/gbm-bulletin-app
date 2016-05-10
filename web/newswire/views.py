@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, OrderOfServiceForm
-from .models import Post, Category, WeeklySummary, OrderOfService, Event, ReadPost, Setting, Unsubscription, Signup, Detail, Relationship
+from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm
+from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Detail, Relationship
 from datetime import datetime
 from django import template
 from django.conf import settings
@@ -111,7 +111,7 @@ class BaseUpdateView(UpdateView):
 
 
 class BulletinHomePageView(ListView):
-    model = Post
+    model = Announcement
     template_name = 'newswire/home.html'
 
     def get_context_data(self, **kwargs):
@@ -127,11 +127,11 @@ class BulletinHomePageView(ListView):
             upcoming_service = None
         context['orderofservice'] = upcoming_service
 
-        active_posts = Post.objects.filter(
+        active_announcements = Announcement.objects.filter(
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
-        unread_active_posts = Post.objects.exclude(
-            readpost__post__id__in=active_posts)
-        context['posts'] = unread_active_posts.extra(
+        unread_active_announcements = Announcement.objects.exclude(
+            readannouncement__announcement__id__in=active_announcements)
+        context['announcements'] = unread_active_announcements.extra(
             order_by=['-publish_start_date'])
 
         try:
@@ -180,6 +180,31 @@ class OrderOfServiceDelete(DeleteView):
     model = OrderOfService
     success_url = reverse_lazy('orderofservice_list')
     template_name = 'newswire/cp/orderofservice_confirm_delete.html'
+
+
+class AnnouncementList(ListView):
+    queryset = Announcement.objects.order_by('-publish_end_date', '-publish_start_date')
+    template_name = 'newswire/cp/announcement_list.html'
+
+
+class AnnouncementCreate(CreateView):
+    model = Announcement
+    success_url = reverse_lazy('announcement_list')
+    form_class = AnnouncementForm
+    template_name = 'newswire/cp/announcement_form.html'
+
+
+class AnnouncementUpdate(UpdateView):
+    model = Announcement
+    success_url = reverse_lazy('announcement_list')
+    form_class = AnnouncementForm
+    template_name = 'newswire/cp/announcement_form.html'
+
+
+class AnnouncementDelete(DeleteView):
+    model = Announcement
+    success_url = reverse_lazy('announcement_list')
+    template_name = 'newswire/cp/announcement_confirm_delete.html'
 
 
 class ProfileDetailView(DetailView):

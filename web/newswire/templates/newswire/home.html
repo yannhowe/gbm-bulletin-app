@@ -18,27 +18,27 @@
     <hr class="section-end"/>
     <br/><br/><br/>
   {% endif %}
-  {% if posts %}
+  {% if announcements %}
     <h2 class="text-center">Announcements</h2>
-    {% for post in posts %}
-      {% if not post.hidden %}
-        <div class="post-preview {{ post.category.name }}-hide">
+    {% for announcement in announcements %}
+      {% if not announcement.hidden %}
+        <div class="post-preview {{ announcement.category.name }}-hide">
           <p class="post-meta pull-right">
-            <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ post.category.color }}; border: 1px solid  {{ post.category.color }};">{{ post.category }}</small>
+            <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">{{ announcement.category }}</small>
           </button>
         </p>
 
         <h2 class="post-title">
-          {{ post.title }}
-          {% if post.link %}
-            <a href="{{ post.link }}">
+          {{ announcement.title }}
+          {% if announcement.link %}
+            <a href="{{ announcement.link }}">
               <i class="fa fa-link"></i>
             </a>
           {% endif %}
         </h2>
 
         <p class="post-subtitle">
-          {{ post.body }}
+          {{ announcement.body }}
         </p>
         <hr>
       </div>
