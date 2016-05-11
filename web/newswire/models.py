@@ -185,9 +185,16 @@ class OrderOfService(models.Model):
 
 
 # Add member details
-class Detail(models.Model):
+class Profile(models.Model):
 
     member = models.OneToOneField(User, related_name='member_detail')
+
+    first_name = models.CharField(max_length=80, null=True, blank=True)
+    last_name = models.CharField(max_length=80, null=True, blank=True)
+    email = models.EmailField(max_length=254, null=True, blank=True)
+
+    prefered_name = models.CharField(max_length=120, null=True, blank=True)
+    maiden_name = models.CharField(max_length=80, null=True, blank=True)
 
     gender = models.CharField(max_length=1, null=True, blank=True)
 
@@ -199,11 +206,8 @@ class Detail(models.Model):
     date_of_baptism = models.DateField(null=True, blank=True)
     date_of_death = models.DateField(null=True, blank=True)
 
-    # phone numbers
-#    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     mobile_number = models.CharField(
-        max_length=15, null=True, blank=True)  # validators should be a list
-    # validators should be a list
+        max_length=15, null=True, blank=True)
     home_number = models.CharField(max_length=15, null=True, blank=True)
 
     # address

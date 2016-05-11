@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm
-from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Detail, Relationship
+from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship
 from datetime import datetime
 from django import template
 from django.conf import settings
@@ -172,6 +172,28 @@ class CategoryDelete(DeleteView):
     template_name = 'newswire/cp/category_confirm_delete.html'
 
 
+class ProfileList(ListView):
+    queryset = Profile.objects.all()
+    template_name = 'newswire/cp/profile_list.html'
+
+class ProfileCreate(CreateView):
+    model = Profile
+    success_url = reverse_lazy('profile_list')
+    form_class = ProfileForm
+    template_name = 'newswire/cp/profile_form.html'
+
+class ProfileUpdate(UpdateView):
+    model = Profile
+    success_url = reverse_lazy('profile_list')
+    form_class = ProfileForm
+    template_name = 'newswire/cp/profile_form.html'
+
+class ProfileDelete(DeleteView):
+    model = Profile
+    success_url = reverse_lazy('profile_list')
+    template_name = 'newswire/cp/profile_confirm_delete.html'
+
+
 class ProfileDetailView(DetailView):
     template_name = 'newswire/profile-detail.html'
 
@@ -286,16 +308,6 @@ class ControlPanelHomeView(ListView):
         except Event.DoesNotExist:
             pass
         return context
-
-
-class PeopleDirectoryView(ListView):
-    model = Detail
-    template_name = 'newswire/cp/people-directory.html'
-
-
-class PeopleSummaryView(ListView):
-    model = Detail
-    template_name = 'newswire/cp/people-summary.html'
 
 
 def send_bulletin(request):

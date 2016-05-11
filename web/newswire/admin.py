@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription
+from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -149,3 +149,43 @@ class UnsubscriptionAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(Unsubscription, UnsubscriptionAdmin)
+
+
+class RelationshipResource(resources.ModelResource):
+
+    class Meta:
+        model = Relationship
+
+
+class RelationshipForm(ModelForm):
+
+    class Meta:
+        model = Relationship
+        fields = '__all__'
+
+
+class RelationshipAdmin(ImportExportModelAdmin):
+    resource_class = RelationshipResource
+    pass
+
+admin.site.register(Relationship, RelationshipAdmin)
+
+
+class ProfileResource(resources.ModelResource):
+
+    class Meta:
+        model = Profile
+
+
+class ProfileForm(ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+
+class ProfileAdmin(ImportExportModelAdmin):
+    resource_class = ProfileResource
+    pass
+
+admin.site.register(Profile, ProfileAdmin)

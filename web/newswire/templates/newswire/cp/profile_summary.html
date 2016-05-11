@@ -1,0 +1,47 @@
+{% extends "newswire/cp/__base.html" %}
+{% block header_title %}People Summary - Grace Baptist Ministries{% endblock %}
+{% block content_header %}People Summary{% endblock %}
+{% block header_includes %}
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
+{% endblock %}
+{% block content_sub_header %}Control Panel{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-3 col-sm-6 col-xs-12">
+      <div class="info-box">
+        <span class="info-box-icon bg-aqua">
+          <i class="fa fa-fw fa-user"></i>
+        </span>
+        <div class="info-box-content">
+          <span class="info-box-text">Members</span>
+          <span class="info-box-number">137</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <div class="col-md-3 col-sm-6 col-xs-12">
+      <div class="info-box">
+        <span class="info-box-icon bg-green">
+          <i class="fa fa-fw fa-user"></i>
+        </span>
+        <div class="info-box-content">
+          <span class="info-box-text">Regular Non-Members</span>
+          <span class="info-box-number">31</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+  </div>
+{% endblock %}
+
+{% block footer_includes %}
+  <script>
+    $(document).ready(function() {
+      $('#memberlist').DataTable({"paging": false});
+    });
+  </script>
+  <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+{% endblock %}
