@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm
+from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm
 from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Detail, Relationship
 from datetime import datetime
 from django import template
@@ -22,92 +22,6 @@ from email.Utils import formataddr
 import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-
-
-class BaseListView(ListView):
-
-    def get_queryset(self):
-        # do not show archived instances.
-        qs = super(BaseListView, self).get_queryset()
-        return qs
-
-
-class BaseCreateView(CreateView):
-
-    def get_success_message(self):
-        """ Returns message to show to user after object creation. """
-        return 'Created.'
-
-    def get_success_url(self):
-        #        return self.object.absolute_url
-        return '..'
-
-    def form_valid(self, form):
-        response = super(BaseCreateView, self).form_valid(form)
-        self.object.created_by = self.request.user
-        self.object.updated_by = self.request.user
-        self.object.save()
-
-        if self.request.is_ajax():
-            return JsonResponse(self.object.as_dict())
-        else:
-            return response
-
-    def form_invalid(self, form):
-        response = super(BaseCreateView, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
-
-
-class BaseUpdateView(UpdateView):
-
-    def get_success_message(self):
-        """ Returns message to show to user after object creation. """
-        return 'Updated.'
-
-    def get_success_url(self):
-        #        return self.object.absolute_url
-        return '../..'
-
-    def form_valid(self, form):
-        response = super(BaseUpdateView, self).form_valid(form)
-        self.object.updated_by = self.request.user
-        self.object.save()
-        if 'delete-instance' in self.request.POST:
-            self.object.delete()
-            if self.request.is_ajax():
-                return JsonResponse(self.object.as_dict())
-            else:
-                return redirect(reverse_lazy('couple-list'))
-        else:
-            if self.request.is_ajax():
-                return JsonResponse(self.object.as_dict())
-            else:
-                return response
-
-    def form_invalid(self, form):
-        response = super(BaseUpdateView, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
-
-    def get_data(self, context):
-        """ Converts context to dict data. """
-        return context['object'].as_dict()
-
-    def render_to_json_response(self, context):
-        """
-        Returns a JSON response, transforming 'context' to make the payload.
-        """
-        return JsonResponse(self.get_data(context))
-
-    def render_to_response(self, context, **response_kwargs):
-        if self.request.is_ajax():
-            return self.render_to_json_response(context)
-        return super(BaseUpdateView, self).render_to_response(context)
 
 
 class BulletinHomePageView(ListView):
@@ -183,7 +97,8 @@ class OrderOfServiceDelete(DeleteView):
 
 
 class AnnouncementList(ListView):
-    queryset = Announcement.objects.order_by('-publish_end_date', '-publish_start_date')
+    queryset = Announcement.objects.order_by(
+        '-publish_end_date', '-publish_start_date')
     template_name = 'newswire/cp/announcement_list.html'
 
 
@@ -205,6 +120,56 @@ class AnnouncementDelete(DeleteView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     template_name = 'newswire/cp/announcement_confirm_delete.html'
+
+
+class WeeklySummaryList(ListView):
+    queryset = WeeklySummary.objects.order_by('-date')
+    template_name = 'newswire/cp/weeklysummary_list.html'
+
+
+class WeeklySummaryCreate(CreateView):
+    model = WeeklySummary
+    success_url = reverse_lazy('weeklysummary_list')
+    form_class = WeeklySummaryForm
+    template_name = 'newswire/cp/weeklysummary_form.html'
+
+
+class WeeklySummaryUpdate(UpdateView):
+    model = WeeklySummary
+    success_url = reverse_lazy('weeklysummary_list')
+    form_class = WeeklySummaryForm
+    template_name = 'newswire/cp/weeklysummary_form.html'
+
+
+class WeeklySummaryDelete(DeleteView):
+    model = WeeklySummary
+    success_url = reverse_lazy('weeklysummary_list')
+    template_name = 'newswire/cp/weeklysummary_confirm_delete.html'
+
+
+class CategoryList(ListView):
+    queryset = Category.objects.all()
+    template_name = 'newswire/cp/category_list.html'
+
+
+class CategoryCreate(CreateView):
+    model = Category
+    success_url = reverse_lazy('category_list')
+    form_class = CategoryForm
+    template_name = 'newswire/cp/category_form.html'
+
+
+class CategoryUpdate(UpdateView):
+    model = Category
+    success_url = reverse_lazy('category_list')
+    form_class = CategoryForm
+    template_name = 'newswire/cp/category_form.html'
+
+
+class CategoryDelete(DeleteView):
+    model = Category
+    success_url = reverse_lazy('category_list')
+    template_name = 'newswire/cp/category_confirm_delete.html'
 
 
 class ProfileDetailView(DetailView):

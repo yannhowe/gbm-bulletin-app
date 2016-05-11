@@ -1,6 +1,6 @@
 {% extends "newswire/cp/__base.html" %}
-{% block header_title %}Order Of Service - Grace Baptist Ministries{% endblock %}
-{% block content_header %}Order Of Service{% endblock %}
+{% block header_title %}Announcements - Grace Baptist Ministries{% endblock %}
+{% block content_header %}Announcements{% endblock %}
 {% block content_sub_header %}
   <a style="margin-top: -0.8em;" href="{% url 'announcement_new' %}" type="button" class="btn btn-xs btn-primary">
     <i class="fa fa-plus"></i>
@@ -64,7 +64,7 @@
             to
             {{ announcement.publish_end_date }}</strong>
         </p>
-        {{ announcement.body|linebreaks }}
+        {{ announcement.body }}
       </div>
       <!-- /.box-body -->
       <div class="box-footer">

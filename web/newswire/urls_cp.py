@@ -37,4 +37,24 @@ urlpatterns = (
         views.AnnouncementUpdate.as_view(), name='announcement_edit'),
     url(r'^bulletin/announcement/delete/(?P<pk>\d+)$',
         views.AnnouncementDelete.as_view(), name='announcement_delete'),
+
+    # Category
+    url(r'^bulletin/category/$',
+        views.CategoryList.as_view(), name='category_list'),
+    url(r'^bulletin/category/new$',
+        views.CategoryCreate.as_view(), name='category_new'),
+    url(r'^bulletin/category/edit/(?P<pk>\d+)$',
+        views.CategoryUpdate.as_view(), name='category_edit'),
+    url(r'^bulletin/category/delete/(?P<pk>\d+)$',
+        views.CategoryDelete.as_view(), name='category_delete'),
+
+    # WeeklySummary
+    url(r'^bulletin/weeklysummary/$',
+        views.WeeklySummaryList.as_view(), name='weeklysummary_list'),
+    url(r'^bulletin/weeklysummary/new$',
+        views.WeeklySummaryCreate.as_view(), name='weeklysummary_new'),
+    url(r'^bulletin/weeklysummary/edit/(?P<pk>\d+)$',
+        views.WeeklySummaryUpdate.as_view(), name='weeklysummary_edit'),
+    url(r'^bulletin/weeklysummary/delete/(?P<pk>\d+)$',
+        views.WeeklySummaryDelete.as_view(), name='weeklysummary_delete'),
 )
