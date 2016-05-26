@@ -75,7 +75,6 @@ INSTALLED_APPS = [
 
     'bootstrap3',
     'newswire',
-    'members',
 
     'allauth',
     'allauth.account',
