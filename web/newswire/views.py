@@ -35,7 +35,7 @@ class BulletinHomePageView(ListView):
 
         upcoming_service = None
         try:
-            upcoming_service = OrderOfService.objects.filter(
+            upcoming_service = OrderOfService.objects.order_by('date').filter(
                 date__gte=datetime.now())[:1].get()
         except OrderOfService.DoesNotExist:
             upcoming_service = None
@@ -72,8 +72,29 @@ class BulletinHomePageView(ListView):
 
 
 class OrderOfServiceList(ListView):
-    queryset = OrderOfService.objects.order_by('-date')
+    model = OrderOfService
+    #queryset = OrderOfService.objects.order_by('-date')
     template_name = 'newswire/cp/orderofservice_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderOfServiceList, self).get_context_data(**kwargs)
+        now = datetime.now()
+
+        liveorderofservice = None
+        try:
+            liveorderofservice = OrderOfService.objects.order_by('date').filter(
+                date__gte=datetime.now())[:1].get()
+        except OrderOfService.DoesNotExist:
+            liveorderofservice = None
+        context['live_orderofservice'] = liveorderofservice
+        context['orderofservice'] = OrderOfService.objects.order_by('-date')
+
+        return context
+
+    def get_queryset(self):
+        # do not show archived instances.
+        qs = super(ListView, self).get_queryset()
+        return qs
 
 
 class OrderOfServiceCreate(CreateView):
@@ -176,17 +197,20 @@ class ProfileList(ListView):
     queryset = Profile.objects.all()
     template_name = 'newswire/cp/profile_list.html'
 
+
 class ProfileCreate(CreateView):
     model = Profile
     success_url = reverse_lazy('profile_list')
     form_class = ProfileForm
     template_name = 'newswire/cp/profile_form.html'
 
+
 class ProfileUpdate(UpdateView):
     model = Profile
     success_url = reverse_lazy('profile_list')
     form_class = ProfileForm
     template_name = 'newswire/cp/profile_form.html'
+
 
 class ProfileDelete(DeleteView):
     model = Profile

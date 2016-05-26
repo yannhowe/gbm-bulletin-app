@@ -29,16 +29,15 @@
     </div>
     <!-- /.box-body -->
   </div>
-
-  {% for orderofservice in object_list %}
-    <div class="box">
+  {% for orderofservice in orderofservice  %}
+    <div class="box collapsed-box">
       <div class="box-header with-border">
-        <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
-          {% if orderofservice.is_upcoming %}
-            <button type="button" class="btn btn-xs btn-primary pull-left">
-              Upcoming</button>
-          {% endif %}
-        </div>
+        {% if orderofservice.id = live_orderofservice.id %}
+          <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
+            <button type="button" class="btn btn-xs btn-success pull-left">
+              Live</button>
+          </div>
+        {% endif %}
         <h3 class="box-title">
           <strong>{{ orderofservice.get_service_name_display }}
             -
