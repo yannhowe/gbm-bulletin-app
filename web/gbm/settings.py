@@ -75,6 +75,7 @@ INSTALLED_APPS = [
 
     'bootstrap3',
     'newswire',
+    'members',
 
     'allauth',
     'allauth.account',
@@ -158,8 +159,8 @@ AUTHENTICATION_BACKENDS = {
 }
 
 # auth and allauth settings
-LOGIN_REDIRECT_URL = '/bulletin/accounts/profile/'
-LOGIN_URL = '/bulletin/accounts/login/'
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGIN_URL = '/accounts/login/'
 
 ABSOLUTE_URL_OVERRIDES = {
     #    'auth.user': lambda u: "/members/profile/%s/" % u.profile.pk,

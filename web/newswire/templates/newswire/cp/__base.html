@@ -12,9 +12,7 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="{% static 'newswire/cp/css/bootstrap.min.css' %}" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="{% static 'newswire/cp/css/font-awesome.min.css' %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static 'newswire/cp/css/AdminLTE.min.css' %}">
     <link rel="stylesheet" href="{% static 'newswire/cp/css/skins/_all-skins.min.css' %}">
@@ -975,7 +973,7 @@
     <!-- jQuery 2.1.4 -->
     <script src="{% static 'newswire/cp/plugins/jQuery/jQuery-2.1.4.min.js' %}"></script>
     <!-- jQuery UI 1.11.4 -->
-    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="{% static 'newswire/cp/plugins/jQueryUI/jquery-ui.min.js' %}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
       $.widget.bridge('uibutton', $.ui.button);
@@ -983,10 +981,10 @@
 
     {% block footer_includes %}{% endblock %}
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="{% static 'newswire/cp/js/bootstrap.min.js' %}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <!-- daterangepicker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>-->
     <!-- datepicker -->
     <script src="{% static 'newswire/cp/plugins/datepicker/bootstrap-datepicker.js' %}"></script>
     <script src="{% static 'newswire/cp/plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
