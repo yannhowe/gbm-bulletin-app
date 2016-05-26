@@ -30,12 +30,18 @@
     <!-- /.box-body -->
   </div>
   {% for orderofservice in orderofservice  %}
-    <div class="box collapsed-box">
+    <div class="box
+      {% if not orderofservice.id = live_orderofservice.id %}collapsed-box{% endif %}">
       <div class="box-header with-border">
         {% if orderofservice.id = live_orderofservice.id %}
           <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
             <button type="button" class="btn btn-xs btn-success pull-left">
               Live</button>
+          </div>
+        {% elif orderofservice.is_upcoming %}
+          <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
+            <button type="button" class="btn btn-xs pull-left">
+              Future</button>
           </div>
         {% endif %}
         <h3 class="box-title">
@@ -51,7 +57,7 @@
             Edit
           </a>
           <button type="button" class="btn btn-box-tool" data-widget="collapse">
-            <i class="fa fa-minus"></i>
+            <i class="fa {% if not orderofservice.id = live_orderofservice.id %}fa-plus{% else %}fa-minus{% endif %}"></i>
           </button>
         </div>
         <!-- /.box-tools -->
