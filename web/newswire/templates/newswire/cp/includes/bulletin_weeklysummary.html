@@ -1,0 +1,56 @@
+<h2 class="text-center">Weekly Summary</h2>
+<div class="post-preview">
+    <h3 class="text-center post-subtitle">
+        <strong>{{ weeklysummary.date }}</strong>
+    </h3>
+    <br/>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td class="text-right col-xs-6">
+                    <strong>Attendance:</strong>
+                </td>
+                <td class="text-left col-xs-6">{{ weeklysummary.attendance|floatformat:"0" }}</td>
+            </tr>
+            {% if user.is_authenticated %}
+                <tr>
+                    <td class="text-right">
+                        <strong>Tithes:</strong>
+                    </td>
+                    <td class="text-left">${{ weeklysummary.tithe_amt }}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        <strong>Building Fund:</strong>
+                    </td>
+                    <td class="text-left">${{ weeklysummary.building_amt }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        <strong>Building Pledge Form:</strong>
+                    </td>
+                    <td class="text-left">${{ weeklysummary.building_pledge_form_amt }}</td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        <strong>Monthly Loan Servicing:</strong>
+                    </td>
+                    <td class="text-left">${{ weeklysummary.monthly_loan_servicing_amt }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% else %}
+    </tbody>
+</table>
+<br/>
+<small>
+    You are not logged in,
+    <a href="{% url 'account_login' %}">Log in</a>
+    for more details.
+</small>
+{% endif %}
+</div>
+<br/>
+<br/>
+<br/>

@@ -346,17 +346,50 @@ class RsvpListViewRaw(ListView):
 
 class ControlPanelHomeView(ListView):
 
-    model = Signup
+    model = Announcement
     template_name = 'newswire/cp/home.html'
 
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
-        event_signups = []
+        messages.info(self.request, '')
+        now = datetime.now()
+
+        upcoming_service = None
         try:
-            context['signups'] = Signup.objects.order_by('event', 'rsvp')
+            upcoming_service = OrderOfService.objects.order_by('date').filter(
+                date__gte=datetime.now())[:1].get()
+        except OrderOfService.DoesNotExist:
+            upcoming_service = None
+        context['orderofservice'] = upcoming_service
+
+        active_announcements = Announcement.objects.filter(
+            publish_start_date__lte=now).filter(publish_end_date__gte=now)
+        unread_active_announcements = Announcement.objects.exclude(
+            readannouncement__announcement__id__in=active_announcements)
+        context['announcements'] = unread_active_announcements.extra(
+            order_by=['-publish_start_date'])
+
+        try:
+            latest_weeklysummary = WeeklySummary.objects.latest('date')
+        except WeeklySummary.DoesNotExist:
+            latest_weeklysummary = None
+        context['weeklysummary'] = latest_weeklysummary
+
+        try:
+            active_events = Event.objects.filter(
+                Q(date_end__gte=now) | Q(date_start__gte=now))
         except Event.DoesNotExist:
-            pass
+            active_events = None
+        context['events'] = active_events.extra(
+            order_by=['date_start'])
+
+        context['categories'] = Category.objects.all()
         return context
+
+    def get_queryset(self):
+        # do not show archived instances.
+        qs = super(ListView, self).get_queryset()
+        return qs
 
 
 def send_bulletin(request):
