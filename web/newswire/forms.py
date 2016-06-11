@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, WeeklySummary
+from models import OrderOfService, Announcement, Category, WeeklySummary, Event
 
 
 class ProfileForm(ModelForm):
@@ -116,3 +116,27 @@ class WeeklySummaryForm(forms.ModelForm):
         model = WeeklySummary
         fields = ['date', 'attendance', 'tithe_amt', 'building_amt', 'building_pledge_form_amt',
                   'monthly_loan_servicing_amt', 'c1_title', 'c1_amt', 'c2_title', 'c2_amt', 'c3_title', 'c3_amt']
+
+
+class EventForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field('title'),
+            PrependedText('date_start', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_end', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            Field('track_rsvp', title="Enable RSVP"),
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "event_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = Event
+        fields = ['title', 'date_start', 'date_end', 'track_rsvp']

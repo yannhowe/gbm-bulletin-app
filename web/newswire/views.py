@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm
+from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm
 from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship
 from datetime import datetime
 from django import template
@@ -168,6 +168,31 @@ class WeeklySummaryDelete(DeleteView):
     template_name = 'newswire/cp/weeklysummary_confirm_delete.html'
 
 
+class EventList(ListView):
+    queryset = Event.objects.order_by('-date_start')
+    template_name = 'newswire/cp/event_list.html'
+
+
+class EventCreate(CreateView):
+    model = Event
+    success_url = reverse_lazy('event_list')
+    form_class = EventForm
+    template_name = 'newswire/cp/event_form.html'
+
+
+class EventUpdate(UpdateView):
+    model = Event
+    success_url = reverse_lazy('event_list')
+    form_class = EventForm
+    template_name = 'newswire/cp/event_form.html'
+
+
+class EventDelete(DeleteView):
+    model = Event
+    success_url = reverse_lazy('event_list')
+    template_name = 'newswire/cp/event_confirm_delete.html'
+
+
 class CategoryList(ListView):
     queryset = Category.objects.all()
     template_name = 'newswire/cp/category_list.html'
@@ -292,7 +317,7 @@ class RsvpUpdateView(DetailView):
 class RsvpListView(ListView):
 
     model = Signup
-    template_name = 'newswire/cp/event-rsvp-list.html'
+    template_name = 'newswire/cp/rsvp_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(RsvpListView, self).get_context_data(**kwargs)
@@ -307,7 +332,7 @@ class RsvpListView(ListView):
 class RsvpListViewRaw(ListView):
 
     model = Signup
-    template_name = 'newswire/cp/event-rsvp-list-raw.html'
+    template_name = 'newswire/cp/rsvp_list_raw.html'
 
     def get_context_data(self, **kwargs):
         context = super(RsvpListViewRaw, self).get_context_data(**kwargs)

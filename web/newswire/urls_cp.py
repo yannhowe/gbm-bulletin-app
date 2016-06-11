@@ -5,13 +5,12 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = (
     url(r'^$',
-        login_required(ControlPanelHomeView.as_view()), name='cp-home'),
+        login_required(ControlPanelHomeView.as_view()), name='cp_home'),
     url(r'^rsvp/list/$',
-        login_required(RsvpListView.as_view()), name='cp-rsvp-list'),
+        login_required(RsvpListView.as_view()), name='rsvp_list'),
     url(r'^rsvp/list/raw$',
-        login_required(RsvpListViewRaw.as_view()), name='cp-rsvp-list-raw'),
-
-    url(r'^bulletin/$', ControlPanelHomeView.as_view(), name='cp-bulletin-home'),
+        login_required(RsvpListViewRaw.as_view()), name='rsvp_list_raw'),
+    url(r'^bulletin/$', ControlPanelHomeView.as_view(), name='cp_bulletin_home'),
 
     # OrderOfService
     url(r'^bulletin/orderofservice/$',
@@ -52,6 +51,17 @@ urlpatterns = (
         views.WeeklySummaryUpdate.as_view(), name='weeklysummary_edit'),
     url(r'^bulletin/weeklysummary/delete/(?P<pk>\d+)$',
         views.WeeklySummaryDelete.as_view(), name='weeklysummary_delete'),
+
+    # Event
+    url(r'^bulletin/event/$',
+        views.EventList.as_view(), name='event_list'),
+    url(r'^bulletin/event/new$',
+        views.EventCreate.as_view(), name='event_new'),
+    url(r'^bulletin/event/edit/(?P<pk>\d+)$',
+        views.EventUpdate.as_view(), name='event_edit'),
+    url(r'^bulletin/event/delete/(?P<pk>\d+)$',
+        views.EventDelete.as_view(), name='event_delete'),
+
 
     # Profile
     url(r'^people/summary/$',
