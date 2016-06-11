@@ -28,7 +28,7 @@
   </div>
 
   {% for weeklysummary in object_list %}
-    <div class="box">
+    <div class="box collapsed-box">
       <div class="box-header with-border">
         <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
           {% if weeklysummary.is_upcoming %}
@@ -47,7 +47,7 @@
             Edit
           </a>
           <button type="button" class="btn btn-box-tool" data-widget="collapse">
-            <i class="fa fa-minus"></i>
+            <i class="fa fa-plus"></i>
           </button>
         </div>
         <!-- /.box-tools -->

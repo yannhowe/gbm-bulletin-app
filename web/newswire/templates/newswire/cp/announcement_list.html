@@ -26,7 +26,7 @@
   </div>
 
   {% for announcement in object_list %}
-    <div class="box">
+    <div class="box collapsed-box">
       <div class="box-header with-border">
         <h3 class="box-title {% if not announcement.is_published or announcement.hidden %}text-muted{% endif %}">
           <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
@@ -50,7 +50,7 @@
             Edit
           </a>
           <button type="button" class="btn btn-box-tool" data-widget="collapse">
-            <i class="fa fa-minus"></i>
+            <i class="fa fa-plus"></i>
           </button>
         </div>
         <!-- /.box-tools -->
