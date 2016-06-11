@@ -1,182 +1,188 @@
 {% extends 'newswire/__base.html' %}
 {% block title %}Newswire{% endblock %}\\
 {% block content %}
-  <p>
-    <br/>Welcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.
-  </p>
-  <hr/>
-  {% if orderofservice %}
-    <div class="text-center">
-      <h2 class="">Order of Service</h2>
-      <h3 class="post-subtitle">
-        <strong>{{ orderofservice.date }}</strong>
-      </h3>
-      <p>
-        {{ orderofservice.text|linebreaks }}
-      </p>
-    </div>
-    <hr class="section-end"/>
-    <br/><br/><br/>
-  {% endif %}
-  {% if announcements %}
-    <h2 class="text-center">Announcements</h2>
-    {% for announcement in announcements %}
-      {% if not announcement.hidden %}
-        <div class="post-preview {{ announcement.category.name }}-hide">
-          <p class="post-meta pull-right">
-            <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">{{ announcement.category }}</small>
-          </button>
-        </p>
-
-        <h2 class="post-title">
-          {{ announcement.title }}
-          {% if announcement.link %}
-            <a href="{{ announcement.link }}">
-              <i class="fa fa-link"></i>
-            </a>
-          {% endif %}
-        </h2>
-
-        <p class="post-subtitle">
-          {{ announcement.body }}
-        </p>
-        <hr>
-      </div>
+    <p>
+        <br/>Welcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to
+            you, pray with you and help you in any way they can. Please also visit our website if you would like more information.
+    </p>
+    <hr/>
+    {% if orderofservice %}
+        <div class="text-center">
+            <h2 class="">Order of Service</h2>
+            <h3 class="post-subtitle">
+                <strong>{{ orderofservice.date }}</strong>
+            </h3>
+            <p>
+                {{ orderofservice.text|linebreaks }}
+            </p>
+        </div>
+        <hr class="section-end"/>
+        <br/><br/><br/>
     {% endif %}
-  {% endfor %}
-  <br/>
-  <br/>
-  <br/>
+    {% if announcements %}
+        <h2 class="text-center">Announcements</h2>
+        {% for announcement in announcements %}
+            {% if not announcement.hidden %}
+                <div class="post-preview {{ announcement.category.name }}-hide">
+                    <p class="post-meta pull-right">
+                        <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">{{ announcement.category }}</small>
+                    </button>
+                </p>
+
+                <h2 class="post-title">
+                    {{ announcement.title }}
+                    {% if announcement.link %}
+                        <a href="{{ announcement.link }}">
+                            <i class="fa fa-link"></i>
+                        </a>
+                    {% endif %}
+                </h2>
+
+                <p class="post-subtitle">
+                    {{ announcement.body }}
+                </p>
+                <hr>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <br/>
+    <br/>
+    <br/>
 {% endif %}
 {% if events %}
-  <h2 class="text-center">Upcoming Events</h1>
-  <table class="table">
-    <tbody>
-      {% for event in events %}
-        <tr>
-          <td class="text-right col-xs-6">
-            <strong>{{ event.title }}</strong>
-          </td>
-          <td class="text-left col-xs-6">
-            <i>{{ event.date_display }}</i>
-            {# OH MY GOODNESS THIS CODE IS SO UGLY, COME BACK FIX ME WHEN YOU CAN. #}
-            {% if event.track_rsvp %}
-              {% if event.signup_set.all %}
-                {% for signup in event.signup_set.all %}
-                  {% if signup.user.pk == request.user.pk %}
-                    {% if signup.rsvp %}
-                      <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                        {{ signup.rsvp }}
-                      </button>
-                    {% else %}
-                      <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                        <i class="fa fa-plus"></i>
-                        RSVP
-                      </button>
-                    {% endif %}
-                  {% else %}
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-              <div class="modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                      <h2 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h2>
-                    </div>
-                    <div class="modal-body">
-                      <p>
-                        <strong>Date:</strong>
-                        {{ event.date_display }}</p>
-                    </div>
-                    <div class="modal-footer">
-                      <form action="{% url 'home' %}" method="POST" id="rsvp-form">
-                        {% csrf_token %}
-                        <div class="fieldWrapper"></div>
-                        <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-notgoing pull-left">Not Going</button>
-                        <button id="btn-interested-{{event.pk}}" type="submit" value="interested-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-interested pull-left">Interested</button>
-                        <button id="btn-going-{{event.pk}}" type="submit" value="going-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-going pull-left">Going</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <br/>
-  <br/>
-  <br/>
+    <h2 class="text-center">Upcoming Events</h1>
+    <table class="table">
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td class="text-right col-xs-6">
+                        <strong>{{ event.title }}</strong>
+                    </td>
+                    <td class="text-left col-xs-6">
+                        <i>{{ event.date_display }}</i>
+                        {# OH MY GOODNESS THIS CODE IS SO UGLY, COME BACK FIX ME WHEN YOU CAN. #}
+                        {% if event.track_rsvp %}1
+                            {% if event.signup_set.all %}2
+                                {% for signup in event.signup_set.all %}3
+                                    {% if signup.user.pk == request.user.pk %}4
+                                        {% if signup.rsvp %}5
+                                            <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                                {{ signup.rsvp }}
+                                            </button>
+                                        {% else %}
+                                            <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                                <i class="fa fa-plus"></i>
+                                                RSVP
+                                            </button>
+                                        {% endif %}
+                                    {% else %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                    <i class="fa fa-plus"></i>
+                                    RSVP
+                                </button>
+                            {% endif %}
+                            <div class="modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h2>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                <strong>Date:</strong>
+                                                {{ event.date_display }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form action="{% url 'home' %}" method="POST" id="rsvp-form">
+                                                {% csrf_token %}
+                                                <div class="fieldWrapper"></div>
+                                                <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-notgoing pull-left">Not Going</button>
+                                                <button id="btn-interested-{{event.pk}}" type="submit" value="interested-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-interested pull-left">Interested</button>
+                                                <button id="btn-going-{{event.pk}}" type="submit" value="going-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-going pull-left">Going</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+    <br/>
+    <br/>
 {% endif %}
 {% if birthdays %}
-  <div id="birthday-greetings" class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <h2 class="text-center">Birthday Greetings</h2>
+    <div id="birthday-greetings" class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <h2 class="text-center">Birthday Greetings</h2>
+        </div>
     </div>
-  </div>
-  <br/>
-  <br/>
-  <br/>
-  <hr class="section-end"/>
+    <br/>
+    <br/>
+    <br/>
+    <hr class="section-end"/>
 {% endif %}
 {% if weeklysummary %}
-  <h2 class="text-center">Weekly Summary</h2>
-  <div class="post-preview">
-    <h3 class="text-center post-subtitle">
-      <strong>{{ weeklysummary.date }}</strong>
-    </h3>
-    <br/>
-    <table class="table">
-      <tbody>
-        <tr>
-          <td class="text-right col-xs-6">
-            <strong>Attendance:</strong>
-          </td>
-          <td class="text-left col-xs-6">{{ weeklysummary.attendance|floatformat:"0" }}</td>
-        </tr>
-        {% if user.is_authenticated %}
-          <tr>
-            <td class="text-right">
-              <strong>Tithes:</strong>
-            </td>
-            <td class="text-left">${{ weeklysummary.tithe_amt }}</td>
-          </tr>
-          <tr>
-            <td class="text-right">
-              <strong>Building Fund:</strong>
-            </td>
-            <td class="text-left">${{ weeklysummary.building_amt }}
-            </td>
-          </tr>
-          <tr>
-            <td class="text-right">
-              <strong>Building Pledge Form:</strong>
-            </td>
-            <td class="text-left">${{ weeklysummary.building_pledge_form_amt }}</td>
-          </tr>
-          <tr>
-            <td class="text-right">
-              <strong>Monthly Loan Servicing:</strong>
-            </td>
-            <td class="text-left">${{ weeklysummary.monthly_loan_servicing_amt }}</td>
-          </tr>
+    <h2 class="text-center">Weekly Summary</h2>
+    <div class="post-preview">
+        <h3 class="text-center post-subtitle">
+            <strong>{{ weeklysummary.date }}</strong>
+        </h3>
+        <br/>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="text-right col-xs-6">
+                        <strong>Attendance:</strong>
+                    </td>
+                    <td class="text-left col-xs-6">{{ weeklysummary.attendance|floatformat:"0" }}</td>
+                </tr>
+                {% if user.is_authenticated %}
+                    <tr>
+                        <td class="text-right">
+                            <strong>Tithes:</strong>
+                        </td>
+                        <td class="text-left">${{ weeklysummary.tithe_amt }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right">
+                            <strong>Building Fund:</strong>
+                        </td>
+                        <td class="text-left">${{ weeklysummary.building_amt }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right">
+                            <strong>Building Pledge Form:</strong>
+                        </td>
+                        <td class="text-left">${{ weeklysummary.building_pledge_form_amt }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right">
+                            <strong>Monthly Loan Servicing:</strong>
+                        </td>
+                        <td class="text-left">${{ weeklysummary.monthly_loan_servicing_amt }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% else %}
         </tbody>
-      </table>
-    {% else %}
-    </tbody>
-  </table>
-  <br/>
-  <small>
-    You are not logged in,
-    <a href="{% url 'account_login' %}">Log in</a>
-    for more details.
-  </small>
+    </table>
+    <br/>
+    <small>
+        You are not logged in,
+        <a href="{% url 'account_login' %}">Log in</a>
+        for more details.
+    </small>
 {% endif %}
 </div>
 <br/>
