@@ -97,14 +97,14 @@
         <li class="{% if 'rsvp' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-calendar"></i>
-                <span>Events</span>
+                <span>Event RSVPs</span>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
                 <li class="{% if 'rsvp' and not 'raw' in request.path and 'list' in request.path %}active{% endif %}">
                     <a href="{% url 'rsvp_list' %}">
                         <i class="fa fa-paper-plane"></i>
-                        Responses</a>
+                        By Event</a>
                 </li>
                 <li class="{% if 'rsvp' in request.path and 'list' in request.path and 'raw' in request.path %}active{% endif %}">
                     <a href="{% url 'rsvp_list_raw' %}">
