@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-from .views import ProfileUpdateView, ProfileDetailView, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView, OrderOfServiceList, OrderOfServiceUpdate
+from .views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView, OrderOfServiceList, OrderOfServiceUpdate
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = (

@@ -1,28 +1,80 @@
 from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML, Field, Button
-from crispy_forms.bootstrap import FormActions, PrependedText
+from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, WeeklySummary, Event
+from models import OrderOfService, Announcement, Category, WeeklySummary, Event, Profile
 
 
-class ProfileForm(ModelForm):
+class ProfileFormFrontEnd(ModelForm):
 
     class Meta:
         model = User
         fields = ['first_name', 'last_name']
 
     def __init__(self, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
+        super(ProfileFormFrontEnd, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.layout.append(
             FormActions(
                 Submit('save', 'Update'),
                 HTML(
-                    """<a href="{% url 'profile-detail' %}" class="btn btn-secondary" role="button">Cancel</a>"""),
+                    """<a href="{% url 'profile_front_end_detail' %}" class="btn btn-secondary" role="button">Cancel</a>"""),
             ))
+
+
+class ProfileForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field(
+                'first_name',
+                'last_name',
+            ),
+            PrependedText('email', '<i class="fa fa-envelope"></i>',
+                          type="email"),
+            Field(
+                'prefered_name',
+                'maiden_name',
+            ),
+            InlineRadios('gender'),
+            PrependedText('date_of_birth', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_of_marriage', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_of_baptism', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_of_death', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('mobile_number', '<i class="fa fa-phone"></i>',
+                          type="text",),
+            PrependedText('home_number', '<i class="fa fa-phone"></i>',
+                          type="text",),
+            Field(
+                'address_block',
+                'address_street',
+                'address_unit',
+                'country',
+                'postal_code',
+                'is_regular',
+                'is_member'
+            ),
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "profile_list" %}>Cancel</a>'),
+            )
+        )
+        gender = forms.ChoiceField(choices=(('M','Male'), ('F','Female')))
+
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'email', 'prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
+                  'date_of_death', 'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code', 'is_regular', 'is_member']
 
 
 class OrderOfServiceForm(forms.ModelForm):

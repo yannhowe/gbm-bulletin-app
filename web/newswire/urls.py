@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 from . import views
-from .views import BulletinHomePageView, ProfileUpdateView, ProfileDetailView, RsvpUpdateView, RsvpListView, RsvpListViewRaw
+from .views import BulletinHomePageView, ProfileDetailFrontEndView, ProfileUpdateFrontEndView, RsvpUpdateView, RsvpListView, RsvpListViewRaw
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = (
@@ -10,7 +10,7 @@ urlpatterns = (
     url(r'^bulletin/send/bulletin/',
         login_required(views.send_bulletin), name='send-bulletin'),
     url(r'^accounts/profile/update/$',
-        login_required(ProfileUpdateView.as_view()), name='profile-update'),
+        login_required(ProfileUpdateFrontEndView.as_view()), name='profile_front_end_update'),
     url(r'^accounts/profile/$',
-        login_required(ProfileDetailView.as_view()), name='profile-detail'),
+        login_required(ProfileDetailFrontEndView.as_view()), name='profile_front_end_detail'),
 )

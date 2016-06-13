@@ -5,7 +5,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-6">
-            <div class="box box-default xcollapsed-box">
+            <div class="box box-default">
                 <div class="box-header with-border">
                     <h3 class="box-title">Bulletin Preview</h3>
                     <div class="box-tools pull-right">
@@ -16,7 +16,7 @@
                     <!-- /.box-tools -->
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body" style="xdisplay: none;">
+                <div class="box-body">
                     {% if orderofservice %}
                         {% include "newswire/cp/includes/bulletin_oos.html" %}
                     {% endif %}
@@ -37,6 +37,64 @@
             </div>
         </div>
         <!-- ./col -->
+        <div class="col-md-6">
+            <div class="box box-default collapsed-box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">How this works</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <!-- /.box-tools -->
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body" style="display: none;"></div>
+                <!-- /.box-body -->
+            </div>
+                <div class="box box-default collapsed-box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">How this works</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <!-- /.box-tools -->
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body" style="display: none;"></div>
+                    <!-- /.box-body -->
+                </div>
+                    <div class="box box-default collapsed-box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">How this works</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            <!-- /.box-tools -->
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body" style="display: none;"></div>
+                        <!-- /.box-body -->
+                    </div>
+                        <div class="box box-default collapsed-box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">How this works</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                                <!-- /.box-tools -->
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body" style="display: none;"></div>
+                            <!-- /.box-body -->
+                        </div>
+        </div>
     </div>
     <!-- /.row -->
 {% endblock %}

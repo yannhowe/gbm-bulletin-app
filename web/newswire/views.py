@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm
 from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship
 from datetime import datetime
 from django import template
@@ -243,19 +243,19 @@ class ProfileDelete(DeleteView):
     template_name = 'newswire/cp/profile_confirm_delete.html'
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailFrontEndView(DetailView):
     template_name = 'newswire/profile-detail.html'
 
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
 
 
-class ProfileUpdateView(UpdateView):
-    form_class = ProfileForm
+class ProfileUpdateFrontEndView(UpdateView):
+    form_class = ProfileFormFrontEnd
     template_name = 'newswire/profile-update.html'
 
     def get_success_url(self):
-        return reverse('profile-detail')
+        return reverse('profile_front_end_detail')
 
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)

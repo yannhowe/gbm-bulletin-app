@@ -187,6 +187,13 @@ class OrderOfService(models.Model):
 # Add member details
 class Profile(models.Model):
 
+    M = 'm'
+    F = 'f'
+    GENDER_CHOICES = (
+        (M, 'Male'),
+        (F, 'Female'),
+    )
+
     member = models.OneToOneField(
         User, related_name='member_detail', null=True, blank=True)
 
@@ -197,7 +204,7 @@ class Profile(models.Model):
     prefered_name = models.CharField(max_length=120, null=True, blank=True)
     maiden_name = models.CharField(max_length=80, null=True, blank=True)
 
-    gender = models.CharField(max_length=1, null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default='Male')
 
     date_record_updated = models.DateField(default=datetime.now)
 
@@ -213,7 +220,8 @@ class Profile(models.Model):
 
     # address
     address_block = models.CharField(max_length=12, null=True, blank=True)
-    address_street = models.CharField(max_length=140, null=True, blank=True)
+    address_street = models.CharField(
+        max_length=140, null=True, blank=True)
     address_unit = models.CharField(max_length=12, null=True, blank=True)
     country = models.CharField(max_length=30, null=True, blank=True)
     postal_code = models.CharField(max_length=12, null=True, blank=True)
