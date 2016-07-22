@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, WeeklySummary, Event, Profile
+from models import OrderOfService, Announcement, Category, WeeklySummary, Event, Profile, DataPoint
 
 
 class ProfileFormFrontEnd(ModelForm):
@@ -69,12 +69,23 @@ class ProfileForm(ModelForm):
                     '<a class="btn" href={% url "profile_list" %}>Cancel</a>'),
             )
         )
-        gender = forms.ChoiceField(choices=(('M','Male'), ('F','Female')))
+        gender = forms.ChoiceField(choices=(('M', 'Male'), ('F', 'Female')))
 
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'email', 'prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
                   'date_of_death', 'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code', 'is_regular', 'is_member']
+
+
+class DataPointForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(DataPointForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+    class Meta:
+        model = DataPoint
+        fields = '__all__'
 
 
 class OrderOfServiceForm(forms.ModelForm):

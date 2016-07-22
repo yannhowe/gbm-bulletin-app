@@ -286,7 +286,7 @@ class DataSeries(models.Model):
         User, related_name='viewer_dataseries', blank=True, default='')
 
 
-class Data(models.Model):
+class DataPoint(models.Model):
 
     user = models.ForeignKey(User, null=True, blank=True, default='')
     value = models.DecimalField(max_digits=10, decimal_places=2, default='0')

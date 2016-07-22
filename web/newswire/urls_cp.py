@@ -75,4 +75,18 @@ urlpatterns = (
         views.ProfileUpdate.as_view(), name='profile_edit'),
     url(r'^people/delete/(?P<pk>\d+)$',
         views.ProfileDelete.as_view(), name='profile_delete'),
+
+
+    # DataPoint
+    url(r'^people/summary/$',
+        views.DataPointList.as_view(), name='datapoint_summary'),
+
+    url(r'^people/$',
+        views.DataPointList.as_view(), name='datapoint_list'),
+    url(r'^people/new$',
+        views.DataPointCreate.as_view(), name='datapoint_new'),
+    url(r'^people/edit/(?P<pk>\d+)$',
+        views.DataPointUpdate.as_view(), name='datapoint_edit'),
+    url(r'^people/delete/(?P<pk>\d+)$',
+        views.DataPointDelete.as_view(), name='datapoint_delete'),
 )

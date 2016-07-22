@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, Data, DataSeries, Group
+from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -211,24 +211,24 @@ class GroupAdmin(ImportExportModelAdmin):
 admin.site.register(Group, GroupAdmin)
 
 
-class DataResource(resources.ModelResource):
+class DataPointResource(resources.ModelResource):
 
     class Meta:
-        model = Data
+        model = DataPoint
 
 
-class DataForm(ModelForm):
+class DataPointForm(ModelForm):
 
     class Meta:
-        model = Data
+        model = DataPoint
         fields = '__all__'
 
 
-class DataAdmin(ImportExportModelAdmin):
-    resource_class = DataResource
+class DataPointAdmin(ImportExportModelAdmin):
+    resource_class = DataPointResource
     pass
 
-admin.site.register(Data, DataAdmin)
+admin.site.register(DataPoint, DataPointAdmin)
 
 
 class DataSeriesResource(resources.ModelResource):

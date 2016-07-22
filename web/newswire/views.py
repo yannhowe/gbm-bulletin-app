@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm
-from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm
+from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint
 from datetime import datetime
 from django import template
 from django.conf import settings
@@ -259,6 +259,31 @@ class ProfileUpdateFrontEndView(UpdateView):
 
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
+
+
+class DataPointList(ListView):
+    queryset = DataPoint.objects.all()
+    template_name = 'newswire/cp/datapoint_list.html'
+
+
+class DataPointCreate(CreateView):
+    model = DataPoint
+    success_url = reverse_lazy('datapoint_list')
+    form_class = DataPointForm
+    template_name = 'newswire/cp/datapoint_form.html'
+
+
+class DataPointUpdate(UpdateView):
+    model = DataPoint
+    success_url = reverse_lazy('datapoint_list')
+    form_class = DataPointForm
+    template_name = 'newswire/cp/datapoint_form.html'
+
+
+class DataPointDelete(DeleteView):
+    model = DataPoint
+    success_url = reverse_lazy('datapoint_list')
+    template_name = 'newswire/cp/datapoint_confirm_delete.html'
 
 
 class RsvpUpdateView(DetailView):
