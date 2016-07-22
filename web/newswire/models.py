@@ -208,8 +208,10 @@ class Profile(models.Model):
         (F, 'Female'),
     )
 
-    member = models.OneToOneField(User, related_name='member_detail', null=True, blank=True)
-    group = models.ForeignKey(Group, null=True, blank=True, related_name="group_profile")
+    member = models.OneToOneField(
+        User, related_name='member_detail', null=True, blank=True)
+    group = models.ForeignKey(
+        Group, null=True, blank=True, related_name="group_profile")
     first_name = models.CharField(max_length=80, null=True, blank=True)
     last_name = models.CharField(max_length=80, null=True, blank=True)
     email = models.EmailField(max_length=254, null=True, blank=True)
@@ -217,7 +219,8 @@ class Profile(models.Model):
     prefered_name = models.CharField(max_length=120, null=True, blank=True)
     maiden_name = models.CharField(max_length=80, null=True, blank=True)
 
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default='M')
+    gender = models.CharField(
+        max_length=1, choices=GENDER_CHOICES, blank=False, default='M')
 
     date_record_updated = models.DateField(default=datetime.now)
 
@@ -266,6 +269,9 @@ class Relationship(models.Model):
     relationship = models.CharField(
         max_length=10, choices=MEMBER_RELATIONSHIP_CHOICES)
 
+    def __str__(self):
+        return '%s, %s, %s' % (self.person, self.member, self.relationship)
+
 
 class DataSeries(models.Model):
     DATA_SERIES_TYPE_CHOICES = (
@@ -285,6 +291,9 @@ class DataSeries(models.Model):
     viewer = models.ManyToManyField(
         User, related_name='viewer_dataseries', blank=True, default='')
 
+    def __str__(self):
+        return '%s - %s' % (self.type, self.name)
+
 
 class DataPoint(models.Model):
 
@@ -296,4 +305,7 @@ class DataPoint(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     date = models.DateTimeField(
         'Date & Time of the metric', null=True, blank=True, default=datetime.now)
-    notes = models.TextField(max_length=300)
+    notes = models.TextField(max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        return '%s - %s - %s' % (self.dataseries.type, self.dataseries.name, self.value)

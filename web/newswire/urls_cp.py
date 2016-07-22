@@ -78,15 +78,15 @@ urlpatterns = (
 
 
     # DataPoint
-    url(r'^people/summary/$',
+    url(r'^datapoint/summary/$',
         views.DataPointList.as_view(), name='datapoint_summary'),
 
-    url(r'^people/$',
+    url(r'^datapoint/$',
         views.DataPointList.as_view(), name='datapoint_list'),
-    url(r'^people/new$',
+    url(r'^datapoint/new$',
         views.DataPointCreate.as_view(), name='datapoint_new'),
-    url(r'^people/edit/(?P<pk>\d+)$',
+    url(r'^datapoint/edit/(?P<pk>\d+)$',
         views.DataPointUpdate.as_view(), name='datapoint_edit'),
-    url(r'^people/delete/(?P<pk>\d+)$',
+    url(r'^datapoint/delete/(?P<pk>\d+)$',
         views.DataPointDelete.as_view(), name='datapoint_delete'),
 )
