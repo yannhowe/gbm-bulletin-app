@@ -119,7 +119,7 @@ class OrderOfServiceDelete(DeleteView):
 
 class AnnouncementList(ListView):
     queryset = Announcement.objects.order_by(
-        '-publish_end_date', '-publish_start_date')
+        '-publish_start_date', 'publish_end_date')
     template_name = 'newswire/cp/announcement_list.html'
 
 
