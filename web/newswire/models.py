@@ -184,6 +184,20 @@ class OrderOfService(models.Model):
         return '%s %s' % (self.date, self.service_name)
 
 
+class Group(models.Model):
+    GROUP_TYPE_CHOICES = (
+        ('finance', 'Finance'),
+        ('management', 'Management'),
+        ('committee', 'Committee'),
+        ('ministry', 'Ministry'),
+        ('cg', 'Community Group'),
+    )
+    name = models.CharField(max_length=80)
+    type = models.CharField(
+        max_length=32, choices=GROUP_TYPE_CHOICES)
+    notes = models.TextField(max_length=300, null=True, blank=True)
+
+
 # Add member details
 class Profile(models.Model):
 
@@ -194,9 +208,8 @@ class Profile(models.Model):
         (F, 'Female'),
     )
 
-    member = models.OneToOneField(
-        User, related_name='member_detail', null=True, blank=True)
-
+    member = models.OneToOneField(User, related_name='member_detail', null=True, blank=True)
+    group = models.ForeignKey(Group, null=True, blank=True, related_name="group_profile")
     first_name = models.CharField(max_length=80, null=True, blank=True)
     last_name = models.CharField(max_length=80, null=True, blank=True)
     email = models.EmailField(max_length=254, null=True, blank=True)
@@ -204,7 +217,7 @@ class Profile(models.Model):
     prefered_name = models.CharField(max_length=120, null=True, blank=True)
     maiden_name = models.CharField(max_length=80, null=True, blank=True)
 
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default='Male')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default='M')
 
     date_record_updated = models.DateField(default=datetime.now)
 
@@ -214,14 +227,12 @@ class Profile(models.Model):
     date_of_baptism = models.DateField(null=True, blank=True)
     date_of_death = models.DateField(null=True, blank=True)
 
-    mobile_number = models.CharField(
-        max_length=15, null=True, blank=True)
+    mobile_number = models.CharField(max_length=15, null=True, blank=True)
     home_number = models.CharField(max_length=15, null=True, blank=True)
 
     # address
     address_block = models.CharField(max_length=12, null=True, blank=True)
-    address_street = models.CharField(
-        max_length=140, null=True, blank=True)
+    address_street = models.CharField(max_length=140, null=True, blank=True)
     address_unit = models.CharField(max_length=12, null=True, blank=True)
     country = models.CharField(max_length=30, null=True, blank=True)
     postal_code = models.CharField(max_length=12, null=True, blank=True)
@@ -254,3 +265,35 @@ class Relationship(models.Model):
     person = models.ForeignKey(User, related_name='person_relationship')
     relationship = models.CharField(
         max_length=10, choices=MEMBER_RELATIONSHIP_CHOICES)
+
+
+class DataSeries(models.Model):
+    DATA_SERIES_TYPE_CHOICES = (
+        ('ATTENDANCE', 'Attendance'),
+        ('FINANCIAL', 'Financial'),
+    )
+
+    name = models.CharField(max_length=80)
+    type = models.CharField(
+        max_length=32, choices=DATA_SERIES_TYPE_CHOICES)
+    owner_group = models.ForeignKey(
+        Group, related_name='owner_group_dataseries', null=True, blank=True, default='')
+    viewer_group = models.ForeignKey(
+        Group, related_name='viewer_group_dataseries', null=True, blank=True, default='')
+    owner = models.ManyToManyField(
+        User, related_name='owner_dataseries', blank=True, default='')
+    viewer = models.ManyToManyField(
+        User, related_name='viewer_dataseries', blank=True, default='')
+
+
+class Data(models.Model):
+
+    user = models.ForeignKey(User, null=True, blank=True, default='')
+    value = models.DecimalField(max_digits=10, decimal_places=2, default='0')
+    dataseries = models.ForeignKey(
+        DataSeries, null=True, blank=True, default='')
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(
+        'Date & Time of the metric', null=True, blank=True, default=datetime.now)
+    notes = models.TextField(max_length=300)
