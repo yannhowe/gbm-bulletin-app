@@ -66,7 +66,6 @@ urlpatterns = (
     # Profile
     url(r'^people/summary/$',
         views.ProfileList.as_view(), name='profile_summary'),
-
     url(r'^people/$',
         views.ProfileList.as_view(), name='profile_list'),
     url(r'^people/new$',
@@ -80,7 +79,6 @@ urlpatterns = (
     # DataPoint
     url(r'^datapoint/summary/$',
         views.DataPointList.as_view(), name='datapoint_summary'),
-
     url(r'^datapoint/$',
         views.DataPointList.as_view(), name='datapoint_list'),
     url(r'^datapoint/new$',
@@ -89,4 +87,28 @@ urlpatterns = (
         views.DataPointUpdate.as_view(), name='datapoint_edit'),
     url(r'^datapoint/delete/(?P<pk>\d+)$',
         views.DataPointDelete.as_view(), name='datapoint_delete'),
+
+
+    # DataSeries
+    url(r'^dataseries/summary/$',
+        views.DataSeriesList.as_view(), name='dataseries_summary'),
+    url(r'^dataseries/$',
+        views.DataSeriesList.as_view(), name='dataseries_list'),
+    url(r'^dataseries/new$',
+        views.DataSeriesCreate.as_view(), name='dataseries_new'),
+    url(r'^dataseries/edit/(?P<pk>\d+)$',
+        views.DataSeriesUpdate.as_view(), name='dataseries_edit'),
+    url(r'^dataseries/delete/(?P<pk>\d+)$',
+        views.DataSeriesDelete.as_view(), name='dataseries_delete'),
+
+
+    # Attendance Input
+    url(r'^attendance/$',
+        views.DataPointList.as_view(), name='attendance_list'),
+    url(r'^attendance/new$',
+        views.DataPointCreate.as_view(), name='attendance_new'),
+    url(r'^attendance/edit/(?P<pk>\d+)$',
+        views.DataPointUpdate.as_view(), name='attendance_edit'),
+    url(r'^attendance/delete/(?P<pk>\d+)$',
+        views.DataPointDelete.as_view(), name='attendance_delete'),
 )

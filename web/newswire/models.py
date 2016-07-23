@@ -200,7 +200,6 @@ class Group(models.Model):
 
 # Add member details
 class Profile(models.Model):
-
     M = 'm'
     F = 'f'
     GENDER_CHOICES = (
@@ -274,6 +273,8 @@ class Relationship(models.Model):
 
 
 class DataSeries(models.Model):
+    ATTENDANCE = 'Attendance'
+    FINANCIAL = 'Financial'
     DATA_SERIES_TYPE_CHOICES = (
         ('ATTENDANCE', 'Attendance'),
         ('FINANCIAL', 'Financial'),

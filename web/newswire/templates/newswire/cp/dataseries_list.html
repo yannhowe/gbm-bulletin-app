@@ -1,12 +1,12 @@
 {% extends "newswire/cp/__base.html" %}
 {% load staticfiles %}
-{% block header_title %}DataPoint List - Grace Baptist Ministries{% endblock %}
-{% block content_header %}DataPoint List{% endblock %}
+{% block header_title %}DataSeries List - Grace Baptist Ministries{% endblock %}
+{% block content_header %}DataSeries List{% endblock %}
 {% block header_includes %}
     <link rel="stylesheet" href="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.css' %}">
 {% endblock %}
 {% block content_sub_header %}
-    <a style="margin-top: -0.8em;" href="{% url 'datapoint_new' %}" type="button" class="btn btn-xs btn-primary">
+    <a style="margin-top: -0.8em;" href="{% url 'dataseries_new' %}" type="button" class="btn btn-xs btn-primary">
         <i class="fa fa-plus"></i>
         Create New</a>
 {% endblock %}
@@ -22,43 +22,40 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Created By</th>
-                                <th>Value</th>
-                                <th>Date</th>
-                                <th>Data Series</th>
-                                <th>Added</th>
-                                <th>Last Updated</th>
-                                <th>Notes</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Owner Group</th>
+                                <th>Viewer Group</th>
+                                <th>Owners</th>
+                                <th>Viewers</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for datapoint in object_list %}
+                            {% for dataseries in object_list %}
                                 <tr>
                                     <td class="text-center">
-                                        <a href="{%  url 'datapoint_edit' datapoint.id  %}">{{ datapoint.id }}
+                                        <a href="{%  url 'dataseries_edit' dataseries.id  %}">{{ dataseries.id }}
                                             <i class="fa fa-pencil"></i>
                                         </a>
                                     </td>
-                                    <td>{{ datapoint.user }}</td>
-                                    <td>{{ datapoint.value }}</td>
-                                    <td>{{ datapoint.date }}</td>
-                                    <td>{{ datapoint.dataseries }}</td>
-                                    <td>{{ datapoint.date_added }}</td>
-                                    <td>{{ datapoint.date_updated }}</td>
-                                    <td>{{ datapoint.notes }}</td>
+                                    <td>{{ dataseries.name }}</td>
+                                    <td>{{ dataseries.type }}</td>
+                                    <td>{{ dataseries.owner_group }}</td>
+                                    <td>{{ dataseries.viewer_group }}</td>
+                                    <td>{{ dataseries.owner }}</td>
+                                    <td>{{ dataseries.viewer }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th>#</th>
-                                <th>Created By</th>
-                                <th>Value</th>
-                                <th>Date</th>
-                                <th>Data Series</th>
-                                <th>Added</th>
-                                <th>Last Updated</th>
-                                <th>Notes</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Owner Group</th>
+                                <th>Viewer Group</th>
+                                <th>Owners</th>
+                                <th>Viewers</th>
                             </tr>
                         </tfoot>
                     </table>

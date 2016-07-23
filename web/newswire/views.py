@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm
-from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm
+from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries
 from datetime import datetime
 from django import template
 from django.conf import settings
@@ -284,6 +284,57 @@ class DataPointDelete(DeleteView):
     model = DataPoint
     success_url = reverse_lazy('datapoint_list')
     template_name = 'newswire/cp/datapoint_confirm_delete.html'
+
+
+class AttendanceList(ListView):
+    # Filter for attendance objects
+    queryset = DataPoint.objects.all()
+    template_name = 'newswire/cp/attendance_list.html'
+
+
+class AttendanceCreate(CreateView):
+    model = DataPoint
+    success_url = reverse_lazy('attendance_new')
+    form_class = AttendanceForm
+    template_name = 'newswire/cp/attendance_form.html'
+
+
+class AttendanceUpdate(UpdateView):
+    model = DataPoint
+    success_url = reverse_lazy('attendance_list')
+    form_class = AttendanceForm
+    template_name = 'newswire/cp/attendance_form.html'
+
+
+class AttendanceDelete(DeleteView):
+    model = DataPoint
+    success_url = reverse_lazy('attendance_list')
+    template_name = 'newswire/cp/attendance_confirm_delete.html'
+
+
+class DataSeriesList(ListView):
+    queryset = DataSeries.objects.all()
+    template_name = 'newswire/cp/dataseries_list.html'
+
+
+class DataSeriesCreate(CreateView):
+    model = DataSeries
+    success_url = reverse_lazy('dataseries_list')
+    form_class = DataSeriesForm
+    template_name = 'newswire/cp/dataseries_form.html'
+
+
+class DataSeriesUpdate(UpdateView):
+    model = DataSeries
+    success_url = reverse_lazy('dataseries_list')
+    form_class = DataSeriesForm
+    template_name = 'newswire/cp/dataseries_form.html'
+
+
+class DataSeriesDelete(DeleteView):
+    model = DataSeries
+    success_url = reverse_lazy('dataseries_list')
+    template_name = 'newswire/cp/dataseries_confirm_delete.html'
 
 
 class RsvpUpdateView(DetailView):

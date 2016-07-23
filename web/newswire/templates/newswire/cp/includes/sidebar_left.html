@@ -117,22 +117,60 @@
                 </li>
             </ul>
         </li>
-        <li class="{% if 'datapoint' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'datapoint' or 'dataseries' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-database"></i>
                 <span>Data</span>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-                <li class="{% if 'datapoint' and 'summary' in request.path %}active{% endif %}">
-                    <a href="{% url 'datapoint_summary' %}">
-                        <i class="fa fa-bar-chart-o"></i>
-                        Summary</a>
-                </li>
                 <li class="{% if 'datapoint' and not 'summary' in request.path %}active{% endif %}">
                     <a href="{% url 'datapoint_list' %}">
-                        <i class="fa fa-table"></i>
-                        Directory</a>
+                        <i class="fa fa-file-text"></i>
+                        DataPoints</a>
+                </li>
+                <li class="{% if 'dataseries' and not 'summary' in request.path %}active{% endif %}">
+                    <a href="{% url 'dataseries_list' %}">
+                        <i class="fa fa-line-chart"></i>
+                        DataSeries</a>
+                </li>
+            </ul>
+        </li>
+        <li class="{% if 'attendance' in request.path %}active{% endif %} treeview">
+            <a href="#">
+                <i class="fa fa-users"></i>
+                <span>Attendance</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li class="{% if 'attendance' and not 'summary' in request.path %}active{% endif %}">
+                    <a href="{% url 'datapoint_list' %}">
+                        <i class="fa fa-file-text"></i>
+                        Records</a>
+                </li>
+                <li class="{% if 'attendance' and not 'summary' in request.path %}active{% endif %}">
+                    <a href="{% url 'datapoint_new' %}">
+                        <i class="fa fa-plus"></i>
+                        Add Record</a>
+                </li>
+            </ul>
+        </li>
+        <li class="{% if 'finance' in request.path %}active{% endif %} treeview">
+            <a href="#">
+                <i class="fa fa-dollar"></i>
+                <span>Finance</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li class="{% if 'finance' and not 'summary' in request.path %}active{% endif %}">
+                    <a href="{% url 'datapoint_list' %}">
+                        <i class="fa fa-file-text"></i>
+                        Records</a>
+                </li>
+                <li class="{% if 'finance' and not 'summary' in request.path %}active{% endif %}">
+                    <a href="{% url 'datapoint_new' %}">
+                        <i class="fa fa-plus"></i>
+                        Add Record</a>
                 </li>
             </ul>
         </li>
