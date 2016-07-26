@@ -28,10 +28,24 @@ class BulletinHomePageView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
 
+    def get_upcoming_birthdays(person_list, days):
+        person_list = person_list.distinct()  # ensure persons are only in the list once
+        today = date.today()
+        doblist = []
+        doblist.extend(list(person_list.filter(
+            date_of_birth__month=today.month, date_of_birth__day=today.day)))
+        next_day = today + timedelta(days=1)
+        for day in range(0, days):
+            doblist.extend(list(person_list.filter(
+                date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, dod__isnull=True)))
+            next_day = next_day + timedelta(days=1)
+        return doblist
+
     def get_context_data(self, **kwargs):
         context = super(BulletinHomePageView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
         now = datetime.now()
+        today = datetime.today()
 
         upcoming_service = None
         try:
@@ -47,6 +61,11 @@ class BulletinHomePageView(ListView):
             readannouncement__announcement__id__in=active_announcements)
         context['announcements'] = unread_active_announcements.extra(
             order_by=['-publish_start_date'])
+
+        all_birthdays = Profile.objects.exclude(date_of_birth=None)
+        birthdays_in_coming_week = all_birthdays.filter(date_of_birth__month=today.month, date_of_birth__day__gte=today.day, date_of_birth__day__lte=today.day+7)
+        context['birthdays'] = birthdays_in_coming_week.extra(
+            order_by=['date_of_birth'])
 
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
@@ -120,7 +139,7 @@ class BulletinPrintView(ListView):
 
 class OrderOfServiceList(ListView):
     model = OrderOfService
-    #queryset = OrderOfService.objects.order_by('-date')
+    # queryset = OrderOfService.objects.order_by('-date')
     template_name = 'newswire/cp/orderofservice_list.html'
 
     def get_context_data(self, **kwargs):
