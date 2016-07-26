@@ -1,5 +1,5 @@
 * {
-    font-size: 10px;
+    font-size: 12px;
     font-family: 'Raleway', sans-serif;
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
@@ -12,13 +12,16 @@
     font-size: 36px
 }
 .h2, h2 {
-    font-size: 22px;
+    font-size: 14px;
     padding: 3px 0;
     border-top: 1px solid #aaaaaa;
     border-bottom: 1px solid #aaaaaa;
 }
 .h3, h3 {
     font-size: 14px
+}
+h3 .posttitle {
+    border-bottom: 1px solid #aaaaaa;
 }
 .h4, h4 {
     font-size: 12px
@@ -31,12 +34,6 @@
 }
 @page {
     size: A5 portrait;
-}
-@page :left {
-    margin-left: 0.5cm;
-}
-@page :right {
-    margin-left: 0.5cm;
 }
 @page :blank {
     @top-center {
@@ -127,4 +124,26 @@ figcaption:before {
     .no-print, .no-print * {
         display: none !important;
     }
+}
+.print-micro {
+    padding: 0;
+    margin: 0;
+    font-size: 0.8em;
+}
+.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
+    font-size: 0.5em;
+    padding: 1px 4px;
+}
+.table {
+    margin: 5px 0 10px 0;
+}
+.raised {
+    position: absolute;
+    left: 10px;
+    top: 9px;
+}
+.goal {
+    position: absolute;
+    right: 10px;
+    top: 9px;
 }

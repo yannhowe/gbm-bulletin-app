@@ -93,7 +93,7 @@ class BulletinPrintView(ListView):
         unread_active_announcements = Announcement.objects.exclude(
             readannouncement__announcement__id__in=active_announcements)
         context['announcements'] = unread_active_announcements.extra(
-            order_by=['-publish_start_date'])
+            order_by=['-publish_start_date'])[:7]
 
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
