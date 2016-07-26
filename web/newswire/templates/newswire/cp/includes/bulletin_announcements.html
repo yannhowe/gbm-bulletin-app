@@ -7,22 +7,19 @@
             </button>
         </p>
 
-        <h2 class="post-title">
+        <h3 class="post-title">
             {{ announcement.title }}
-            {% if announcement.link %}
-                <a href="{{ announcement.link }}">
-                    <i class="fa fa-link"></i>
-                </a>
-            {% endif %}
-        </h2>
+        </h3>
 
         <p class="post-subtitle">
             {{ announcement.body }}
+            {% if announcement.link %}
+                <a href="{{ announcement.link }}">
+                    <i class="no-print fa fa-link"></i>
+                </a>
+            {% endif %}
         </p>
-        <hr>
+        <hr class="no-print">
     </div>
 {% endif %}
 {% endfor %}
-<br/>
-<br/>
-<br/>

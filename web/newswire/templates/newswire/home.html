@@ -6,21 +6,37 @@
             you, pray with you and help you in any way they can. Please also visit our website if you would like more information.
     </p>
     <hr/>
-    {% if orderofservice %}
-        {% include "newswire/cp/includes/bulletin_oos.html" %}
-    {% endif %}
-    {% if announcements %}
-        {% include "newswire/cp/includes/bulletin_announcements.html" %}
-    {% endif %}
-    {% if events %}
-        {% include "newswire/cp/includes/bulletin_events.html" %}
-    {% endif %}
-    {% if birthdays %}
-        {% include "newswire/cp/includes/bulletin_birthdays.html" %}
-    {% endif %}
-    {% if weeklysummary %}
-        {% include "newswire/cp/includes/bulletin_weeklysummary.html" %}
-    {% endif %}
+        {% if orderofservice %}
+            {% include "newswire/cp/includes/bulletin_oos.html" %}
+            <hr class="section-end"/>
+            <br/>
+            <br/>
+        {% endif %}
+        {% if announcements %}
+            {% include "newswire/cp/includes/bulletin_announcements.html" %}
+            <br/>
+            <br/>
+            <br/>
+        {% endif %}
+        {% if events %}
+            {% include "newswire/cp/includes/bulletin_events.html" %}
+            <br/>
+            <br/>
+            <br/>
+            <hr class="section-end"/>
+        {% endif %}
+        {% if birthdays %}
+            {% include "newswire/cp/includes/bulletin_birthdays.html" %}
+            <br/>
+            <br/>
+            <br/>
+            <hr class="section-end"/>
+        {% endif %}
+        {% if weeklysummary %}
+            {% include "newswire/cp/includes/bulletin_weeklysummary.html" %}
+            <br/>
+            <hr class="section-end"/>
+        {% endif %}
 
     <section class="features">
         <article>

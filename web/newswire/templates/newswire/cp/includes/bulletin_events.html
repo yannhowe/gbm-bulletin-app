@@ -1,4 +1,4 @@
-<h2 class="text-center">Upcoming Events</h1>
+<h2 class="text-center">Upcoming Events</h2>
 <table class="table">
     <tbody>
         {% for event in events %}
@@ -14,11 +14,11 @@
                             {% for signup in event.signup_set.all %}
                                 {% if signup.user.pk == request.user.pk %}
                                     {% if signup.rsvp %}
-                                        <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                        <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
                                             {{ signup.rsvp }}
                                         </button>
                                     {% else %}
-                                        <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                        <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
                                             <i class="fa fa-plus"></i>
                                             RSVP
                                         </button>
@@ -27,7 +27,7 @@
                                 {% endif %}
                             {% endfor %}
                         {% else %}
-                            <button type="button" id="rsvpbtn-{{event.pk}}" class="btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                            <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
                                 <i class="fa fa-plus"></i>
                                 RSVP
                             </button>
@@ -64,6 +64,3 @@
         {% endfor %}
     </tbody>
 </table>
-<br/>
-<br/>
-<br/>
