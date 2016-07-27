@@ -9,30 +9,21 @@
                 <td class="text-left col-xs-6">
                     <i>{{ event.date_display }}</i>
                     {# OH MY GOODNESS THIS CODE IS SO UGLY, COME BACK FIX ME WHEN YOU CAN. #}
+
                     {% if request.user.is_authenticated %}
                         {% if event.track_rsvp %}
-                            {% if event.signup_set.all %}
-                                {% for signup in event.signup_set.all %}
-                                    {% if signup.user.pk == request.user.pk %}
-                                        {% if signup.rsvp %}
-                                            <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                                {{ signup.rsvp }}
-                                            </button>
-                                        {% else %}
-                                            <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                                <i class="fa fa-plus"></i>
-                                                RSVP
-                                            </button>
-                                        {% endif %}
-                                    {% else %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                    <i class="fa fa-plus"></i>
-                                    RSVP
-                                </button>
-                            {% endif %}
+                            {% for signup in signups %}
+                                {% if signup.user.pk == request.user.pk and signup.event.pk == event.pk %}
+                                    <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                        {{ signup.rsvp }}
+                                    </button>
+                                {% else %}
+                                    <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                        <i class="fa fa-plus"></i>
+                                        RSVP
+                                    </button>
+                                {% endif %}
+                            {% endfor %}
                             <div class="modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
@@ -59,6 +50,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         {% endif %}
                     {% endif %}
                 </td>

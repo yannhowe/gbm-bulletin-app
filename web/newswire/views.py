@@ -63,7 +63,8 @@ class BulletinHomePageView(ListView):
             order_by=['-publish_start_date'])
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        birthdays_in_coming_week = all_birthdays.filter(date_of_birth__month=today.month, date_of_birth__day__gte=today.day, date_of_birth__day__lte=today.day+7)
+        birthdays_in_coming_week = all_birthdays.filter(
+            date_of_birth__month=today.month, date_of_birth__day__gte=today.day, date_of_birth__day__lte=today.day + 7)
         context['birthdays'] = birthdays_in_coming_week.extra(
             order_by=['date_of_birth'])
 
@@ -80,6 +81,12 @@ class BulletinHomePageView(ListView):
             active_events = None
         context['events'] = active_events.extra(
             order_by=['date_start'])
+
+        try:
+            signup_list = Signup.objects.filter(event__in=active_events).filter(user=self.request.user)
+        except Signup.DoesNotExist:
+            signup_list = None
+        context['signups'] = signup_list.all()
 
         context['categories'] = Category.objects.all()
         return context
