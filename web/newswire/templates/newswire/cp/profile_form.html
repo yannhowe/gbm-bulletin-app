@@ -16,7 +16,7 @@
         <div class="box-tools pull-right">
             <!-- Buttons, labels, and many other things can be placed here! -->
             <!-- Here is a label for example -->
-            <span class="label label-primary">{{ OrderOfService.date }}</span>
+            <span class="label label-primary"></span>
         </div>
         <!-- /.box-tools -->
     </div>
@@ -35,5 +35,10 @@
     $(document).ready(function() {
         $('.dateinput').datepicker({format: "yyyy-mm-dd"});
     });
+</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script type="text/javascript">
+    $('.select_user_to_attach').select2();
 </script>
 {% endblock %}

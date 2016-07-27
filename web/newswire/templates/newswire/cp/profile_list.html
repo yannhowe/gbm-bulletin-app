@@ -40,6 +40,7 @@
                                 <th>postal_code</th>
                                 <th>is_regular</th>
                                 <th>is_member</th>
+                                <th>Attached to User</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,6 +71,7 @@
                                     <td>{{ profile.postal_code }}</td>
                                     <td>{{ profile.is_regular }}</td>
                                     <td>{{ profile.is_member }}</td>
+                                    <td>{{ profile.member }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -94,6 +96,7 @@
                                 <th>postal_code</th>
                                 <th>is_regular</th>
                                 <th>is_member</th>
+                                <th>Attached to User</th>
                             </tr>
                         </tfoot>
                     </table>
