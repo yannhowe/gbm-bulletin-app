@@ -125,7 +125,7 @@ class Event(models.Model):
     track_rsvp = models.BooleanField(default=False)
 
     def _get_date_display(self):
-        if self.date_end == None:
+        if self.date_end == None or self.date_start == self.date_end:
             return self.date_start.strftime("%-d %b %Y")
         elif self.date_start.month == self.date_end.month:
             return '%s-%s' % (self.date_start.strftime("%-d"), self.date_end.strftime("%-d %b %Y"))
