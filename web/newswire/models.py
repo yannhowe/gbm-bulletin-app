@@ -191,6 +191,7 @@ class Group(models.Model):
         ('committee', 'Committee'),
         ('ministry', 'Ministry'),
         ('cg', 'Community Group'),
+        ('tech', 'Technology'),
     )
     name = models.CharField(max_length=80)
     type = models.CharField(
@@ -209,8 +210,8 @@ class Profile(models.Model):
 
     member = models.OneToOneField(
         User, related_name='member_detail', null=True, blank=True)
-    group = models.ForeignKey(
-        Group, null=True, blank=True, related_name="group_profile")
+    group = models.ManyToManyField(
+        Group, blank=True, related_name="group_profile")
     first_name = models.CharField(max_length=80, null=True, blank=True)
     last_name = models.CharField(max_length=80, null=True, blank=True)
     email = models.EmailField(max_length=254, null=True, blank=True)

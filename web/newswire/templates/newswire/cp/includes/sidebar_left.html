@@ -2,7 +2,7 @@
 <!-- sidebar: style can be found in sidebar.less -->
 <section class="sidebar">
     <!-- Sidebar user panel -->
-    <div class="user-panel">
+    <div class="user-panel hidden">
         <div class="pull-left image">
             <img src="{% static 'newswire/cp/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
         </div>
@@ -18,7 +18,7 @@
         </div>
     </div>
     <!-- search form -->
-    <form action="#" method="get" class="sidebar-form">
+    <form action="#" method="get" class="sidebar-form hidden">
         <div class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Search...">
             <span class="input-group-btn">
@@ -45,7 +45,7 @@
                         Home</a>
                 </li>
             </ul>
-        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklysummary' in request.path or 'category' in request.path or 'event' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklysummary' in request.path or 'category' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-newspaper-o"></i>
                 <span>Bulletin</span>
@@ -67,15 +67,34 @@
                         <i class="fa fa-line-chart"></i>
                         Weekly Summary</a>
                 </li>
-                <li class="{% if 'event' in request.path %}active{% endif %}">
-                    <a href="{%  url 'event_list' %}">
-                        <i class="fa fa-list-alt"></i>
-                        Events</a>
-                </li>
                 <li class="{% if 'category' in request.path %}active{% endif %}">
                     <a href="{%  url 'category_list' %}">
                         <i class="fa fa-list-alt"></i>
                         Announcement Categories</a>
+                </li>
+            </ul>
+        </li>
+        <li class="{% if 'rsvp' in request.path or 'event' in request.path %}active{% endif %} treeview">
+            <a href="#">
+                <i class="fa fa-calendar"></i>
+                <span>Events</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li class="{% if 'event' in request.path %}active{% endif %}">
+                    <a href="{%  url 'event_list' %}">
+                        <i class="fa fa-calendar"></i>
+                        Event List</a>
+                </li>
+                <li class="{% if 'rsvp' and not 'raw' in request.path and 'list' in request.path %}active{% endif %}">
+                    <a href="{% url 'rsvp_list' %}">
+                        <i class="fa fa-paper-plane"></i>
+                        RSVP Responses</a>
+                </li>
+                <li class="{% if 'rsvp' in request.path and 'list' in request.path and 'raw' in request.path %}active{% endif %}">
+                    <a href="{% url 'rsvp_list_raw' %}">
+                        <i class="fa fa-list-alt"></i>
+                        Raw RSVP Data</a>
                 </li>
             </ul>
         </li>
@@ -98,45 +117,26 @@
                 </li>
             </ul>
         </li>
-        <li class="{% if 'rsvp' in request.path %}active{% endif %} treeview">
-            <a href="#">
-                <i class="fa fa-calendar"></i>
-                <span>Event RSVPs</span>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-                <li class="{% if 'rsvp' and not 'raw' in request.path and 'list' in request.path %}active{% endif %}">
-                    <a href="{% url 'rsvp_list' %}">
-                        <i class="fa fa-paper-plane"></i>
-                        By Event</a>
-                </li>
-                <li class="{% if 'rsvp' in request.path and 'list' in request.path and 'raw' in request.path %}active{% endif %}">
-                    <a href="{% url 'rsvp_list_raw' %}">
-                        <i class="fa fa-list-alt"></i>
-                        Raw Data</a>
-                </li>
-            </ul>
-        </li>
-        <li class="{% if 'datapoint' or 'dataseries' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'datapoint' in request.path or 'dataseries' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-database"></i>
                 <span>Data</span>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-                <li class="{% if 'datapoint' and not 'summary' in request.path %}active{% endif %}">
+                <li class="{% if 'datapoint' in request.path %}active{% endif %}">
                     <a href="{% url 'datapoint_list' %}">
                         <i class="fa fa-file-text"></i>
                         DataPoints</a>
                 </li>
-                <li class="{% if 'dataseries' and not 'summary' in request.path %}active{% endif %}">
+                <li class="{% if 'dataseries' in request.path %}active{% endif %}">
                     <a href="{% url 'dataseries_list' %}">
                         <i class="fa fa-line-chart"></i>
                         DataSeries</a>
                 </li>
             </ul>
         </li>
-        <li class="{% if 'attendance' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'attendance' in request.path %}active{% endif %} treeview hidden">
             <a href="#">
                 <i class="fa fa-users"></i>
                 <span>Attendance</span>
@@ -155,7 +155,7 @@
                 </li>
             </ul>
         </li>
-        <li class="{% if 'finance' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'finance' in request.path %}active{% endif %} treeview hidden">
             <a href="#">
                 <i class="fa fa-dollar"></i>
                 <span>Finance</span>
