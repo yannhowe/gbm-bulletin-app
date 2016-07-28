@@ -82,19 +82,21 @@ class BulletinHomePageView(ListView):
         context['events'] = active_events.extra(
             order_by=['date_start'])
 
-        try:
-            signup_list = Signup.objects.filter(
-                event__in=active_events).filter(user=self.request.user)
-        except Signup.DoesNotExist:
-            signup_list = None
-        context['signups'] = signup_list.all()
+        if self.request.user.is_authenticated():
+            try:
+                signup_list = Signup.objects.filter(
+                    event__in=active_events).filter(user=self.request.user)
+            except Signup.DoesNotExist:
+                signup_list = None
+            context['signups'] = signup_list.all()
 
-        try:
-            signup_id_list = Signup.objects.filter(
-                event__in=active_events).filter(user=self.request.user).values_list('event_id', flat=True)
-        except Signup.DoesNotExist:
-            signup_id_list = None
-        context['signup_id_list'] = signup_id_list.all()
+        if self.request.user.is_authenticated():
+            try:
+                signup_id_list = Signup.objects.filter(
+                    event__in=active_events).filter(user=self.request.user).values_list('event_id', flat=True)
+            except Signup.DoesNotExist:
+                signup_id_list = None
+            context['signup_id_list'] = signup_id_list.all()
 
         context['categories'] = Category.objects.all()
         return context
