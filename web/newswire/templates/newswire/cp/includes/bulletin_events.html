@@ -35,7 +35,11 @@
                                         <div class="modal-body">
                                             <p>
                                                 <strong>Date:</strong>
-                                                {{ event.date_display }}</p>
+                                                {{ event.date_display }}
+                                            </p>
+                                            <p>
+                                                {{ event.description }}
+                                            </p>
                                         </div>
                                         <div class="modal-footer">
                                             <form action="{% url 'home' %}" method="POST" id="rsvp-form">

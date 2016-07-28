@@ -120,6 +120,7 @@ class Unsubscription(models.Model):
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
+    description = models.TextField(max_length=400, null=True, blank=True)
     date_start = models.DateField(default=datetime.now)
     date_end = models.DateField(blank=True, null=True)
     track_rsvp = models.BooleanField(default=False)
