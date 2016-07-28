@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm
 from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries
-from datetime import datetime
+from datetime import datetime, timedelta
 from django import template
 from django.conf import settings
 from django.contrib import messages
@@ -23,23 +23,23 @@ import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
+def get_upcoming_birthdays(person_list, days):
+    person_list = person_list.distinct()  # ensure persons are only in the list once
+    today = datetime.today()
+    doblist = []
+    doblist.extend(list(person_list.filter(
+        date_of_birth__month=today.month, date_of_birth__day=today.day)))
+    next_day = today + timedelta(days=1)
+    for day in range(0, days):
+        doblist.extend(list(person_list.filter(
+            date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
+        next_day = next_day + timedelta(days=1)
+    return doblist
 
 class BulletinHomePageView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
 
-    def get_upcoming_birthdays(person_list, days):
-        person_list = person_list.distinct()  # ensure persons are only in the list once
-        today = date.today()
-        doblist = []
-        doblist.extend(list(person_list.filter(
-            date_of_birth__month=today.month, date_of_birth__day=today.day)))
-        next_day = today + timedelta(days=1)
-        for day in range(0, days):
-            doblist.extend(list(person_list.filter(
-                date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, dod__isnull=True)))
-            next_day = next_day + timedelta(days=1)
-        return doblist
 
     def get_context_data(self, **kwargs):
         context = super(BulletinHomePageView, self).get_context_data(**kwargs)
@@ -62,11 +62,12 @@ class BulletinHomePageView(ListView):
         context['announcements'] = unread_active_announcements.extra(
             order_by=['-publish_start_date'])
 
-        all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        birthdays_in_coming_week = all_birthdays.filter(
-            date_of_birth__month=today.month, date_of_birth__day__gte=today.day, date_of_birth__day__lte=today.day + 7)
-        context['birthdays'] = birthdays_in_coming_week.extra(
-            order_by=['date_of_birth'])
+        all_birthdays = Profile.objects.exclude(date_of_birth=None).values_list('last_name', 'first_name', 'date_of_birth')
+        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+#        birthdays_in_coming_week = all_birthdays.filter(
+#            date_of_birth__month=today.month, date_of_birth__day__gte=today.day, date_of_birth__day__lte=today.day + 7)
+#        context['birthdays'] = birthdays_in_coming_week.extra(
+#            order_by=['date_of_birth'])
 
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')

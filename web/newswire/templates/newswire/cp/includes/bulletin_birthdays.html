@@ -1,15 +1,16 @@
-<div id="birthday-greetings" class="row">
-    <div class="col-xs-12  text-center">
-        <h2 class="text-center">Birthday Greetings</h2>
-        <ul class="list-unstyled text-center">
-            {% for birthday in birthdays %}
-                <li>
-                    <strong>{{ birthday.last_name }}</strong>
-                    {{ birthday.first_name }}
-                    -
-                    {{ birthday.date_of_birth | date:"d F"}}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
+<h2 class="text-center">Birthday Greetings</h2>
+<table class="table">
+    <tbody>
+        {% for last_name, first_name, birthday in birthdays %}
+            <tr>
+                <td class="text-right col-xs-6">
+                    <strong>{{last_name}}
+                        {{first_name}}</strong>
+                </td>
+                <td class="text-left col-xs-6">
+                    <em>{{birthday|date:"j F"}}</em>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
