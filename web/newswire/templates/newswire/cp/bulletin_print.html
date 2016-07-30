@@ -9,46 +9,24 @@
                 {{ orderofservice.date }}{% endblock %}
         </title>
         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{% static 'newswire/cp/css/bootstrap.min.css' %}">
         <!-- Font-Awesome -->
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="{% static 'newswire/cp/css/font-awesome.min.css' %}">
         <link rel="stylesheet" href="{% static 'newswire/cp/css/gbm_bulletin_print.css' %}">
-        <link href='https://fonts.googleapis.com/css?family=Raleway:400,700,400italic' rel='stylesheet' type='text/css'>
-
+        <link href="https://fonts.googleapis.com/css?family=Raleway:400,400i,700,700i" rel="stylesheet">
         {% block header_includes %}{% endblock %}
     </head>
     <body>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
         {% include "newswire/cp/includes/bulletin_cover.html" %}
-        <div class="pagebreak"></div>
         <div class="row">
             <div class="col-xs-6">
                 {% if orderofservice %}
                     {% include "newswire/cp/includes/bulletin_oos.html" %}
                 {% endif %}
-                <h2 class="text-center">Our Theme</h2>
-                <h3 class="text-center post-subtitle">
-                    <strong>2016: Loving Across Our Differences</strong>
-                </h3>
+                <h2 class="text-center">2016 Theme: Loving Across Our Differences</h2>
                 <p class="text-justified">
                     <sup>34</sup>A new commandment I give to you, that you love one another; as I have loved you, that you also love one another.
-                    <sup>35</sup>By this all will know that you are My disciples, if you have love for one another.”<br/>
-                </p>
-                <p class="text-right">
-                    John 13:34-35
+                    <sup>35</sup>By this all will know that you are My disciples, if you have love for one another.” - John 13:34-35
                 </p>
             </div>
             <div class="col-xs-6">
