@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm
 from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
+import datetime
 from django import template
 from django.conf import settings
 from django.contrib import messages
@@ -25,15 +26,15 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 def get_upcoming_birthdays(person_list, days):
     person_list = person_list.distinct()  # ensure persons are only in the list once
-    today = datetime.today()
+    today = datetime.datetime.today()
     doblist = []
     doblist.extend(list(person_list.filter(
         date_of_birth__month=today.month, date_of_birth__day=today.day)))
-    next_day = today + timedelta(days=1)
+    next_day = today + datetime.timedelta(days=1)
     for day in range(0, days):
         doblist.extend(list(person_list.filter(
             date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
-        next_day = next_day + timedelta(days=1)
+        next_day = next_day + datetime.timedelta(days=1)
     return doblist
 
 class BulletinHomePageView(ListView):
@@ -44,13 +45,13 @@ class BulletinHomePageView(ListView):
     def get_context_data(self, **kwargs):
         context = super(BulletinHomePageView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
-        now = datetime.now()
-        today = datetime.today()
+        now = datetime.datetime.now()
+        today = datetime.datetime.today()
 
         upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.now())[:1].get()
+                date__gte=datetime.datetime.now())[:1].get()
         except OrderOfService.DoesNotExist:
             upcoming_service = None
         context['orderofservice'] = upcoming_service
@@ -115,12 +116,17 @@ class BulletinPrintView(ListView):
     def get_context_data(self, **kwargs):
         context = super(BulletinPrintView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
-        now = datetime.now()
+        now = datetime.datetime.now()
+
+        # coming sunday's date
+        coming_sunday = datetime.date.today()
+        while coming_sunday.weekday() != 6:
+            coming_sunday += datetime.timedelta(1)
 
         upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.now())[:1].get()
+                date=coming_sunday).get()
         except OrderOfService.DoesNotExist:
             upcoming_service = None
         context['orderofservice'] = upcoming_service
@@ -162,12 +168,12 @@ class OrderOfServiceList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderOfServiceList, self).get_context_data(**kwargs)
-        now = datetime.now()
+        now = datetime.datetime.now()
 
         liveorderofservice = None
         try:
             liveorderofservice = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.now())[:1].get()
+                date__gte=datetime.datetime.now())[:1].get()
         except OrderOfService.DoesNotExist:
             liveorderofservice = None
         context['live_orderofservice'] = liveorderofservice
@@ -512,12 +518,12 @@ class ControlPanelHomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
-        now = datetime.now()
+        now = datetime.datetime.now()
 
         upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.now())[:1].get()
+                date__gte=datetime.datetime.now())[:1].get()
         except OrderOfService.DoesNotExist:
             upcoming_service = None
         context['orderofservice'] = upcoming_service

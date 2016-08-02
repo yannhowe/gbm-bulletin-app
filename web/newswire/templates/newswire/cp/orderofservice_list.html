@@ -44,6 +44,12 @@
                             Future</button>
                     </div>
                 {% endif %}
+                {% if orderofservice.is_print %}
+                    <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
+                        <button type="button" class="btn btn-xs btn-success pull-left">
+                            Print</button>
+                    </div>
+                {% endif %}
                 <h3 class="box-title">
                     <strong>{{ orderofservice.get_service_name_display }}
                         -
@@ -63,6 +69,29 @@
                 <!-- /.box-tools -->
             </div>
             <!-- /.box-header -->
+
+            {% if orderofservice.num_of_lines > 21 %}
+                <div class="callout {% if orderofservice.num_of_lines > 23 %}callout-warning{% else %}callout-info{% endif %}">
+                    <h4>
+                        {% if orderofservice.num_of_lines > 23 %}Warning!{% else %}Tip{% endif %}
+                    </h4>
+                    <p>
+                        This order of service has
+                        {{ orderofservice.num_of_lines }}
+                        lines,
+                        {% if orderofservice.num_of_lines > 23 %}
+                            more than
+                        {% else %}
+                            very close to
+                        {% endif %}
+                        the recommended 23 lines. It may not fit in the printed bulletin.
+                        {% if orderofservice.is_print %}Check the print preview
+                            <a href="{% url 'cp_bulletin_print' %}">here</a>
+                        {% endif %}.
+                    </p>
+                </div>
+            {% endif %}
+
             <div class="box-body">
                 {{ orderofservice.text|linebreaks }}
             </div>

@@ -178,6 +178,25 @@ class OrderOfService(models.Model):
             return True
         return False
 
+    def is_print(self):
+        import datetime
+        # coming sunday's date
+        coming_sunday = datetime.date.today()
+        while coming_sunday.weekday() != 6:
+            coming_sunday += datetime.timedelta(1)
+
+        if coming_sunday == self.date:
+            return True
+        return False
+
+
+    def num_of_lines(self):
+        i = 0
+        for line in self.text:
+            if "\n" in line:
+                i += 1
+        return i
+
     def get_absolute_url(self):
         return reverse('orderofservice_edit', kwargs={'pk': self.pk})
 

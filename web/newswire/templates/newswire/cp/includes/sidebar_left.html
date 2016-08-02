@@ -72,6 +72,11 @@
                         <i class="fa fa-list-alt"></i>
                         Announcement Categories</a>
                 </li>
+                <li class="{% if 'print' in request.path and 'bulletin' in request.path %}active{% endif %}">
+                    <a href="{%  url 'cp_bulletin_print' %}">
+                        <i class="fa fa-print"></i>
+                        Print Bulletin for Sunday</a>
+                </li>
             </ul>
         </li>
         <li class="{% if 'rsvp' in request.path or 'event' in request.path %}active{% endif %} treeview">
