@@ -1,3 +1,8 @@
+cairocffi==0.7.*
+CairoSVG==1.0.*
+cffi==1.7.*
+cssselect==0.9.*
+diff-match-patch==20121119
 Django==1.9.*
 django-allauth==0.25.*
 django-bootstrap3==7.0.*
@@ -9,9 +14,13 @@ django-widget-tweaks==1.4.*
 factory-boy==2.7.*
 fake-factory==0.5.*
 gunicorn==19.4.*
+html5lib==0.999999999
 ipaddress==1.0.*
+lxml==3.6.*
 oauthlib==1.0.*
 psycopg2==2.6.*
+pycparser==2.14
+Pyphen==0.9.*
 python-dateutil==2.5.*
 python-openid==2.2.*
 redis==2.10.*
@@ -19,4 +28,7 @@ requests==2.9.*
 requests-oauthlib==0.6.*
 six==1.10.*
 tablib==0.11.*
+tinycss==0.3
 virtualenv==15.0.*
+WeasyPrint==0.30
+webencodings==0.5
