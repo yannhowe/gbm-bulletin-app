@@ -21,7 +21,15 @@
         <div class="row">
             <div class="col-xs-6">
                 {% if orderofservice %}
-                    {% include "newswire/cp/includes/bulletin_oos.html" %}
+                    <div class="text-center">
+                        <h2>Order of Service</h2>
+                        <h3 class="post-subtitle">
+                            <strong>{{ orderofservice_print.date }}</strong>
+                        </h3>
+                        <p>
+                            {{ orderofservice_print.text|linebreaks }}
+                        </p>
+                    </div>
                 {% endif %}
                 <h2 class="text-center">2016 Theme: Loving Across Our Differences</h2>
                 <p class="text-justified">
@@ -86,7 +94,11 @@
             {% endif %}
         {% endfor %}
         <hr>
-        <p class="text-center">See <strong>3</strong> more announcements at <strong>http://gbm.sg/bulletin/</strong></p>
+        <p class="text-center">See
+            <strong>3</strong>
+            more announcements at
+            <strong>http://gbm.sg/bulletin/</strong>
+        </p>
 
     {% endif %}
     <div class="pagebreak"></div>

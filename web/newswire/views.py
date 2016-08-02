@@ -16,6 +16,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import select_template, get_template
+from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
 from django.core.urlresolvers import reverse_lazy
@@ -23,55 +24,7 @@ from email.Utils import formataddr
 import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-
-# WeasyPrint
-from django.template.response import TemplateResponse
-from django.views.generic.base import TemplateResponseMixin, TemplateView
-import weasyprint
-
-
-class PDFTemplateResponse(TemplateResponse):
-    def __init__(self, filename=None, *args, **kwargs):
-        kwargs['content_type'] = "application/pdf"
-        super(PDFTemplateResponse, self).__init__(*args, **kwargs)
-        if filename:
-            self['Content-Disposition'] = 'attachment; filename="%s"' % filename
-        else:
-            self['Content-Disposition'] = 'attachment'
-
-    @property
-    def rendered_content(self):
-        """Returns the rendered pdf"""
-        html = super(PDFTemplateResponse, self).rendered_content
-        if hasattr(settings, 'WEASYPRINT_BASEURL'):
-            base_url = settings.WEASYPRINT_BASEURL
-        else:
-            base_url = self._request.build_absolute_uri("/")
-        pdf = weasyprint.HTML(string=html, base_url=base_url).write_pdf()
-        return pdf
-
-
-class PDFTemplateResponseMixin(TemplateResponseMixin):
-    response_class = PDFTemplateResponse
-    filename = None
-
-    def get_filename(self):
-        """
-        Returns the filename of the rendered PDF.
-        """
-        return self.filename
-
-    def render_to_response(self, *args, **kwargs):
-        """
-        Returns a response, giving the filename parameter to PDFTemplateResponse.
-        """
-        kwargs['filename'] = self.get_filename()
-        return super(PDFTemplateResponseMixin, self).render_to_response(*args, **kwargs)
-
-
-class PDFTemplateView(TemplateView, PDFTemplateResponseMixin):
-    pass
-
+from weasyprint import HTML
 
 
 def get_upcoming_birthdays(person_list, days):
@@ -87,16 +40,21 @@ def get_upcoming_birthdays(person_list, days):
         next_day = next_day + datetime.timedelta(days=1)
     return doblist
 
-class BulletinHomePageView(ListView):
+
+class BulletinListView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
 
-
     def get_context_data(self, **kwargs):
-        context = super(BulletinHomePageView, self).get_context_data(**kwargs)
+        context = super(BulletinListView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
         now = datetime.datetime.now()
         today = datetime.datetime.today()
+
+        # coming sunday's date
+        coming_sunday = datetime.date.today()
+        while coming_sunday.weekday() != 6:
+            coming_sunday += datetime.timedelta(1)
 
         upcoming_service = None
         try:
@@ -106,6 +64,14 @@ class BulletinHomePageView(ListView):
             upcoming_service = None
         context['orderofservice'] = upcoming_service
 
+        upcoming_service_print = None
+        try:
+            upcoming_service_print = OrderOfService.objects.order_by('date').filter(
+                date=coming_sunday).get()
+        except OrderOfService.DoesNotExist:
+            upcoming_service_print = None
+        context['orderofservice_print'] = upcoming_service_print
+
         active_announcements = Announcement.objects.filter(
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
         unread_active_announcements = Announcement.objects.exclude(
@@ -113,12 +79,9 @@ class BulletinHomePageView(ListView):
         context['announcements'] = unread_active_announcements.extra(
             order_by=['-publish_start_date'])
 
-        all_birthdays = Profile.objects.exclude(date_of_birth=None).values_list('last_name', 'first_name', 'date_of_birth')
+        all_birthdays = Profile.objects.exclude(date_of_birth=None).values_list(
+            'last_name', 'first_name', 'date_of_birth')
         context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
-#        birthdays_in_coming_week = all_birthdays.filter(
-#            date_of_birth__month=today.month, date_of_birth__day__gte=today.day, date_of_birth__day__lte=today.day + 7)
-#        context['birthdays'] = birthdays_in_coming_week.extra(
-#            order_by=['date_of_birth'])
 
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
@@ -159,56 +122,16 @@ class BulletinHomePageView(ListView):
         return qs
 
 
-class BulletinPrintView(ListView):
-    model = Announcement
+class BulletinHomePageView(BulletinListView):
+    template_name = 'newswire/home.html'
+
+
+class BulletinPrintView(BulletinListView):
     template_name = 'newswire/cp/bulletin_print.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(BulletinPrintView, self).get_context_data(**kwargs)
-        messages.info(self.request, '')
-        now = datetime.datetime.now()
 
-        # coming sunday's date
-        coming_sunday = datetime.date.today()
-        while coming_sunday.weekday() != 6:
-            coming_sunday += datetime.timedelta(1)
-
-        upcoming_service = None
-        try:
-            upcoming_service = OrderOfService.objects.order_by('date').filter(
-                date=coming_sunday).get()
-        except OrderOfService.DoesNotExist:
-            upcoming_service = None
-        context['orderofservice'] = upcoming_service
-
-        active_announcements = Announcement.objects.filter(
-            publish_start_date__lte=now).filter(publish_end_date__gte=now)
-        unread_active_announcements = Announcement.objects.exclude(
-            readannouncement__announcement__id__in=active_announcements)
-        context['announcements'] = unread_active_announcements.extra(
-            order_by=['-publish_start_date'])[:7]
-
-        try:
-            latest_weeklysummary = WeeklySummary.objects.latest('date')
-        except WeeklySummary.DoesNotExist:
-            latest_weeklysummary = None
-        context['weeklysummary'] = latest_weeklysummary
-
-        try:
-            active_events = Event.objects.filter(
-                Q(date_end__gte=now) | Q(date_start__gte=now))
-        except Event.DoesNotExist:
-            active_events = None
-        context['events'] = active_events.extra(
-            order_by=['date_start'])
-
-        context['categories'] = Category.objects.all()
-        return context
-
-    def get_queryset(self):
-        # do not show archived instances.
-        qs = super(ListView, self).get_queryset()
-        return qs
+class BulletinPDFView(TemplateResponse):
+    HTML('http://weasyprint.org/').write_pdf('/tmp/weasyprint-website.pdf')
 
 
 class OrderOfServiceList(ListView):
