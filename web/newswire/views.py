@@ -38,6 +38,8 @@ def get_upcoming_birthdays(person_list, days):
         doblist.extend(list(person_list.filter(
             date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
         next_day = next_day + datetime.timedelta(days=1)
+    for dob in doblist:
+        dob.date_of_birth = dob.date_of_birth.replace(year=datetime.datetime.today().year)
     return doblist
 
 
@@ -78,9 +80,7 @@ class BulletinListView(ListView):
             readannouncement__announcement__id__in=active_announcements)
         context['announcements'] = unread_active_announcements.extra(
             order_by=['-publish_start_date'])
-
-        all_birthdays = Profile.objects.exclude(date_of_birth=None).values_list(
-            'last_name', 'first_name', 'date_of_birth')
+        all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
 
         try:
