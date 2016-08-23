@@ -9,9 +9,10 @@
         <strong>$6,688</strong>. We need to receive
         <strong>$139,833</strong>
         by the end of the year to meet our building fund goal for 2016 which is
-        <strong>$230,000</strong>. <span class="no-print">Click
-        <a href="#">here</a>
-        to give.</span>
+        <strong>$230,000</strong>.
+        <span class="no-print">Click
+            <a href="#">here</a>
+            to give.</span>
     </p>
 
     <p>Giving through
@@ -22,8 +23,72 @@
         <strong>$1,823</strong>. We need to receive
         <strong>$12,388</strong>
         by the end of the year in order to meet our goal of
-        <strong>$76,6271</strong>. <span class="no-print">Click
-        <a href="#">here</a></span>
+        <strong>$76,6271</strong>.
+        <span class="no-print">Click
+            <a href="#">here</a>
+        </span>
         to give.
     </p>
 </div>
+
+<style>
+    .tooltip {
+        position: relative;
+        float: right;
+    }
+    .tooltip > .tooltip-inner {
+        background-color: #eebf3f;
+        padding: 5px 15px;
+        color: rgb(23,44,66);
+        font-weight: bold;
+        font-size: 13px;
+    }
+    .popOver + .tooltip > .tooltip-arrow {
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #eebf3f;
+    }
+    .popUnder + .tooltip > .tooltip-arrow {
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid #eebf3f;
+    }
+    .progress {
+        border-radius: 0;
+        overflow: visible;
+        margin: 45px 0 35px;
+    }
+    .progress-bar {
+        -webkit-transition: width 1.5s ease-in-out;
+        transition: width 1.5s ease-in-out;
+    }
+
+</style>
+
+<div class="barWrapper">
+    <span class="progressText">
+        <strong>2016 Operating Fund Goal - $50,000</strong>
+    </span>
+    <div class="progress">
+        <div class="progress-bar progress-bar-success progress-bar-striped" style="border-right: 4px solid #eeeeee;" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+            <span class="popOver" data-toggle="tooltip" data-placement="top" title="$15000&nbsp;Received"></span>
+        </div>
+        <div class="progress-bar" style="background: #999;" role="progressbar" aria-valuenow="53" aria-valuemin="0" aria-valuemax="100">
+            <span class="popOver" data-toggle="tooltip" data-placement="top" title="$43000&nbsp;Pledged"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip({trigger: 'manual'}).tooltip('show');
+    });
+
+    // $( window ).scroll(function() { if($( window ).scrollTop() > 10){  // scroll down abit and get the action
+    $(".progress-bar").each(function() {
+        each_bar_width = $(this).attr('aria-valuenow');
+        $(this).width(each_bar_width + '%');
+    });
+
+    //  } });
+</script>
