@@ -42,6 +42,19 @@ ALLOWED_HOSTS = [
 
 SITE_ID = 1
 
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'SITE_NAME': ('My Title', 'Website title'),
+    'SITE_DESCRIPTION': ('', 'Website description'),
+    'THEME': ('light-blue', 'Website theme'),
+}
+
+CONSTANCE_CONFIG_FIELDSETS = {
+    'General Options': ('SITE_NAME', 'SITE_DESCRIPTION'),
+    'Theme Options': ('THEME',),
+}
+
 # Email Settings
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', '')
 EMAIL_HOST = os.getenv('EMAIL_HOST', '')
@@ -86,6 +99,10 @@ INSTALLED_APPS = [
 
     'widget_tweaks',
     'import_export',  # inport/export CSV function
+
+    'constance',
+    'constance.backends.database',
+
 ]
 
 MIDDLEWARE_CLASSES = [
