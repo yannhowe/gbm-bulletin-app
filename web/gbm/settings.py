@@ -42,19 +42,6 @@ ALLOWED_HOSTS = [
 
 SITE_ID = 1
 
-CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
-
-CONSTANCE_CONFIG = {
-    'SITE_NAME': ('My Title', 'Website title'),
-    'SITE_DESCRIPTION': ('', 'Website description'),
-    'THEME': ('light-blue', 'Website theme'),
-}
-
-CONSTANCE_CONFIG_FIELDSETS = {
-    'General Options': ('SITE_NAME', 'SITE_DESCRIPTION'),
-    'Theme Options': ('THEME',),
-}
-
 # Email Settings
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', '')
 EMAIL_HOST = os.getenv('EMAIL_HOST', '')
@@ -77,7 +64,7 @@ INSTALLED_APPS = [
     # The Django sites framework is required for allauth
     'django.contrib.sites',
     # django-suit
-    'suit',
+    #    'suit',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -252,4 +239,17 @@ BOOTSTRAP3 = {
     'error_css_class': 'bootstrap3-error',
     'required_css_class': 'bootstrap3-required',
     'javascript_in_head': True,
+}
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'SITE_NAME': ('My Title', 'Website title'),
+    'SITE_DESCRIPTION': ('', 'Website description'),
+    'THEME': ('light-blue', 'Website theme'),
+}
+
+CONSTANCE_CONFIG_FIELDSETS = {
+    'General Options': ('SITE_NAME', 'SITE_DESCRIPTION'),
+    'Theme Options': ('THEME'),
 }

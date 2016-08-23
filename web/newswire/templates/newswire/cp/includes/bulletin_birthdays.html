@@ -1,25 +1,10 @@
 <h2 class="text-center">Birthday Greetings</h2>
-<table class="table">
-    <tbody>
-        {% regroup birthdays by date_of_birth as birthdays_by_date %}
-            {% for item in birthdays_by_date %}
-                <strong>{{ item.grouper|date:"j/m" }}:</strong>
-                        {% for i in item.list %}
-                             {{ i.last_name }} {{ i.first_name }} {% if forloop.last %}{% else %}&bull;{% endif %}
-                        {% endfor %}
-            {% endfor %}
-        </ul>
-
-        {% for last_name, first_name,  birthday in birthdays %}
-            <tr>
-                <td class="text-right col-xs-6">
-                    <strong>{{last_name}}
-                        {{first_name}}</strong>
-                </td>
-                <td class="text-left col-xs-6">
-                    <em>{{birthday|date:"j F"}}</em>
-                </td>
-            </tr>
+<p class="text-center">
+    {% regroup birthdays by date_of_birth as birthdays_by_date %}
+        {% for date in birthdays_by_date %}
+                <strong>{{ date.grouper|date:"j/m" }}</strong><br />
+                    {% for person in date.list %}
+                        {{ person.last_name }} {{ person.first_name }} <br />
+                    {% endfor %}
         {% endfor %}
-    </tbody>
-</table>
+</p>
