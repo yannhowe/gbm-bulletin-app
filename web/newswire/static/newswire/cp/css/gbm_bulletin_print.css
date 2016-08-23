@@ -146,3 +146,6 @@ figcaption:before {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+.borderless>tbody>tr>td, .borderless>tbody>tr>th, .borderless>tfoot>tr>td, .borderless>tfoot>tr>th, .borderless>thead>tr>td, .borderless>thead>tr>th {
+  border: none;
+}

@@ -1,0 +1,15 @@
+<h2 class="text-center">Upcoming Events</h2>
+<table class="table borderless">
+    <tbody>
+        {% for event in events %}
+            <tr>
+                <td class="text-right col-xs-6">
+                    <strong>{{ event.title }}</strong>
+                </td>
+                <td class="text-left col-xs-6">
+                    <i>{{ event.date_display }}</i>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
