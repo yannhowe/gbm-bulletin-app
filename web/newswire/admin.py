@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group
+from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group, WeeklyVerse
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -249,3 +249,23 @@ class DataSeriesAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(DataSeries, DataSeriesAdmin)
+
+
+class WeeklyVerseResource(resources.ModelResource):
+
+    class Meta:
+        model = WeeklyVerse
+
+
+class WeeklyVerseForm(ModelForm):
+
+    class Meta:
+        model = WeeklyVerse
+        fields = '__all__'
+
+
+class WeeklyVerseAdmin(ImportExportModelAdmin):
+    resource_class = WeeklyVerseResource
+    pass
+
+admin.site.register(WeeklyVerse, WeeklyVerseAdmin)

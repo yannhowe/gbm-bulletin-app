@@ -318,7 +318,6 @@ class DataSeries(models.Model):
 
 
 class DataPoint(models.Model):
-
     user = models.ForeignKey(User, null=True, blank=True, default='')
     value = models.DecimalField(max_digits=10, decimal_places=2, default='0')
     dataseries = models.ForeignKey(
@@ -331,3 +330,11 @@ class DataPoint(models.Model):
 
     def __str__(self):
         return '%s - %s - %s' % (self.dataseries.type, self.dataseries.name, self.value)
+
+class WeeklyVerse(models.Model):
+    date = models.DateField(default=datetime.now() + timedelta(days=7))
+    verse = models.TextField(max_length=1200, default='')
+    reference = models.CharField(max_length=40, default='')
+
+    def __str__(self):
+        return '%s - %s' % (self.date, self.reference)

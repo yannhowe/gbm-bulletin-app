@@ -17,7 +17,9 @@
         {% block header_includes %}{% endblock %}
     </head>
     <body>
+      <br /><br /><br /><br /><br /><br /><br /><br /><br />
         {% include "newswire/cp/includes/bulletin_cover.html" %}
+        <div class="pagebreak"></div>
         <div class="row">
             <div class="col-xs-6">
                 {% if orderofservice %}
@@ -30,6 +32,9 @@
                             {{ orderofservice_print.text|linebreaks }}
                         </p>
                     </div>
+                {% endif %}
+                {% if weeklyverse %}
+                    {% include "newswire/cp/includes/bulletin_weeklyverse.html" %}
                 {% endif %}
                 <h2 class="text-center">2016 Theme: Loving Across Our Differences</h2>
                 <p class="text-justified">

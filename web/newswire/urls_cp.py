@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-from .views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPDFView
+from .views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView
 from django.contrib.auth.decorators import login_required
 
 
@@ -15,8 +15,6 @@ urlpatterns = (
         name='cp_bulletin_home'),
     url(r'^bulletin/print$', login_required(BulletinPrintView.as_view()),
         name='cp_bulletin_print'),
-    url(r'^bulletin/pdf$', login_required(views.BulletinPDFView),
-        name='cp_bulletin_pdf'),
 
     # OrderOfService
     url(r'^bulletin/orderofservice/$',
@@ -106,6 +104,20 @@ urlpatterns = (
         views.DataSeriesUpdate.as_view(), name='dataseries_edit'),
     url(r'^dataseries/delete/(?P<pk>\d+)$',
         views.DataSeriesDelete.as_view(), name='dataseries_delete'),
+
+
+    # WeeklyVerse
+    url(r'^weeklyverse/summary/$',
+        views.WeeklyVerseList.as_view(), name='weeklyverse_summary'),
+    url(r'^weeklyverse/$',
+        views.WeeklyVerseList.as_view(), name='weeklyverse_list'),
+    url(r'^weeklyverse/new$',
+        views.WeeklyVerseCreate.as_view(), name='weeklyverse_new'),
+    url(r'^weeklyverse/edit/(?P<pk>\d+)$',
+        views.WeeklyVerseUpdate.as_view(), name='weeklyverse_edit'),
+    url(r'^weeklyverse/delete/(?P<pk>\d+)$',
+        views.WeeklyVerseDelete.as_view(), name='weeklyverse_delete'),
+
 
 
     # Attendance Input

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm
-from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm
+from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse
 #from datetime import datetime, timedelta
 import datetime
 from django import template
@@ -24,7 +24,6 @@ from email.Utils import formataddr
 import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from weasyprint import HTML
 
 
 def get_upcoming_birthdays(person_list, days):
@@ -39,7 +38,8 @@ def get_upcoming_birthdays(person_list, days):
             date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
         next_day = next_day + datetime.timedelta(days=1)
     for dob in doblist:
-        dob.date_of_birth = dob.date_of_birth.replace(year=datetime.datetime.today().year)
+        dob.date_of_birth = dob.date_of_birth.replace(
+            year=datetime.datetime.today().year)
     return doblist
 
 
@@ -90,6 +90,12 @@ class BulletinListView(ListView):
         context['weeklysummary'] = latest_weeklysummary
 
         try:
+            latest_weeklyverse = WeeklyVerse.objects.latest('date')
+        except WeeklyVerse.DoesNotExist:
+            latest_weeklyverse = None
+        context['weeklyverse'] = latest_weeklyverse
+
+        try:
             active_events = Event.objects.filter(
                 Q(date_end__gte=now) | Q(date_start__gte=now))
         except Event.DoesNotExist:
@@ -128,10 +134,6 @@ class BulletinHomePageView(BulletinListView):
 
 class BulletinPrintView(BulletinListView):
     template_name = 'newswire/cp/bulletin_print.html'
-
-
-class BulletinPDFView(TemplateResponse):
-    HTML('http://weasyprint.org/').write_pdf('/tmp/weasyprint-website.pdf')
 
 
 class OrderOfServiceList(ListView):
@@ -398,6 +400,31 @@ class DataSeriesDelete(DeleteView):
     model = DataSeries
     success_url = reverse_lazy('dataseries_list')
     template_name = 'newswire/cp/dataseries_confirm_delete.html'
+
+
+class WeeklyVerseList(ListView):
+    queryset = WeeklyVerse.objects.all()
+    template_name = 'newswire/cp/weeklyverse_list.html'
+
+
+class WeeklyVerseCreate(CreateView):
+    model = WeeklyVerse
+    success_url = reverse_lazy('weeklyverse_list')
+    form_class = WeeklyVerseForm
+    template_name = 'newswire/cp/weeklyverse_form.html'
+
+
+class WeeklyVerseUpdate(UpdateView):
+    model = WeeklyVerse
+    success_url = reverse_lazy('weeklyverse_list')
+    form_class = WeeklyVerseForm
+    template_name = 'newswire/cp/weeklyverse_form.html'
+
+
+class WeeklyVerseDelete(DeleteView):
+    model = WeeklyVerse
+    success_url = reverse_lazy('weeklyverse_list')
+    template_name = 'newswire/cp/weeklyverse_confirm_delete.html'
 
 
 class RsvpUpdateView(DetailView):
