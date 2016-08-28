@@ -189,7 +189,6 @@ class OrderOfService(models.Model):
             return True
         return False
 
-
     def num_of_lines(self):
         i = 0
         for line in self.text:
@@ -330,6 +329,7 @@ class DataPoint(models.Model):
 
     def __str__(self):
         return '%s - %s - %s' % (self.dataseries.type, self.dataseries.name, self.value)
+
 
 class WeeklyVerse(models.Model):
     date = models.DateField(default=datetime.now() + timedelta(days=7))

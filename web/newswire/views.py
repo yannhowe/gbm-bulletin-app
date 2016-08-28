@@ -78,8 +78,12 @@ class BulletinListView(ListView):
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
         unread_active_announcements = Announcement.objects.exclude(
             readannouncement__announcement__id__in=active_announcements)
-        context['announcements'] = unread_active_announcements.extra(
-            order_by=['-publish_start_date'])
+        published_announcements = unread_active_announcements.filter(publish_start_date__lte=today, publish_end_date__gte=today, hidden=False).extra(
+            order_by=['-publish_start_date', 'publish_end_date'])
+        context['announcements'] = published_announcements
+        context['announcements_print'] = published_announcements[:7]
+        context['more_annoucements_online_count'] = published_announcements.count() - 7
+
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
 
