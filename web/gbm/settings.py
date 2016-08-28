@@ -121,6 +121,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # `allauth` needs this from django
                 'django.template.context_processors.request',
+                # constance
+                'constance.context_processors.config',
             ],
         },
     },
@@ -244,12 +246,12 @@ BOOTSTRAP3 = {
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 CONSTANCE_CONFIG = {
-    'SITE_NAME': ('My Title', 'Website title'),
-    'SITE_DESCRIPTION': ('', 'Website description'),
-    'THEME': ('light-blue', 'Website theme'),
-}
-
-CONSTANCE_CONFIG_FIELDSETS = {
-    'General Options': ('SITE_NAME', 'SITE_DESCRIPTION'),
-    'Theme Options': ('THEME'),
+    'THIS_YEAR_THEME': ('Loving Across Our Differences', 'This year\'s theme'),
+    'THIS_YEAR_THEME_VERSE': ('<p class="text-justified"><sup>34</sup>A new commandment I give to you, that you love one another; as I have loved you, that you also love one another. <sup>35</sup>By this all will know that you are My disciples, if you have love for one another.<br /><br />John 13:34-35</p>', 'This year\'s theme verse'),
+    'CONTACT_PHONE': ('+65 6745 2887', 'Contact number appearing in footer/bottom of page'),
+    'CONTACT_PHONE_URL': ('tel:+6567452887', 'Contact number URL appearing in footer/bottom of page'),
+    'CONTACT_EMAIL': ('office@gbm.sg', 'Email address appearing in footer/bottom of page'),
+    'CONTACT_EMAIL_URL': ('mailto:office@gbm.sg?Subject=gbm.sg%20Contact%20Form', 'Email address URL appearing in footer/bottom of page'),
+    'CONTACT_ADDRESS': ('146B Paya Lebar Road,<br/>ACE Building, #05-01<br/>Singapore 409017', 'Mailing Address appearing in footer/bottom of page'),
+    'CONTACT_ADDRESS_URL': ('https://goo.gl/maps/55FGkrEbUf72', 'Google maps link for above address'),
 }
