@@ -4,6 +4,9 @@
         <strong>{{ orderofservice.date }}</strong>
     </h3>
     <p>
+        {% if weeklyverse %}
+            {% include "newswire/cp/includes/bulletin_weeklyverse.html" %}
+        {% endif %}
         {{ orderofservice.text|linebreaks }}
     </p>
 </div>

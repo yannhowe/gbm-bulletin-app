@@ -311,6 +311,7 @@ class DataSeries(models.Model):
         User, related_name='owner_dataseries', blank=True, default='')
     viewer = models.ManyToManyField(
         User, related_name='viewer_dataseries', blank=True, default='')
+    notes = models.TextField(max_length=300, null=True, blank=True)
 
     def __str__(self):
         return '%s - %s' % (self.type, self.name)
@@ -332,7 +333,7 @@ class DataPoint(models.Model):
 
 
 class WeeklyVerse(models.Model):
-    date = models.DateField(default=datetime.now() + timedelta(days=7))
+    date = models.DateField(default=get_default_publish_end_date)
     verse = models.TextField(max_length=1200, default='')
     reference = models.CharField(max_length=40, default='')
 

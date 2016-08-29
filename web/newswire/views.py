@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm
 from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse
-#from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 import datetime
 from django import template
 from django.conf import settings
@@ -11,7 +11,7 @@ from django.core import mail
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
@@ -26,32 +26,38 @@ import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 
-def get_upcoming_birthdays(person_list, days):
-    person_list = person_list.distinct()  # ensure persons are only in the list once
-    today = datetime.datetime.today()
-    doblist = []
-    doblist.extend(list(person_list.filter(
-        date_of_birth__month=today.month, date_of_birth__day=today.day)))
-    next_day = today + datetime.timedelta(days=1)
-    for day in range(0, days):
-        doblist.extend(list(person_list.filter(
-            date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
-        next_day = next_day + datetime.timedelta(days=1)
-    for dob in doblist:
-        dob.date_of_birth = dob.date_of_birth.replace(
-            year=datetime.datetime.today().year)
-    return doblist
-
-
 class BulletinListView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
+
+    def get_upcoming_birthdays(self, person_list, days):
+        person_list = person_list.distinct()  # ensure persons are only in the list once
+        today = datetime.datetime.today()
+        doblist = []
+        doblist.extend(list(person_list.filter(
+            date_of_birth__month=today.month, date_of_birth__day=today.day)))
+        next_day = today + datetime.timedelta(days=1)
+        for day in range(0, days):
+            doblist.extend(list(person_list.filter(
+                date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
+            next_day = next_day + datetime.timedelta(days=1)
+        for dob in doblist:
+            dob.date_of_birth = dob.date_of_birth.replace(
+                year=datetime.datetime.today().year)
+        return doblist
+
+    def ahead_or_behind(self, received, giving):
+        if received > giving:
+            return "ahead"
+        elif received < giving:
+            return "behind"
 
     def get_context_data(self, **kwargs):
         context = super(BulletinListView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
         now = datetime.datetime.now()
         today = datetime.datetime.today()
+        current_year = datetime.datetime.now().year
 
         # coming sunday's date
         coming_sunday = datetime.date.today()
@@ -85,7 +91,49 @@ class BulletinListView(ListView):
         context['more_annoucements_online_count'] = published_announcements.count() - 7
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+        context['birthdays'] = self.get_upcoming_birthdays(all_birthdays, 7)
+
+        building_fund_received_ytd = None
+        try:
+            building_fund_received_ytd = DataPoint.objects.filter(
+                date__year=current_year, dataseries__name__exact="Building Fund Weekly Collection").aggregate(Sum('value')).values()[0]
+        except DataPoint.DoesNotExist:
+            building_fund_received_ytd = None
+        context['building_fund_received_ytd'] = building_fund_received_ytd
+
+        building_fund_received = None
+        try:
+            building_fund_received = DataPoint.objects.filter(
+                dataseries__name__exact="Building Fund Weekly Collection").latest('date')
+        except DataPoint.DoesNotExist:
+            building_fund_received = None
+        context['building_fund_received'] = building_fund_received
+
+        building_fund_pledged_ytd = None
+        try:
+            building_fund_pledged = DataPoint.objects.filter(
+                dataseries__name__exact="Building Fund Pledge").latest('date')
+            building_fund_pledged_ytd = building_fund_pledged.value / \
+                365 * datetime.datetime.now().timetuple().tm_yday
+        except DataPoint.DoesNotExist:
+            building_fund_pledged_ytd = None
+        context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
+
+        building_goal = None
+        try:
+            building_goal = DataPoint.objects.filter(
+                dataseries__name__exact="Building Fund Goal").latest('date')
+        except DataPoint.DoesNotExist:
+            building_goal = None
+        context['building_goal'] = building_goal.value
+
+        context['ahead_or_behind'] = self.ahead_or_behind(1, 2)
+        context['building_pledge_received_difference'] = building_fund_pledged_ytd - \
+            building_fund_received_ytd
+        context['building_goal_received_difference'] = building_goal.value - \
+            building_fund_received_ytd
+        context['building_goal_received_percent'] = building_fund_received.value / \
+            building_goal.value * 100
 
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')

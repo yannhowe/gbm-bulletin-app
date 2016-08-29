@@ -10,6 +10,7 @@
         </title>
         <!-- Bootstrap -->
         <link rel="stylesheet" href="{% static 'newswire/cp/css/bootstrap.min.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
         <!-- Font-Awesome -->
         <link rel="stylesheet" href="{% static 'newswire/cp/css/font-awesome.min.css' %}">
         <link rel="stylesheet" href="{% static 'newswire/cp/css/gbm_bulletin_print.css' %}">
@@ -17,7 +18,7 @@
         {% block header_includes %}{% endblock %}
     </head>
     <body>
-        <br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        <br/><br/><br/><br/>
         {% include "newswire/cp/includes/bulletin_cover.html" %}
         <div class="pagebreak"></div>
         <div class="row">
@@ -33,33 +34,9 @@
                         </p>
                     </div>
                 {% endif %}
-                {% if weeklyverse %}
-                    {% include "newswire/cp/includes/bulletin_weeklyverse.html" %}
-                {% endif %}
-
-                {% include "newswire/cp/includes/bulletin_theme.html" %}
             </div>
             <div class="col-xs-6">
-                <h2 class="text-center">Our Vision</h2>
-                <p class="text-justified">
-                    Glorifying God by building and developing a church of genuine Christians to fulfill the Great Commission.
-                </p>
-                <h2 class="text-center">
-                    Our Mission</h2>
-                <p >
-                    <ul class="list-unstyled text-center">
-                        <li>
-                            <strong>G</strong>lorify God in Worship</li>
-                        <li>
-                            <strong>R</strong>ely on the Holy Spirit</li>
-                        <li>
-                            <strong>A</strong>dvance the Gospel</li>
-                        <li>
-                            <strong>C</strong>are for the Body</li>
-                        <li>
-                            <strong>E</strong>quip God’s disciples</li>
-                    </ul>
-                </p>
+                {% include "newswire/cp/includes/bulletin_theme.html" %}
                 {% if events %}
                     {% include "newswire/cp/includes/bulletin_events_print.html" %}
                 {% endif %}
@@ -67,7 +44,7 @@
                     {% include "newswire/cp/includes/bulletin_birthdays_print.html" %}
                 {% endif %}
                 {% if weeklysummary %}
-                    {% include "newswire/cp/includes/bulletin_weeklysummary.html" %}
+                    {% include "newswire/cp/includes/bulletin_weeklysummary_print.html" %}
                 {% endif %}
             </div>
         </div>
@@ -97,7 +74,8 @@
         {% if more_annoucements_online_count > 0 %}
             <p class="text-center">See
                 <strong>{{more_annoucements_online_count}}</strong>
-                more announcement{{more_annoucements_online_count|pluralize}} at
+                more announcement{{more_annoucements_online_count|pluralize}}
+                at
                 <strong>http://gbm.sg/bulletin/</strong>
             </p>
         {% endif %}
