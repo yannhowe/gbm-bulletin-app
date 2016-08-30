@@ -328,9 +328,9 @@ class DataPoint(models.Model):
         'Date & Time of the metric', null=True, blank=True, default=datetime.now)
     notes = models.TextField(max_length=300, null=True, blank=True)
 
-    def __str__(self):
+#    def __str__(self):
 #        return '%s' % (self.id)
-        return '%s - %s - %d' % (self.dataseries.type, self.dataseries.name, self.value)
+#        return '%s - %s - %d' % (self.dataseries.type, self.dataseries.name, self.value)
 
 
 class WeeklyVerse(models.Model):
