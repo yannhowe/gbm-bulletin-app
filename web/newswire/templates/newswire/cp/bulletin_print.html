@@ -42,65 +42,36 @@
         </div>
         <div class="pagebreak"></div>
         {% if announcements_print %}
-            <h2 class="text-center">Announcements</h2>
-            {% for announcement in announcements_print %}
-                <div class="post-preview {{ announcement.category.name }}-hide">
-                    <p class="post-meta pull-right">
-                        <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">{{ announcement.category }}</small>
-                    </button>
-                </p>
-                <h3 class="post-title">
-                    <strong>{{ announcement.title }}</strong>
-                </h3>
-                <p class="post-subtitle">
-                    {{ announcement.body }}
-                    {% if announcement.link %}
-                        <a href="{{ announcement.link }}">
-                            <i class="no-print fa fa-link"></i>
-                        </a>
-                    {% endif %}
-                </p>
-            </div>
-        {% endfor %}
-        <hr>
-        {% if more_annoucements_online_count > 0 %}
-            <p class="text-center">See
-                <strong>{{more_annoucements_online_count}}</strong>
-                more announcement{{more_annoucements_online_count|pluralize}}
-                at
-                <strong>http://gbm.sg/bulletin/</strong>
-            </p>
+            {% include "newswire/cp/includes/bulletin_announcements_print.html" %}
         {% endif %}
+        <div class="pagebreak"></div>
+        {% include "newswire/cp/includes/bulletin_back_cover.html" %}
 
-    {% endif %}
-    <div class="pagebreak"></div>
-    {% include "newswire/cp/includes/bulletin_back_cover.html" %}
+        <!-- /.row -->
+        <!-- ./wrapper -->
 
-    <!-- /.row -->
-    <!-- ./wrapper -->
+        <!-- jQuery 2.1.4 -->
+        <script src="{% static 'newswire/cp/plugins/jQuery/jQuery-2.1.4.min.js' %}"></script>
+        <!-- jQuery UI 1.11.4 -->
+        <script src="{% static 'newswire/cp/plugins/jQueryUI/jquery-ui.min.js' %}"></script>
+        <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+        <script>
+            $.widget.bridge('uibutton', $.ui.button);
+        </script>
 
-    <!-- jQuery 2.1.4 -->
-    <script src="{% static 'newswire/cp/plugins/jQuery/jQuery-2.1.4.min.js' %}"></script>
-    <!-- jQuery UI 1.11.4 -->
-    <script src="{% static 'newswire/cp/plugins/jQueryUI/jquery-ui.min.js' %}"></script>
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-    <script>
-        $.widget.bridge('uibutton', $.ui.button);
-    </script>
+        {% block footer_includes %}{% endblock %}
 
-    {% block footer_includes %}{% endblock %}
+        <script src="{% static 'newswire/cp/js/bootstrap.min.js' %}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-    <script src="{% static 'newswire/cp/js/bootstrap.min.js' %}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-    <!-- daterangepicker -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>-->
-    <!-- datepicker -->
-    <script src="{% static 'newswire/cp/plugins/datepicker/bootstrap-datepicker.js' %}"></script>
-    <script src="{% static 'newswire/cp/plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
-    <!-- FastClick -->
-    <script src="{% static 'newswire/cp/plugins/fastclick/fastclick.min.js' %}"></script>
-    <!-- AdminLTE App -->
-    <script src="{% static 'newswire/cp/js/app.min.js' %}"></script>
-</div>
+        <!-- daterangepicker -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>-->
+        <!-- datepicker -->
+        <script src="{% static 'newswire/cp/plugins/datepicker/bootstrap-datepicker.js' %}"></script>
+        <script src="{% static 'newswire/cp/plugins/slimScroll/jquery.slimscroll.min.js' %}"></script>
+        <!-- FastClick -->
+        <script src="{% static 'newswire/cp/plugins/fastclick/fastclick.min.js' %}"></script>
+        <!-- AdminLTE App -->
+        <script src="{% static 'newswire/cp/js/app.min.js' %}"></script>
+    </div>
 </body>
 </html>

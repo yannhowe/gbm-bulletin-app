@@ -37,35 +37,32 @@
         //  } });
     </script>
     <br/>
-    <h3>Past Year's Attendance:</h3>
-    <p>{{weekly_attendance}}</p>
+    <h3>Attendance:</h3>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
     <p>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-        <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
         <div id="attendance-chart"></div>
         <script>
             Morris.Area({
                 element: 'attendance-chart',
                 data: [
-                    {% for attendance_record in weekly_attendance %}
+                    {% for attendance in weekly_attendance %}
                         {
-                            y: '{{attendance_record.date|date:"o-m-d"}}',
-                            a: {{attendance_record.value}},
-                            b: 0,
-                            c: 0,
-                            d: 0,
-                            e: 0
-                        },
-                    {% endfor %}
-
+                            y: '{{attendance.date|date:"o-m-d"}}',
+                            a: '{{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                            b: '{{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                            c: '{{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                            d: '{{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                            e: '{{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}'
+                        },{% endfor %}
                 ],
                 xkey: 'y',
                 ykeys: [
                     'a', 'b', 'c', 'd', 'e'
                 ],
-                xLabels: ["date"],
+                xLabels: ["day"],
                 labels: [
-                    'Sunday Morning Service (Children\'s Church)', 'Sunday Morning Service (Chinese)', 'Sunday Morning Service (English)', 'Sunday Morning Service (Nursery)', 'Sunday Morning Service (Preschoolers)'
+                    'Nursery', 'Preschoolers', 'Children\'s Church', 'Chinese Congregation', 'English Congregation'
                 ],
                 ymin: 'auto 200'
             });

@@ -7,11 +7,11 @@ from django import template
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.core import mail
+from django.core import mail, serializers
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, F, When, Case
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
@@ -24,6 +24,7 @@ from email.Utils import formataddr
 import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from constance import config
 
 
 class BulletinListView(ListView):
@@ -51,6 +52,12 @@ class BulletinListView(ListView):
             return "ahead"
         elif received < giving:
             return "behind"
+
+    def merge_dicts(self, *dict_args):
+        result = {}
+        for dictionary in dict_args:
+            result.update(dictionary)
+        return result
 
     def get_context_data(self, **kwargs):
         context = super(BulletinListView, self).get_context_data(**kwargs)
@@ -87,8 +94,9 @@ class BulletinListView(ListView):
         published_announcements = unread_active_announcements.filter(publish_start_date__lte=today, publish_end_date__gte=today, hidden=False).extra(
             order_by=['-publish_start_date', 'publish_end_date'])
         context['announcements'] = published_announcements
-        context['announcements_print'] = published_announcements[:7]
-        context['more_annoucements_online_count'] = published_announcements.count() - 7
+        max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
+        context['announcements_print'] = published_announcements[:max_print_annoucements]
+        context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = self.get_upcoming_birthdays(all_birthdays, 7)
@@ -135,7 +143,33 @@ class BulletinListView(ListView):
         context['building_goal_received_percent'] = building_fund_received.value / \
             building_goal.value * 100
 
-        weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service ").all()
+        weekly_attendance_nursery = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Nursery)").order_by('-date').annotate(weekly_attendance_nursery=F('value')).values('date', 'weekly_attendance_nursery')
+        weekly_attendance_preschoolers = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Preschoolers)").order_by('-date').annotate(weekly_attendance_preschoolers=F('value')).values('date', 'weekly_attendance_preschoolers')
+        weekly_attendance_childrens_church = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Children\'s Church)").order_by('-date').annotate(weekly_attendance_childrens_church=F('value')).values('date', 'weekly_attendance_childrens_church')
+        weekly_attendance_chinese = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Chinese)").order_by('-date').annotate(weekly_attendance_chinese=F('value')).values('date', 'weekly_attendance_chinese')
+        weekly_attendance_english = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (English)").order_by('-date').annotate(weekly_attendance_english=F('value')).values('date', 'weekly_attendance_english')
+        weekly_attendance_all = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service").all()
+
+        weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service").values('date').order_by('-date').annotate(
+            weekly_attendance_nursery=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Nursery)', then='value'))),
+            weekly_attendance_preschoolers=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Preschoolers)', then='value'))),
+            weekly_attendance_childrens_church=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Children\'s Church)', then='value'))),
+            weekly_attendance_chinese=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Chinese)', then='value'))),
+            weekly_attendance_english=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (English)', then='value'))),
+            total_attendance=Sum('value')
+        )[:12]
+
         context['weekly_attendance'] = weekly_attendance
 
         try:
