@@ -2,18 +2,13 @@
 {% block title %}Newswire{% endblock %}\\
 {% block content %}
     <p>
-        <br/>Welcome to Grace Baptist Ministries. We're glad you're with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to
-            you, pray with you and help you in any way they can. Please also visit our website if you would like more information.
+        <br/>{{config.BULLETIN_WELCOME_MESSAGE}}
     </p>
     <hr/>
     {% include "newswire/cp/includes/bulletin_theme.html" %}
     <hr class="section-end"/>
     {% if orderofservice %}
         {% include "newswire/cp/includes/bulletin_oos.html" %}
-        <hr class="section-end"/>
-    {% endif %}
-    {% if weeklyverse %}
-        {% include "newswire/cp/includes/bulletin_weeklyverse.html" %}
         <hr class="section-end"/>
     {% endif %}
     {% if announcements %}

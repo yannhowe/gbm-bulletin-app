@@ -135,6 +135,9 @@ class BulletinListView(ListView):
         context['building_goal_received_percent'] = building_fund_received.value / \
             building_goal.value * 100
 
+        weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service ").all()
+        context['weekly_attendance'] = weekly_attendance
+
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
         except WeeklySummary.DoesNotExist:

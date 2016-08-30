@@ -329,7 +329,8 @@ class DataPoint(models.Model):
     notes = models.TextField(max_length=300, null=True, blank=True)
 
     def __str__(self):
-        return '%s - %s - %s' % (self.dataseries.type, self.dataseries.name, self.value)
+#        return '%s' % (self.id)
+        return '%s - %s - %d' % (self.dataseries.type, self.dataseries.name, self.value)
 
 
 class WeeklyVerse(models.Model):

@@ -1,9 +1,8 @@
 {% load staticfiles %}
 {% load humanize %}
-<h2 class="text-center">Weekly Summary -
-    {{ weeklysummary.date }}</h2>
+<h2 class="text-center">Weekly Summary</h2>
 <div class="post-preview">
-    <p>Giving through
+    <p>Building Fund: Giving through
         {{ building_fund_received.date|date:"j M, o" }}
         was
         <strong>${{building_fund_received_ytd|floatformat:"0"|intcomma}}</strong>
@@ -18,7 +17,8 @@
         <strong>${{building_goal|floatformat:"0"|intcomma}}</strong>
         this year.
     </p>
-
+    <p>{{ building_fund_received.date|date:"o" }}
+        building fund progress:</p>
     <div class="progress">
         <div class="progress-bar" role="progressbar" aria-valuenow="{{building_goal_received_percent}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: 2%;">
             {{building_goal_received_percent|floatformat:"0"}}%
@@ -65,72 +65,69 @@
         });
         /* ]]> */
     </script>
-
-    <h3>Attendance</h3>
+    <h3>Past Year's Attendance:</h3>
     <p>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
         <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
-
-        <div id="line-example"></div>
+        <div id="attendance-chart"></div>
         <script>
-            Morris.Line({
-                element: 'line-example',
+            Morris.Area({
+                element: 'attendance-chart',
                 data: [
                     {
                         y: '2016-08-21',
-                        a: 230
+                        a: 24,
+                        b: 31,
+                        c: 162,
+                        d: 14,
+                        e: 15
                     }, {
                         y: '2016-08-14',
-                        a: 225
+                        a: 14,
+                        b: 27,
+                        c: 121,
+                        d: 14,
+                        e: 10
                     }, {
                         y: '2016-08-07',
-                        a: 233
+                        a: 25,
+                        b: 26,
+                        c: 148,
+                        d: 12,
+                        e: 15
                     }, {
                         y: '2016-07-31',
-                        a: 245
+                        a: 21,
+                        b: 30,
+                        c: 153,
+                        d: 11,
+                        e: 13
                     }, {
                         y: '2016-07-24',
-                        a: 238
+                        a: 19,
+                        b: 27,
+                        c: 118,
+                        d: 14,
+                        e: 14
                     }, {
                         y: '2016-07-17',
-                        a: 220
-                    }, {
-                        y: '2016-07-10',
-                        a: 210
-                    }, {
-                        y: '2016-08-18',
-                        b: 210
-                    }, {
-                        y: '2016-08-16',
-                        b: 215
-                    }, {
-                        y: '2016-08-05',
-                        b: 213
-                    }, {
-                        y: '2016-07-30',
-                        b: 215
-                    }, {
-                        y: '2016-07-20',
-                        b: 218
-                    }, {
-                        y: '2016-07-13',
-                        b: 203
-                    }, {
-                        y: '2016-07-11',
-                        b: 200
+                        a: 17,
+                        b: 30,
+                        c: 126,
+                        d: 10,
+                        e: 14
                     }
                 ],
                 xkey: 'y',
                 ykeys: [
-                    'a', 'b'
+                    'a', 'b', 'c', 'd', 'e'
                 ],
-                xLabels: ["week"],
+                xLabels: ["date"],
                 labels: [
-                    '2016 Attendance', '2015 Attendance'
+                    'Sunday Morning Service (Children\'s Church)', 'Sunday Morning Service (Chinese)', 'Sunday Morning Service (English)', 'Sunday Morning Service (Nursery)', 'Sunday Morning Service (Preschoolers)'
                 ],
                 ymin: 'auto 200'
             });
         </script>
     </p>
-</p>
 </div>

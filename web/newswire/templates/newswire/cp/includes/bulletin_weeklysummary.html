@@ -2,8 +2,14 @@
 {% load humanize %}
 <h2 class="text-center">Weekly Summary</h2>
 <div class="post-preview">
-    <h3>Building Fund</h3>
-    <p>Giving through
+    <h3>{{ building_fund_received.date|date:"o" }}
+        building fund progress:</h3>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{building_goal_received_percent}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: 2%;">
+            {{building_goal_received_percent|floatformat:"0"|intcomma}}%
+        </div>
+    </div>
+    <p class="small">Giving through
         {{ building_fund_received.date|date:"j M, o" }}
         was
         <strong>${{building_fund_received_ytd|floatformat:"0"|intcomma}}</strong>
@@ -18,14 +24,6 @@
         <strong>${{building_goal|floatformat:"0"|intcomma}}</strong>
         this year.
     </p>
-
-    <div class="progress">
-        <div class="progress-bar" role="progressbar" aria-valuenow="{{building_goal_received_percent}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: 2%;">
-            {{building_goal_received_percent|floatformat:"0"}}%
-        </div>
-    </div>
-    <br/>
-
     <script>
         $(function() {
             $('[data-toggle="tooltip"]').tooltip({trigger: 'manual'}).tooltip('show');
@@ -38,99 +36,39 @@
         });
         //  } });
     </script>
-    <script src="{% static 'newswire/js/jquery.sparkline.min.js' %}"></script>
-    <script type="text/javascript">
-        /* <![CDATA[ */
-        $(function() {
-            /** This code runs when everything has been loaded on the page */
-            /* Inline sparklines take their values from the contents of the tag */
-            $('.inlinesparkline').sparkline();
-
-            /* Sparklines can also take their values from the first argument passed to the sparkline() function */
-            var myvalues = [
-                245,
-                235,
-                233,
-                240,
-                248,
-                242,
-                245
-            ];
-            /* The second argument gives options such as specifying you want a bar chart */
-            $('.dynamicbar').sparkline(myvalues, {
-                type: 'line',
-                barColor: 'green'
-            });
-
-        });
-        /* ]]> */
-    </script>
-
-    <h3>Attendance</h3>
+    <br/>
+    <h3>Past Year's Attendance:</h3>
+    <p>{{weekly_attendance}}</p>
     <p>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
         <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
-
-        <div id="line-example"></div>
+        <div id="attendance-chart"></div>
         <script>
-            Morris.Line({
-                element: 'line-example',
+            Morris.Area({
+                element: 'attendance-chart',
                 data: [
-                    {
-                        y: '2016-08-21',
-                        a: 230
-                    }, {
-                        y: '2016-08-14',
-                        a: 225
-                    }, {
-                        y: '2016-08-07',
-                        a: 233
-                    }, {
-                        y: '2016-07-31',
-                        a: 245
-                    }, {
-                        y: '2016-07-24',
-                        a: 238
-                    }, {
-                        y: '2016-07-17',
-                        a: 220
-                    }, {
-                        y: '2016-07-10',
-                        a: 210
-                    }, {
-                        y: '2016-08-18',
-                        b: 210
-                    }, {
-                        y: '2016-08-16',
-                        b: 215
-                    }, {
-                        y: '2016-08-05',
-                        b: 213
-                    }, {
-                        y: '2016-07-30',
-                        b: 215
-                    }, {
-                        y: '2016-07-20',
-                        b: 218
-                    }, {
-                        y: '2016-07-13',
-                        b: 203
-                    }, {
-                        y: '2016-07-11',
-                        b: 200
-                    }
+                    {% for attendance_record in weekly_attendance %}
+                        {
+                            y: '{{attendance_record.date|date:"o-m-d"}}',
+                            a: {{attendance_record.value}},
+                            b: 0,
+                            c: 0,
+                            d: 0,
+                            e: 0
+                        },
+                    {% endfor %}
+
                 ],
                 xkey: 'y',
                 ykeys: [
-                    'a', 'b'
+                    'a', 'b', 'c', 'd', 'e'
                 ],
-                xLabels: ["week"],
+                xLabels: ["date"],
                 labels: [
-                    '2016 Attendance', '2015 Attendance'
+                    'Sunday Morning Service (Children\'s Church)', 'Sunday Morning Service (Chinese)', 'Sunday Morning Service (English)', 'Sunday Morning Service (Nursery)', 'Sunday Morning Service (Preschoolers)'
                 ],
                 ymin: 'auto 200'
             });
         </script>
     </p>
-</p>
 </div>
