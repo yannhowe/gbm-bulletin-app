@@ -34,8 +34,12 @@
                             {% for dataseries in object_list %}
                                 <tr>
                                     <td class="text-center">
-                                        <a href="{%  url 'dataseries_edit' dataseries.id  %}">{{ dataseries.id }}
+                                      {{ dataseries.id }}
+                                        <a href="{%  url 'dataseries_edit' dataseries.id  %}">
                                             <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="{%  url 'dataseries_delete' dataseries.id  %}">
+                                            <i class="text-danger fa fa-trash"></i>
                                         </a>
                                     </td>
                                     <td>{{ dataseries.name }}</td>

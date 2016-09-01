@@ -6,9 +6,9 @@
     <link rel="stylesheet" href="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.css' %}">
 {% endblock %}
 {% block content_sub_header %}
-  <a style="margin-top: -0.8em;" href="{% url 'event_new' %}" type="button" class="btn btn-xs btn-primary">
-    <i class="fa fa-plus"></i>
-    Create New</a>
+    <a style="margin-top: -0.8em;" href="{% url 'event_new' %}" type="button" class="btn btn-xs btn-primary">
+        <i class="fa fa-plus"></i>
+        Create New</a>
 {% endblock %}
 {% block content %}
     <div class="row">
@@ -50,11 +50,17 @@
                         <tbody>
                             {% for event in object_list %}
                                 <tr>
-                                    <td class="text-center">{{ event.id }}</td>
-                                    <td>
-                                        <a href="{%  url 'event_edit' event.id %}">{{ event.title }}
-                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    <td class="text-center">
+                                        {{ event.id }}
+                                        <a href="{%  url 'event_edit' event.id  %}">
+                                            <i class="fa fa-pencil"></i>
                                         </a>
+                                        <a href="{%  url 'event_delete' event.id  %}">
+                                            <i class="text-danger fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{ event.title }}
                                     </td>
                                     <td class="text-right">{{ event.date_start }}</td>
                                     <td class="text-right">{{ event.date_end }}</td>

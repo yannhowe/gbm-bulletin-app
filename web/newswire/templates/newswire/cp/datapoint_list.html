@@ -35,8 +35,12 @@
                             {% for datapoint in object_list %}
                                 <tr>
                                     <td class="text-center">
-                                        <a href="{%  url 'datapoint_edit' datapoint.id  %}">{{ datapoint.id }}
+                                        {{ datapoint.id }}
+                                        <a href="{%  url 'datapoint_edit' datapoint.id  %}">
                                             <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="{%  url 'datapoint_delete' datapoint.id  %}">
+                                            <i class="text-danger fa fa-trash"></i>
                                         </a>
                                     </td>
                                     <td>{{ datapoint.user }}</td>

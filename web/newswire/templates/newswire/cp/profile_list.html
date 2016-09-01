@@ -47,8 +47,12 @@
                             {% for profile in object_list %}
                                 <tr>
                                     <td class="text-center">
-                                        <a href="{%  url 'profile_edit' profile.id  %}">{{ profile.id }}
+                                        {{ profile.id }}
+                                        <a href="{%  url 'profile_edit' profile.id  %}">
                                             <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="{%  url 'profile_delete' profile.id  %}">
+                                            <i class="text-danger fa fa-trash"></i>
                                         </a>
                                     </td>
                                     <td>
