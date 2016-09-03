@@ -82,7 +82,7 @@ class BulletinListView(ListView):
         upcoming_service_print = None
         try:
             upcoming_service_print = OrderOfService.objects.order_by('date').filter(
-                date=coming_sunday).get()
+                date=coming_sunday)[:1].get()
         except OrderOfService.DoesNotExist:
             upcoming_service_print = None
         context['orderofservice_print'] = upcoming_service_print
