@@ -15,7 +15,7 @@ from django.db.models import Q, Sum, F, When, Case
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
-from django.template.loader import select_template, get_template
+from django.template.loader import select_template, get_template, render_to_string
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
@@ -25,6 +25,20 @@ import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from constance import config
+from weasyprint import HTML, CSS
+
+
+class PdfResponseMixin(object, ):
+
+    def render_to_response(self, context, **response_kwargs):
+        context = self.get_context_data()
+        template = self.get_template_names()[0]
+        html_string = render_to_string(template, context)
+        rendered_html = HTML(string=html_string)
+        pdf_file = rendered_html.write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="mypdf.pdf"'
+        return response
 
 
 class BulletinListView(ListView):
@@ -95,8 +109,14 @@ class BulletinListView(ListView):
             order_by=['-publish_start_date', 'publish_end_date'])
         context['announcements'] = published_announcements
         max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
-        context['announcements_print'] = published_announcements[:max_print_annoucements]
-        context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
+        context['announcements_print'] = published_announcements[
+            :max_print_annoucements]
+        context['more_annoucements_online_count'] = published_announcements.count(
+        ) - max_print_annoucements
+
+        context['theme'] = {'this_year_theme': config.THIS_YEAR_THEME,
+                            'this_year_theme_verse': config.THIS_YEAR_THEME_VERSE,
+                            'this_year_theme_year': config.THIS_YEAR_THEME_YEAR}
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = self.get_upcoming_birthdays(all_birthdays, 7)
@@ -171,6 +191,7 @@ class BulletinListView(ListView):
         )[:12]
 
         context['weekly_attendance'] = weekly_attendance
+        context['latest_weekly_attendance'] = weekly_attendance[:1]
 
         try:
             latest_weeklysummary = WeeklySummary.objects.latest('date')
@@ -223,6 +244,21 @@ class BulletinHomePageView(BulletinListView):
 
 class BulletinPrintView(BulletinListView):
     template_name = 'newswire/cp/bulletin_print.html'
+
+
+class BulletinPdfView(PdfResponseMixin, BulletinListView):
+    template_name = 'newswire/cp/bulletin_pdf.html'
+
+    def render_to_response(self, context, **response_kwargs):
+        context = self.get_context_data()
+        template = self.get_template_names()[0]
+        html_string = render_to_string(template, context)
+        rendered_html = HTML(string=html_string)
+        pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(
+            settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="gbm_bulletin.pdf"'
+        return response
 
 
 class OrderOfServiceList(ListView):

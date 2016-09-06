@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-from .views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView
+from .views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView
 from django.contrib.auth.decorators import login_required
 
 
@@ -15,6 +15,9 @@ urlpatterns = (
         name='cp_bulletin_home'),
     url(r'^bulletin/print$', login_required(BulletinPrintView.as_view()),
         name='cp_bulletin_print'),
+    #    url(r'^bulletin/print/pdf$', login_required(BulletinPdfView.as_view()),
+    #        name='cp_bulletin_print'),
+    url(r'^bulletin/print/pdf$', BulletinPdfView.as_view(), name='cp_bulletin_pdf'),
 
     # OrderOfService
     url(r'^bulletin/orderofservice/$',

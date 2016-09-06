@@ -1,9 +1,9 @@
 <div class="text-center">
-    <h2>2016 THEME: {{ config.THIS_YEAR_THEME }}</h2>
+    <h2>{{ theme.this_year_theme_year }} Theme</h2>
     <h3 class="post-subtitle">
-        <strong></strong>
+        <strong>{{theme.this_year_theme}}</strong>
     </h3>
     <p class="text-justified">
-      {{ config.THIS_YEAR_THEME_VERSE|safe }}
+        {{theme.this_year_theme_verse|safe}}
     </p>
 </div>

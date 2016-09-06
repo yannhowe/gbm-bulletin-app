@@ -1,2 +1,3 @@
 FROM python:2.7-onbuild
-# Add Django Admin CSS
+COPY newswire/static/newswire/cp/fonts/Raleway-*.ttf /usr/share/fonts/TTF/
+RUN fc-cache -f -v

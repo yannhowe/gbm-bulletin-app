@@ -249,8 +249,9 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 CONSTANCE_CONFIG = {
     'BULLETIN_WELCOME_MESSAGE': ('Welcome to Grace Baptist Ministries. We\'re glad you\'re with us today! If something you encounter during the worship service moves you to want to know more, there are always leaders up front near the stage at the end of the service to talk to you, pray with you and help you in any way they can. Please also visit our website if you would like more information.', 'Welcome message at the top of the bulletin'),
+    'THIS_YEAR_THEME_YEAR': ('2016', 'The year of the theme you entered below'),
     'THIS_YEAR_THEME': ('Loving Across Our Differences', 'This year\'s theme'),
-    'THIS_YEAR_THEME_VERSE': ('<p class="text-justified"><sup>34</sup>A new commandment I give to you, that you love one another; as I have loved you, that you also love one another. <sup>35</sup>By this all will know that you are My disciples, if you have love for one another.<br /><br />John 13:34-35</p>', 'This year\'s theme verse'),
+    'THIS_YEAR_THEME_VERSE': ('<p class="text-justified"><sup>34</sup> A new commandment I give to you, that you love one another; as I have loved you, that you also love one another. <sup>35</sup> By this all will know that you are My disciples, if you have love for one another.<br /><br />John 13:34-35</p>', 'This year\'s theme verse'),
     'CONTACT_PHONE': ('+65 6745 2887', 'Contact number appearing in footer/bottom of page'),
     'CONTACT_PHONE_URL': ('tel:+6567452887', 'Contact number URL appearing in footer/bottom of page'),
     'CONTACT_EMAIL': ('office@gbm.sg', 'Email address appearing in footer/bottom of page'),

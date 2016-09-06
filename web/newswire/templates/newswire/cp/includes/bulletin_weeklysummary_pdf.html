@@ -1,0 +1,44 @@
+{% load staticfiles %}
+{% load humanize %}
+<h2 class="text-center">Weekly Summary</h2>
+<div class="post-preview">
+    <p>
+        <strong>
+            {{ building_fund_received.date|date:"o" }} Building Fund Progress:
+        </strong>
+    </p>
+    <p class="small">Giving through
+        {{ building_fund_received.date|date:"j M, o" }}
+        was
+        <strong>${{building_fund_received_ytd|floatformat:"0"|intcomma}}</strong>
+        out of
+        <strong>${{building_fund_pledged_ytd|floatformat:"0"|intcomma }}</strong>
+        pledged year to date which puts us
+        {{ahead_or_behind}}
+        by about
+        <strong>${{building_pledge_received_difference|floatformat:"0"|intcomma}}</strong>. We'll need to receive
+        <strong>${{building_goal_received_difference|floatformat:"0"|intcomma}}</strong>
+        by the end of the year to meet our building fund goal of
+        <strong>${{building_goal|floatformat:"0"|intcomma}}</strong>
+        this year.
+    </p>
+    {% for attendance in latest_weekly_attendance %}
+        <p>
+            <strong>
+                Attendance ({{attendance.date|date:"d/m/o"}}):
+            </strong>
+        </p>
+        English Service:
+        <strong>{{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        &bull; Chinese Service:
+        <strong>{{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        &bull; Children's Church:
+        <strong>{{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        &bull; Preschoolers:
+        <strong>{{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        &bull; Nursery:
+        <strong>{{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        &bull;
+    </p>
+{% endfor %}
+</div>
