@@ -45,7 +45,7 @@
                         Home</a>
                 </li>
             </ul>
-        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklysummary' in request.path or 'category' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklyverse' in request.path or 'category' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-newspaper-o"></i>
                 <span>Bulletin</span>
@@ -61,11 +61,6 @@
                     <a href="{%  url 'announcement_list' %}">
                         <i class="fa fa-thumb-tack"></i>
                         Announcements</a>
-                </li>
-                <li class="{% if 'weeklysummary' in request.path %}active{% endif %}">
-                    <a href="{%  url 'weeklysummary_list' %}">
-                        <i class="fa fa-line-chart"></i>
-                        Weekly Summary</a>
                 </li>
                 <li class="{% if 'category' in request.path %}active{% endif %}">
                     <a href="{%  url 'category_list' %}">
