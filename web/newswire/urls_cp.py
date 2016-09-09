@@ -110,8 +110,6 @@ urlpatterns = (
 
 
     # WeeklyVerse
-    url(r'^weeklyverse/summary/$',
-        views.WeeklyVerseList.as_view(), name='weeklyverse_summary'),
     url(r'^weeklyverse/$',
         views.WeeklyVerseList.as_view(), name='weeklyverse_list'),
     url(r'^weeklyverse/new$',
@@ -124,12 +122,14 @@ urlpatterns = (
 
 
     # Attendance Input
+    url(r'^attendance/summary/$',
+        views.AttendanceSummary.as_view(), name='attendance_summary'),
     url(r'^attendance/$',
-        views.DataPointList.as_view(), name='attendance_list'),
+        views.AttendanceList.as_view(), name='attendance_list'),
     url(r'^attendance/new$',
-        views.DataPointCreate.as_view(), name='attendance_new'),
+        views.AttendanceCreate.as_view(), name='attendance_new'),
     url(r'^attendance/edit/(?P<pk>\d+)$',
-        views.DataPointUpdate.as_view(), name='attendance_edit'),
+        views.AttendanceUpdate.as_view(), name='attendance_edit'),
     url(r'^attendance/delete/(?P<pk>\d+)$',
-        views.DataPointDelete.as_view(), name='attendance_delete'),
+        views.AttendanceDelete.as_view(), name='attendance_delete'),
 )

@@ -1,0 +1,94 @@
+{% extends "newswire/cp/__base.html" %}
+{% load humanize %}
+{% load staticfiles %}
+{% block header_title %}Attendance Summary - Grace Baptist Ministries{% endblock %}
+{% block content_header %}Attendance Summary{% endblock %}
+{% block header_includes %}
+    <link rel="stylesheet" href="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.css' %}">
+{% endblock %}
+{% block content_sub_header %}
+    <a style="margin-top: -0.8em;" href="{% url 'attendance_new' %}" type="button" class="btn btn-xs btn-primary">
+        <i class="fa fa-plus"></i>
+        Create New</a>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            {% for attendance in latest_weekly_attendance %}
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Last Week ({{attendance.date|date:"d-m-o"}})</h3>
+                    </div>
+                    <div class="box-body">
+                        <p>
+                            <ul>
+                                <li>English Service:
+                                    {{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Chinese Service:
+                                    {{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Children's Church:
+                                    {{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Pre-Schoolers:
+                                    {{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Nursery:
+                                    {{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Trend</h3>
+                </div>
+                <div class="box-body">
+                    <script>
+                        $(function() {
+                            $('[data-toggle="tooltip"]').tooltip({trigger: 'manual'}).tooltip('show');
+                        });
+
+                        // $( window ).scroll(function() { if($( window ).scrollTop() > 10){  // scroll down abit and get the action
+                        $(".progress-bar").each(function() {
+                            each_bar_width = $(this).attr('aria-valuenow');
+                            $(this).width(each_bar_width + '%');
+                        });
+                        //  } });
+                    </script>
+                    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+                    <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
+                    <p>
+                        <div id="attendance-chart"></div>
+                        <script>
+                            Morris.Area({
+                                element: 'attendance-chart',
+                                data: [
+                                    {% for attendance in weekly_attendance %}
+                                        {
+                                            y: '{{attendance.date|date:"o-m-d"}}',
+                                            a: '{{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            b: '{{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            c: '{{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            d: '{{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            e: '{{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}'
+                                        },{% endfor %}
+                                ],
+                                xkey: 'y',
+                                ykeys: [
+                                    'a', 'b', 'c', 'd', 'e'
+                                ],
+                                xLabels: ["day"],
+                                labels: [
+                                    'Nursery', 'Preschoolers', 'Children\'s Church', 'Chinese Congregation', 'English Congregation'
+                                ],
+                                ymin: 'auto 200'
+                            });
+                        </script>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_includes %}{% endblock %}

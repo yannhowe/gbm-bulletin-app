@@ -19,7 +19,7 @@
     {% regroup signups by event as signup_list_by_event %}
     {% for event in signup_list_by_event %}
         <div class="box box-default collapsed-box">
-            <div class="box-header">
+            <div class="box-header with-border">
                 <h3 class="box-title">{{ event.grouper.title }}</h3>
                 <p>
                     <strong>{{ event.grouper.date_display }}

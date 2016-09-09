@@ -1,0 +1,174 @@
+{% extends "newswire/cp/__base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block header_title %}Update Attendance - Grace Baptist Ministries{% endblock %}
+{% block content_header %}Update Attendance{% endblock %}
+{% block content_sub_header %}{% endblock %}
+
+{% block header_includes %}
+    <link href="http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Attendance Update</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <style>
+                [id^=ex] .slider-selection {
+                    background: #BABABA;
+                }
+                table.slider-table > tbody > tr > td,
+                thead > tr > th {
+                    padding: 2em 0;
+                    text-align: center;
+                }
+
+            </style>
+            <table class="table slider-table">
+                <thead>
+                    <tr>
+                        <th>Group</th>
+                        <th>Attendance</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>
+                        <strong>English Service:
+                            <span id="ex1CurrentSliderValLabel">
+                                <span id="ex1SliderVal">0</span>
+                            </span>
+                        </strong>
+                    </td>
+                    <td>
+                        <input id="ex1" class="slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Chinese Service:
+                        <span id="ex2CurrentSliderValLabel">
+                            <span id="ex2SliderVal">0</span>
+                        </span>
+                    </strong>
+                    </td>
+                    <td>
+                        <input id="ex2" class="slider" data-slider-id='ex2Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Children's Church:
+                        <span id="ex3CurrentSliderValLabel">
+                            <span id="ex3SliderVal">0</span>
+                        </span>
+                    </strong>
+                    </td>
+                    <td><input id="ex3" class="slider" data-slider-id='ex3Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Preschoolers:
+                        <span id="ex4CurrentSliderValLabel">
+                            <span id="ex4SliderVal">0</span>
+                        </span>
+                    </strong>
+                    </td>
+                    <td><input id="ex4" class="slider" data-slider-id='ex4Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Nursery:
+                        <span id="ex5CurrentSliderValLabel">
+                            <span id="ex5SliderVal">0</span>
+                        </span>
+                    </strong>
+                    </td>
+                    <td>
+                        <input id="ex5" class="slider" data-slider-id='ex5Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                <strong>Update Attendance</strong>
+            </a>
+        </h3>
+        <div class="box-tools pull-right">
+            <!-- Buttons, labels, and many other things can be placed here! -->
+            <!-- Here is a label for example -->
+            <span class="label label-primary"></span>
+        </div>
+        <!-- /.box-tools -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        {% crispy form %}
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer"></div>
+    <!-- box-footer -->
+</div>
+{% endblock %}
+
+{% block footer_includes %}
+<script src="{% static 'newswire/cp/js/bootstrap-colorpicker.min.js' %}"></script>
+<script type='text/javascript' src="http://seiyria.com/bootstrap-slider/dependencies/js/jquery.min.js"></script>
+<script type='text/javascript' src="http://seiyria.com/bootstrap-slider/js/bootstrap-slider.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#ex1').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+        $("#ex1").on("slide", function(slideEvt) {
+            $("#ex1SliderVal").text(slideEvt.value);
+        });
+
+        $('#ex2').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+        $("#ex2").on("slide", function(slideEvt) {
+            $("#ex2SliderVal").text(slideEvt.value);
+        });
+        $('#ex3').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+        $("#ex3").on("slide", function(slideEvt) {
+            $("#ex3SliderVal").text(slideEvt.value);
+        });
+        $('#ex4').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+        $("#ex4").on("slide", function(slideEvt) {
+            $("#ex4SliderVal").text(slideEvt.value);
+        });
+        $('#ex5').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+        $("#ex5").on("slide", function(slideEvt) {
+            $("#ex5SliderVal").text(slideEvt.value);
+        });
+    });
+</script>
+{% endblock %}

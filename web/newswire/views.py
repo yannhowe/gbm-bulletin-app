@@ -476,9 +476,60 @@ class DataPointDelete(DeleteView):
     template_name = 'newswire/cp/datapoint_confirm_delete.html'
 
 
+class AttendanceSummary(ListView):
+    queryset = DataPoint.objects.filter(
+        dataseries__name__contains="Sunday Morning Service").order_by('-date')
+    template_name = 'newswire/cp/attendance_summary.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AttendanceSummary, self).get_context_data(**kwargs)
+        messages.info(self.request, '')
+        now = datetime.datetime.now()
+        today = datetime.datetime.today()
+        current_year = datetime.datetime.now().year
+
+        weekly_attendance_nursery = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Nursery)").order_by('-date').annotate(weekly_attendance_nursery=F('value')).values('date', 'weekly_attendance_nursery')
+        weekly_attendance_preschoolers = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Preschoolers)").order_by('-date').annotate(weekly_attendance_preschoolers=F('value')).values('date', 'weekly_attendance_preschoolers')
+        weekly_attendance_childrens_church = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Children\'s Church)").order_by('-date').annotate(weekly_attendance_childrens_church=F('value')).values('date', 'weekly_attendance_childrens_church')
+        weekly_attendance_chinese = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (Chinese)").order_by('-date').annotate(weekly_attendance_chinese=F('value')).values('date', 'weekly_attendance_chinese')
+        weekly_attendance_english = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service (English)").order_by('-date').annotate(weekly_attendance_english=F('value')).values('date', 'weekly_attendance_english')
+        weekly_attendance_all = DataPoint.objects.filter(
+            dataseries__name__contains="Sunday Morning Service").all()
+
+        weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service").values('date').order_by('-date').annotate(
+            weekly_attendance_nursery=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Nursery)', then='value'))),
+            weekly_attendance_preschoolers=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Preschoolers)', then='value'))),
+            weekly_attendance_childrens_church=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Children\'s Church)', then='value'))),
+            weekly_attendance_chinese=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Chinese)', then='value'))),
+            weekly_attendance_english=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (English)', then='value'))),
+            total_attendance=Sum('value')
+        )[:24]
+
+        context['weekly_attendance'] = weekly_attendance
+        context['latest_weekly_attendance'] = weekly_attendance[:1]
+
+        return context
+
+    def get_queryset(self):
+        # do not show archived instances.
+        qs = super(ListView, self).get_queryset()
+        return qs
+
+
 class AttendanceList(ListView):
     # Filter for attendance objects
-    queryset = DataPoint.objects.all()
+    queryset = DataPoint.objects.filter(
+        dataseries__name__contains="Sunday Morning Service").order_by('-date')
     template_name = 'newswire/cp/attendance_list.html'
 
 

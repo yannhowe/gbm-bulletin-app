@@ -1,4 +1,7 @@
 {% load staticfiles %}
+{% url 'attendance_list' as attendance_list %}
+{% url 'attendance_summary' as attendance_summary %}
+
 <!-- sidebar: style can be found in sidebar.less -->
 <section class="sidebar">
     <!-- Sidebar user panel -->
@@ -125,7 +128,7 @@
         <li class="{% if 'datapoint' in request.path or 'dataseries' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-database"></i>
-                <span>Data</span>
+                <span>Raw Data</span>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
@@ -141,22 +144,22 @@
                 </li>
             </ul>
         </li>
-        <li class="{% if 'attendance' in request.path %}active{% endif %} treeview hidden">
+        <li class="{% if 'attendance' in request.path %}active{% endif %} treeview">
             <a href="#">
-                <i class="fa fa-users"></i>
+                <i class="fa fa-check-square-o" aria-hidden="true"></i>
                 <span>Attendance</span>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-                <li class="{% if 'attendance' and not 'summary' in request.path %}active{% endif %}">
-                    <a href="{% url 'datapoint_list' %}">
-                        <i class="fa fa-file-text"></i>
-                        Records</a>
+                <li class="{% ifequal request.path attendance_summary %}active{% endifequal %}">
+                    <a href="{% url 'attendance_summary' %}">
+                        <i class="fa fa-line-chart"></i>
+                        Attendance Summary</a>
                 </li>
-                <li class="{% if 'attendance' and not 'summary' in request.path %}active{% endif %}">
-                    <a href="{% url 'datapoint_new' %}">
-                        <i class="fa fa-plus"></i>
-                        Add Record</a>
+                <li class="{% ifequal request.path attendance_list %}active{% endifequal %}">
+                    <a href="{% url 'attendance_list' %}">
+                        <i class="fa fa-file-text"></i>
+                        Raw Attendance Data</a>
                 </li>
             </ul>
         </li>

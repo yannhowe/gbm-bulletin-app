@@ -1,67 +1,61 @@
 {% extends "newswire/cp/__base.html" %}
+{% load humanize %}
 {% load staticfiles %}
-{% block header_title %}DataPoint List - Grace Baptist Ministries{% endblock %}
-{% block content_header %}DataPoint List{% endblock %}
+{% block header_title %}Attendance List - Grace Baptist Ministries{% endblock %}
+{% block content_header %}Attendance List{% endblock %}
 {% block header_includes %}
     <link rel="stylesheet" href="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.css' %}">
 {% endblock %}
 {% block content_sub_header %}
-    <a style="margin-top: -0.8em;" href="{% url 'datapoint_new' %}" type="button" class="btn btn-xs btn-primary">
+    <a style="margin-top: -0.8em;" href="{% url 'attendance_new' %}" type="button" class="btn btn-xs btn-primary">
         <i class="fa fa-plus"></i>
         Create New</a>
 {% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-xs-12">
-            <div class="box">
+            <div class="box ">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Member List</h3>
+                    <h3 class="box-title">Raw Data</h3>
                 </div>
                 <div class="box-body">
                     <table id="memberlist" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Created By</th>
-                                <th>Value</th>
                                 <th>Date</th>
-                                <th>Data Series</th>
-                                <th>Added</th>
+                                <th>Group</th>
+                                <th>Attendance</th>
                                 <th>Last Updated</th>
+                                <th>Added By</th>
                                 <th>Notes</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for datapoint in object_list %}
+                            {% for attendance in object_list %}
                                 <tr>
-                                    <td class="text-center">
-                                        {{ datapoint.id }}
-                                        <a href="{%  url 'datapoint_edit' datapoint.id  %}">
+                                    <td>{{ attendance.date|date:"o-m-d" }}
+                                        <a href="{%  url 'attendance_edit' attendance.id  %}">
                                             <i class="fa fa-pencil"></i>
                                         </a>
-                                        <a href="{%  url 'datapoint_delete' datapoint.id  %}">
+                                        <a href="{%  url 'attendance_delete' attendance.id  %}">
                                             <i class="text-danger fa fa-trash"></i>
                                         </a>
                                     </td>
-                                    <td>{{ datapoint.user }}</td>
-                                    <td>{{ datapoint.value }}</td>
-                                    <td>{{ datapoint.date }}</td>
-                                    <td>{{ datapoint.dataseries }}</td>
-                                    <td>{{ datapoint.date_added }}</td>
-                                    <td>{{ datapoint.date_updated }}</td>
-                                    <td>{{ datapoint.notes }}</td>
+                                    <td>{{ attendance.dataseries }}</td>
+                                    <td>{{ attendance.value|default_if_none:"0"|floatformat:"0"|intcomma }}</td>
+                                    <td>{{ attendance.date_updated }}</td>
+                                    <td>{{ attendance.user }}</td>
+                                    <td>{{ attendance.notes }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>#</th>
-                                <th>Created By</th>
-                                <th>Value</th>
                                 <th>Date</th>
-                                <th>Data Series</th>
-                                <th>Added</th>
+                                <th>Group</th>
+                                <th>Attendance</th>
                                 <th>Last Updated</th>
+                                <th>Added By</th>
                                 <th>Notes</th>
                             </tr>
                         </tfoot>
@@ -75,7 +69,11 @@
 {% block footer_includes %}
     <script>
         $(document).ready(function() {
-            $('#memberlist').DataTable({"paging": false, "scrollX": true});
+            $('#memberlist').DataTable({
+                "paging": true,
+                "scrollX": true,
+                "order": [3, 'desc']
+            });
         });
     </script>
     <script src="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.js' %}"></script>
