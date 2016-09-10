@@ -1,3 +1,5 @@
+{% load newswire_extras %}
+
 <h2 class="text-center">Upcoming Events</h2>
 <table class="table">
     <tbody>
@@ -7,7 +9,7 @@
                     <strong>{{ event.title }}</strong>
                 </td>
                 <td class="text-left col-xs-6">
-                    <i>{{ event.date_display }}</i>
+                    <i>{% format_date_range event.date_start event.date_end %}</i>
                     {% if request.user.is_authenticated %}
                         {% if event.track_rsvp %}
                             {% for signup in signups %}
@@ -35,7 +37,7 @@
                                         <div class="modal-body">
                                             <p>
                                                 <strong>Date:</strong>
-                                                {{ event.date_display }}
+                                                {% format_date_range event.date_start event.date_end %}
                                             </p>
                                             <p>
                                                 {{ event.description }}

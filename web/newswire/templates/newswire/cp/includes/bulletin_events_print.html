@@ -7,7 +7,7 @@
                     <strong>{{ event.title }}</strong>
                 </td>
                 <td class="text-left col-xs-6">
-                    <i>{{ event.date_display }}</i>
+                    <i>{% format_date_range event.date_start event.date_end %}</i>
                 </td>
             </tr>
         {% endfor %}
