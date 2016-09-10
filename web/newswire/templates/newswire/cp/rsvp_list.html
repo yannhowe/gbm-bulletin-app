@@ -1,4 +1,5 @@
 {% extends 'newswire/cp/__base.html' %}
+{% load newswire_extras %}
 
 {% block header_title %}Event Responses - Grace Baptist Ministries{% endblock %}
 {% block content_header %}Responses{% endblock %}
@@ -22,7 +23,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">{{ event.grouper.title }}</h3>
                 <p>
-                    <strong>{{ event.grouper.date_display }}
+                    <strong>{% format_date_range event.grouper.date_start event.grouper.date_end %}
                         &bull;
                         {{ event.list|length }}
                         Response{%if event.list|length < 1 %}s{%endif%}

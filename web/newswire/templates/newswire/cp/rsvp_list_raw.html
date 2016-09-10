@@ -1,4 +1,5 @@
 {% extends 'newswire/cp/__base.html' %}
+{% load newswire_extras %}
 
 
 {% block header_title %}Event Signup Data - Grace Baptist Ministries{% endblock %}
@@ -22,7 +23,7 @@
     {% for rsvp in signups %}
       <tr>
         <td>{{ rsvp.event.title }}
-          {{ rsvp.event.date_display }}</td>
+          {% format_date_range rsvp.event.date_start rsvp.event.date_end %}</td>
         <td>
           <strong>{{ rsvp.user.last_name }}</strong>
           {{ rsvp.user.first_name }}</td>
