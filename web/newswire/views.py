@@ -45,13 +45,19 @@ class BulletinListView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
 
-    def get_upcoming_birthdays(self, person_list, days):
+    def get_coming_sunday(self, date):
+        # coming sunday's date
+        coming_sunday = date
+        while coming_sunday.weekday() != 6:
+            coming_sunday += datetime.timedelta(1)
+        return coming_sunday
+
+    def get_upcoming_birthdays(self, person_list, days, from_date=datetime.datetime.today()):
         person_list = person_list.distinct()  # ensure persons are only in the list once
-        today = datetime.datetime.today()
         doblist = []
         doblist.extend(list(person_list.filter(
-            date_of_birth__month=today.month, date_of_birth__day=today.day)))
-        next_day = today + datetime.timedelta(days=1)
+            date_of_birth__month=from_date.month, date_of_birth__day=from_date.day)))
+        next_day = from_date + datetime.timedelta(days=1)
         for day in range(0, days):
             doblist.extend(list(person_list.filter(
                 date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
@@ -81,9 +87,7 @@ class BulletinListView(ListView):
         current_year = datetime.datetime.now().year
 
         # coming sunday's date
-        coming_sunday = datetime.date.today()
-        while coming_sunday.weekday() != 6:
-            coming_sunday += datetime.timedelta(1)
+        coming_sunday = self.get_coming_sunday(today)
 
         upcoming_service = None
         try:
@@ -120,6 +124,7 @@ class BulletinListView(ListView):
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = self.get_upcoming_birthdays(all_birthdays, 7)
+        context['birthdays_after_coming_sunday'] = self.get_upcoming_birthdays(all_birthdays, 7, coming_sunday)
 
         building_fund_received_ytd = None
         try:

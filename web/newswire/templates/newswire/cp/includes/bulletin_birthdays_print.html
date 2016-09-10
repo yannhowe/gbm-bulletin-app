@@ -1,6 +1,6 @@
 <h2 class="text-center">Birthday Greetings</h2>
 <p class="text-justify">
-    {% regroup birthdays by date_of_birth as birthdays_by_date %}
+    {% regroup birthdays_after_coming_sunday by date_of_birth as birthdays_by_date %}
     {% for date in birthdays_by_date %}
         <strong>{{ date.grouper|date:"j/m" }}:</strong>
         {% for person in date.list %}
