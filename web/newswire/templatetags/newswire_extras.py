@@ -5,7 +5,7 @@ register = template.Library()
 # From https://gist.github.com/ncherro/5358040
 @register.simple_tag
 def format_date_range(date_from, date_to, separator=" - ",
-    format_str="%d %b %Y", year_f="%Y", month_f="%b", date_f=" %d"):
+    format_str="%-d %b %Y", year_f="%Y", month_f="%b", date_f=" %-d"):
     """ Takes a start date, end date, separator and formatting strings and
         returns a pretty date range string
     """
