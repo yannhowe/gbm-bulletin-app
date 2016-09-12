@@ -115,6 +115,7 @@ class AttendanceForm(ModelForm):
     class Meta:
         model = DataPoint
         fields = '__all__'
+        exclude = ["user"]
 
 
 class DataSeriesForm(ModelForm):
