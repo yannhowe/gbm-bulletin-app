@@ -19,20 +19,20 @@
                     <h3 class="box-title">Recent Attendance</h3>
                 </div>
                 <div class="box-body">
-                    {% for attendance in latest_weekly_attendance %}
+                    {% for attendance in recent_sunday_attendance %}
                         <p>
                             <strong>{{attendance.date|date:"d-m-o (D)"}}</strong>
                             <ul>
                                 <li>English Service:
-                                    {{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    {{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                                 <li>Chinese Service:
-                                    {{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    {{attendance.chinese_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                                 <li>Children's Church:
-                                    {{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    {{attendance.childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                                 <li>Pre-Schoolers:
-                                    {{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    {{attendance.preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                                 <li>Nursery:
-                                    {{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                             </ul>
                         </p>
                     {% endfor %}
@@ -64,14 +64,14 @@
                             Morris.Area({
                                 element: 'attendance-chart',
                                 data: [
-                                    {% for attendance in weekly_attendance %}
+                                    {% for attendance in graph_sunday_attendance %}
                                         {
                                             y: '{{attendance.date|date:"o-m-d"}}',
-                                            a: '{{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}',
-                                            b: '{{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}',
-                                            c: '{{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}',
-                                            d: '{{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}',
-                                            e: '{{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}'
+                                            a: '{{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            b: '{{attendance.preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            c: '{{attendance.childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            d: '{{attendance.chinese_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}',
+                                            e: '{{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}'
                                         },{% endfor %}
                                 ],
                                 xkey: 'y',

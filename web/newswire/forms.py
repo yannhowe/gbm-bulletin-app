@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, Event, Profile, DataPoint, DataSeries, WeeklyVerse
+from models import OrderOfService, Announcement, Category, Event, Profile, DataPoint, DataSeries, WeeklyVerse, SundayAttendance
 
 
 class ProfileFormFrontEnd(ModelForm):
@@ -155,6 +155,24 @@ class WeeklyVerseForm(ModelForm):
         model = WeeklyVerse
         fields = '__all__'
 
+
+class SundayAttendanceForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SundayAttendanceForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "weeklyverse_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = SundayAttendance
+        fields = '__all__'
 
 class OrderOfServiceForm(forms.ModelForm):
 

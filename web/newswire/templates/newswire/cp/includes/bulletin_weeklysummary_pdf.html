@@ -22,22 +22,22 @@
         <strong>${{building_goal|floatformat:"0"|intcomma}}</strong>
         this year.
     </p>
-    {% for attendance in latest_weekly_attendance %}
+    {% for attendance in latest_sunday_attendance %}
         <p>
             <strong>
                 Attendance ({{attendance.date|date:"d/m/o"}}):
             </strong>
         </p>
         English Service:
-        <strong>{{attendance.weekly_attendance_english|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        <strong>{{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
         &bull; Chinese Service:
-        <strong>{{attendance.weekly_attendance_chinese|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        <strong>{{attendance.chinese_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
         &bull; Children's Church:
-        <strong>{{attendance.weekly_attendance_childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        <strong>{{attendance.childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
         &bull; Preschoolers:
-        <strong>{{attendance.weekly_attendance_preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        <strong>{{attendance.preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
         &bull; Nursery:
-        <strong>{{attendance.weekly_attendance_nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
+        <strong>{{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</strong>
     </p>
 {% endfor %}
 </div>

@@ -252,6 +252,19 @@ class Relationship(models.Model):
         return '%s, %s, %s' % (self.person, self.member, self.relationship)
 
 
+class SundayAttendance(models.Model):
+    date = models.DateField(default=datetime.now)
+    english_congregation = models.PositiveSmallIntegerField(default=0)
+    chinese_congregation = models.PositiveSmallIntegerField(default=0)
+    childrens_church = models.PositiveSmallIntegerField(default=0)
+    preschoolers = models.PositiveSmallIntegerField(default=0)
+    nursery = models.PositiveSmallIntegerField(default=0)
+    notes = models.TextField(max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        return '%s' % (self.date)
+
+
 class DataSeries(models.Model):
     ATTENDANCE = 'Attendance'
     FINANCIAL = 'Financial'

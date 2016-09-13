@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm
-from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, SundayAttendanceForm
+from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse, SundayAttendance
 # from datetime import datetime, timedelta
 import datetime
 from django import template
@@ -215,35 +215,9 @@ class BulletinListView(ListView):
         context['building_goal_received_percent'] = building_fund_received.value / \
             building_goal.value * 100
 
-        weekly_attendance_nursery = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Nursery)").order_by('-date').annotate(weekly_attendance_nursery=F('value')).values('date', 'weekly_attendance_nursery')
-        weekly_attendance_preschoolers = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Preschoolers)").order_by('-date').annotate(weekly_attendance_preschoolers=F('value')).values('date', 'weekly_attendance_preschoolers')
-        weekly_attendance_childrens_church = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Children\'s Church)").order_by('-date').annotate(weekly_attendance_childrens_church=F('value')).values('date', 'weekly_attendance_childrens_church')
-        weekly_attendance_chinese = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Chinese)").order_by('-date').annotate(weekly_attendance_chinese=F('value')).values('date', 'weekly_attendance_chinese')
-        weekly_attendance_english = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (English)").order_by('-date').annotate(weekly_attendance_english=F('value')).values('date', 'weekly_attendance_english')
-        weekly_attendance_all = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service").all()
-
-        weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service").values('date').order_by('-date').annotate(
-            weekly_attendance_nursery=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Nursery)', then='value'))),
-            weekly_attendance_preschoolers=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Preschoolers)', then='value'))),
-            weekly_attendance_childrens_church=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Children\'s Church)', then='value'))),
-            weekly_attendance_chinese=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Chinese)', then='value'))),
-            weekly_attendance_english=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (English)', then='value'))),
-            total_attendance=Sum('value')
-        )[:12]
-
-        context['weekly_attendance'] = weekly_attendance
-        context['latest_weekly_attendance'] = weekly_attendance[:1]
+        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:4]
+        context['latest_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:1]
 
         try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
@@ -498,66 +472,24 @@ class DataPointDelete(SuperUserRequiredMixin, DeleteView):
 
 
 class AttendanceSummary(StaffRequiredMixin, ListView):
-    queryset = DataPoint.objects.filter(
-        dataseries__name__contains="Sunday Morning Service").order_by('-date')
+    queryset = SundayAttendance.objects.all()
     template_name = 'newswire/cp/attendance_summary.html'
 
     def get_context_data(self, **kwargs):
         context = super(AttendanceSummary, self).get_context_data(**kwargs)
-        messages.info(self.request, '')
-        now = datetime.datetime.now()
-        today = datetime.datetime.today()
-        current_year = datetime.datetime.now().year
-
-        weekly_attendance_nursery = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Nursery)").order_by('-date').annotate(weekly_attendance_nursery=F('value')).values('date', 'weekly_attendance_nursery', 'pk')
-        weekly_attendance_preschoolers = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Preschoolers)").order_by('-date').annotate(weekly_attendance_preschoolers=F('value')).values('date', 'weekly_attendance_preschoolers')
-        weekly_attendance_childrens_church = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Children\'s Church)").order_by('-date').annotate(weekly_attendance_childrens_church=F('value')).values('date', 'weekly_attendance_childrens_church')
-        weekly_attendance_chinese = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Chinese)").order_by('-date').annotate(weekly_attendance_chinese=F('value')).values('date', 'weekly_attendance_chinese')
-        weekly_attendance_english = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (English)").order_by('-date').annotate(weekly_attendance_english=F('value')).values('date', 'weekly_attendance_english')
-        weekly_attendance_all = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service").all()
-
-        weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service").values('date').order_by('-date').annotate(
-            weekly_attendance_nursery=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Nursery)', then='value'))),
-            weekly_attendance_nursery_id=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Nursery)', then='pk'))),
-            weekly_attendance_preschoolers=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Preschoolers)', then='value'))),
-            weekly_attendance_childrens_church=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Children\'s Church)', then='value'))),
-            weekly_attendance_chinese=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (Chinese)', then='value'))),
-            weekly_attendance_english=Sum(Case(When(
-                dataseries__name__contains='Sunday Morning Service (English)', then='value'))),
-            total_attendance=Sum('value')
-        )[:24]
-
-        context['weekly_attendance'] = weekly_attendance
-        context['latest_weekly_attendance'] = weekly_attendance[:5]
-
+        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:4]
         return context
-
-    def get_queryset(self):
-        # do not show archived instances.
-        qs = super(ListView, self).get_queryset()
-        return qs
 
 
 class AttendanceList(StaffRequiredMixin, ListView):
     # Filter for attendance objects
-    queryset = DataPoint.objects.filter(
-        dataseries__name__contains="Sunday Morning Service").order_by('-date')
+    queryset = SundayAttendance.objects.order_by('-date')
     template_name = 'newswire/cp/attendance_list.html'
 
 
 class AttendanceCreate(StaffRequiredMixin, CreateView):
-    model = DataPoint
+    model = SundayAttendance
     success_url = reverse_lazy('attendance_new')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
@@ -571,14 +503,14 @@ class AttendanceCreate(StaffRequiredMixin, CreateView):
 
 
 class AttendanceUpdate(StaffRequiredMixin, UpdateView):
-    model = DataPoint
+    model = SundayAttendance
     success_url = reverse_lazy('attendance_list')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
 
 class AttendanceDelete(StaffRequiredMixin, DeleteView):
-    model = DataPoint
+    model = SundayAttendance
     success_url = reverse_lazy('attendance_list')
     template_name = 'newswire/cp/attendance_confirm_delete.html'
 

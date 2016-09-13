@@ -31,7 +31,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for attendance in object_list %}
+                            {% for attendance in graph_sunday_attendance %}
                                 <tr>
                                     <td>{{ attendance.date|date:"o-m-d" }}
                                         <a href="{%  url 'attendance_edit' attendance.id  %}">
