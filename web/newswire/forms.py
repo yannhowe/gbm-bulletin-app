@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, WeeklySummary, Event, Profile, DataPoint, DataSeries, WeeklyVerse
+from models import OrderOfService, Announcement, Category, Event, Profile, DataPoint, DataSeries, WeeklyVerse
 
 
 class ProfileFormFrontEnd(ModelForm):
@@ -115,7 +115,7 @@ class AttendanceForm(ModelForm):
     class Meta:
         model = DataPoint
         fields = '__all__'
-        exclude = ["user"]
+        # exclude = ["user"]
 
 
 class DataSeriesForm(ModelForm):
@@ -224,29 +224,6 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name', 'description', 'color']
-
-
-class WeeklySummaryForm(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(WeeklySummaryForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            PrependedText('date', '<i class="fa fa-calendar"></i>',
-                          css_class="dateinput"),
-            Field('attendance', 'tithe_amt', 'building_amt', 'building_pledge_form_amt',
-                  'monthly_loan_servicing_amt', 'c1_title', 'c1_amt', 'c2_title', 'c2_amt', 'c3_title', 'c3_amt'),
-            FormActions(
-                Submit('save', 'Save changes'),
-                HTML(
-                    '<a class="btn" href={% url "weeklysummary_list" %}>Cancel</a>'),
-            )
-        )
-
-    class Meta:
-        model = WeeklySummary
-        fields = ['date', 'attendance', 'tithe_amt', 'building_amt', 'building_pledge_form_amt',
-                  'monthly_loan_servicing_amt', 'c1_title', 'c1_amt', 'c2_title', 'c2_amt', 'c3_title', 'c3_amt']
 
 
 class EventForm(forms.ModelForm):

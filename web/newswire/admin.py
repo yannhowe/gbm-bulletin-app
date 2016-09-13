@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Announcement, Category, Setting, WeeklySummary, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group, WeeklyVerse
+from .models import Announcement, Category, Setting, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group, WeeklyVerse
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -61,19 +61,6 @@ class SettingAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(Setting, SettingAdmin)
-
-
-class WeeklySummaryResource(resources.ModelResource):
-
-    class Meta:
-        model = WeeklySummary
-
-
-class WeeklySummaryAdmin(ImportExportModelAdmin):
-    resource_class = WeeklySummaryResource
-    pass
-
-admin.site.register(WeeklySummary, WeeklySummaryAdmin)
 
 
 class ReadAnnouncementResource(resources.ModelResource):

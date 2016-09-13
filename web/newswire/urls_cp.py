@@ -49,16 +49,6 @@ urlpatterns = (
     url(r'^bulletin/category/delete/(?P<pk>\d+)$',
         views.CategoryDelete.as_view(), name='category_delete'),
 
-    # WeeklySummary
-    url(r'^bulletin/weeklysummary/$',
-        views.WeeklySummaryList.as_view(), name='weeklysummary_list'),
-    url(r'^bulletin/weeklysummary/new$',
-        views.WeeklySummaryCreate.as_view(), name='weeklysummary_new'),
-    url(r'^bulletin/weeklysummary/edit/(?P<pk>\d+)$',
-        views.WeeklySummaryUpdate.as_view(), name='weeklysummary_edit'),
-    url(r'^bulletin/weeklysummary/delete/(?P<pk>\d+)$',
-        views.WeeklySummaryDelete.as_view(), name='weeklysummary_delete'),
-
     # Event
     url(r'^bulletin/event/$',
         views.EventList.as_view(), name='event_list'),

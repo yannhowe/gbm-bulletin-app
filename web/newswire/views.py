@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, WeeklySummaryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm
-from .models import Announcement, Category, WeeklySummary, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm
+from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse
 # from datetime import datetime, timedelta
 import datetime
 from django import template
@@ -246,12 +246,6 @@ class BulletinListView(ListView):
         context['latest_weekly_attendance'] = weekly_attendance[:1]
 
         try:
-            latest_weeklysummary = WeeklySummary.objects.latest('date')
-        except WeeklySummary.DoesNotExist:
-            latest_weeklysummary = None
-        context['weeklysummary'] = latest_weeklysummary
-
-        try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
         except WeeklyVerse.DoesNotExist:
             latest_weeklyverse = None
@@ -385,31 +379,6 @@ class AnnouncementDelete(StaffRequiredMixin, DeleteView):
     template_name = 'newswire/cp/announcement_confirm_delete.html'
 
 
-class WeeklySummaryList(StaffRequiredMixin, ListView):
-    queryset = WeeklySummary.objects.order_by('-date')
-    template_name = 'newswire/cp/weeklysummary_list.html'
-
-
-class WeeklySummaryCreate(StaffRequiredMixin, CreateView):
-    model = WeeklySummary
-    success_url = reverse_lazy('weeklysummary_list')
-    form_class = WeeklySummaryForm
-    template_name = 'newswire/cp/weeklysummary_form.html'
-
-
-class WeeklySummaryUpdate(StaffRequiredMixin, UpdateView):
-    model = WeeklySummary
-    success_url = reverse_lazy('weeklysummary_list')
-    form_class = WeeklySummaryForm
-    template_name = 'newswire/cp/weeklysummary_form.html'
-
-
-class WeeklySummaryDelete(StaffRequiredMixin, DeleteView):
-    model = WeeklySummary
-    success_url = reverse_lazy('weeklysummary_list')
-    template_name = 'newswire/cp/weeklysummary_confirm_delete.html'
-
-
 class EventList(StaffRequiredMixin, ListView):
     queryset = Event.objects.order_by('-date_start')
     template_name = 'newswire/cp/event_list.html'
@@ -541,7 +510,7 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         current_year = datetime.datetime.now().year
 
         weekly_attendance_nursery = DataPoint.objects.filter(
-            dataseries__name__contains="Sunday Morning Service (Nursery)").order_by('-date').annotate(weekly_attendance_nursery=F('value')).values('date', 'weekly_attendance_nursery')
+            dataseries__name__contains="Sunday Morning Service (Nursery)").order_by('-date').annotate(weekly_attendance_nursery=F('value')).values('date', 'weekly_attendance_nursery', 'pk')
         weekly_attendance_preschoolers = DataPoint.objects.filter(
             dataseries__name__contains="Sunday Morning Service (Preschoolers)").order_by('-date').annotate(weekly_attendance_preschoolers=F('value')).values('date', 'weekly_attendance_preschoolers')
         weekly_attendance_childrens_church = DataPoint.objects.filter(
@@ -556,6 +525,8 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         weekly_attendance = DataPoint.objects.filter(dataseries__name__contains="Sunday Morning Service").values('date').order_by('-date').annotate(
             weekly_attendance_nursery=Sum(Case(When(
                 dataseries__name__contains='Sunday Morning Service (Nursery)', then='value'))),
+            weekly_attendance_nursery_id=Sum(Case(When(
+                dataseries__name__contains='Sunday Morning Service (Nursery)', then='pk'))),
             weekly_attendance_preschoolers=Sum(Case(When(
                 dataseries__name__contains='Sunday Morning Service (Preschoolers)', then='value'))),
             weekly_attendance_childrens_church=Sum(Case(When(
@@ -568,7 +539,7 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         )[:24]
 
         context['weekly_attendance'] = weekly_attendance
-        context['latest_weekly_attendance'] = weekly_attendance[:1]
+        context['latest_weekly_attendance'] = weekly_attendance[:5]
 
         return context
 
@@ -592,10 +563,10 @@ class AttendanceCreate(StaffRequiredMixin, CreateView):
     template_name = 'newswire/cp/attendance_form.html'
 
     def form_valid(self, form):
-        attendance_record = form.save(commit=False)
-        attendance_record.user = User.objects.get(
-            user=self.request.user)  # use your own profile here
-        attendance_record.save()
+        attendance = form.save(commit=False)
+        attendance.user = User.objects.get(
+            username=self.request.user)  # use your own profile here
+        attendance.save()
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -769,12 +740,6 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             readannouncement__announcement__id__in=active_announcements)
         context['announcements'] = unread_active_announcements.extra(
             order_by=['-publish_start_date'])
-
-        try:
-            latest_weeklysummary = WeeklySummary.objects.latest('date')
-        except WeeklySummary.DoesNotExist:
-            latest_weeklysummary = None
-        context['weeklysummary'] = latest_weeklysummary
 
         try:
             active_events = Event.objects.filter(

@@ -52,38 +52,6 @@ class Announcement(models.Model):
     def __str__(self):
         return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
 
-# Stores Weekly Summayry
-
-
-class WeeklySummary(models.Model):
-
-    class Meta:
-        verbose_name_plural = "weekly summaries"
-
-    date = models.DateField(default=datetime.now)
-    attendance = models.SmallIntegerField(
-        blank=True, default='')
-    tithe_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-    building_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-    building_pledge_form_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-    monthly_loan_servicing_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-    c1_title = models.CharField(max_length=200, null=True, blank=True)
-    c1_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-    c2_title = models.CharField(max_length=200, null=True, blank=True)
-    c2_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-    c3_title = models.CharField(max_length=200, null=True, blank=True)
-    c3_amt = models.DecimalField(
-        max_digits=8, decimal_places=2, blank=True, default='')
-
-    def __str__(self):
-        return str(self.date)
-
 # Stores all user settings
 
 
@@ -322,7 +290,8 @@ class DataPoint(models.Model):
 
 #    def __str__(self):
 #        return '%s' % (self.id)
-#        return '%s - %s - %d' % (self.dataseries.type, self.dataseries.name, self.value)
+# return '%s - %s - %d' % (self.dataseries.type, self.dataseries.name,
+# self.value)
 
 
 class WeeklyVerse(models.Model):
