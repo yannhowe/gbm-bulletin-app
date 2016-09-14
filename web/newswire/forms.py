@@ -113,7 +113,7 @@ class AttendanceForm(ModelForm):
         )
 
     class Meta:
-        model = DataPoint
+        model = SundayAttendance
         fields = '__all__'
         # exclude = ["user"]
 

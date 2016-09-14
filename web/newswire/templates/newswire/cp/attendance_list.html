@@ -23,15 +23,16 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Group</th>
-                                <th>Attendance</th>
-                                <th>Last Updated</th>
-                                <th>Added By</th>
+                                <th>English Congregation</th>
+                                <th>Chinese Congregation</th>
+                                <th>Children's Church</th>
+                                <th>Preschoolers</th>
+                                <th>Nursery</th>
                                 <th>Notes</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for attendance in graph_sunday_attendance %}
+                            {% for attendance in object_list %}
                                 <tr>
                                     <td>{{ attendance.date|date:"o-m-d" }}
                                         <a href="{%  url 'attendance_edit' attendance.id  %}">
@@ -41,10 +42,11 @@
                                             <i class="text-danger fa fa-trash"></i>
                                         </a>
                                     </td>
-                                    <td>{{ attendance.dataseries }}</td>
-                                    <td>{{ attendance.value|default_if_none:"0"|floatformat:"0"|intcomma }}</td>
-                                    <td>{{ attendance.date_updated }}</td>
-                                    <td>{{ attendance.user }}</td>
+                                    <td>{{ attendance.english_congregation }}</td>
+                                    <td>{{ attendance.chinese_congregation }}</td>
+                                    <td>{{ attendance.childrens_church }}</td>
+                                    <td>{{ attendance.preschoolers }}</td>
+                                    <td>{{ attendance.nursery }}</td>
                                     <td>{{ attendance.notes }}</td>
                                 </tr>
                             {% endfor %}
@@ -52,10 +54,11 @@
                         <tfoot>
                             <tr>
                                 <th>Date</th>
-                                <th>Group</th>
-                                <th>Attendance</th>
-                                <th>Last Updated</th>
-                                <th>Added By</th>
+                                <th>English Congregation</th>
+                                <th>Chinese Congregation</th>
+                                <th>Children's Church</th>
+                                <th>Preschoolers</th>
+                                <th>Nursery</th>
                                 <th>Notes</th>
                             </tr>
                         </tfoot>

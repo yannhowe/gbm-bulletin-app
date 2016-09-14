@@ -16,12 +16,16 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Recent Attendance</h3>
+                    <h3 class="box-title">Recent Sunday Attendance</h3>
                 </div>
                 <div class="box-body">
                     {% for attendance in recent_sunday_attendance %}
                         <p>
-                            <strong>{{attendance.date|date:"d-m-o (D)"}}</strong>
+                            <strong>{{attendance.date|date:"d-m-o (D)"}}
+                                <a href="{%  url 'attendance_edit' attendance.id  %}">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </strong>
                             <ul>
                                 <li>English Service:
                                     {{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
