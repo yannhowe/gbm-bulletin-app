@@ -1,41 +1,6 @@
 {% load staticfiles %}
 {% load humanize %}
-<h2 class="text-center">Weekly Summary</h2>
 <div class="post-preview">
-    <h3>{{ building_fund_received.date|date:"o" }}
-        building fund progress:</h3>
-    <div class="progress">
-        <div class="progress-bar" role="progressbar" aria-valuenow="{{building_goal_received_percent}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: 2%;">
-            {{building_goal_received_percent|floatformat:"0"|intcomma}}%
-        </div>
-    </div>
-    <p class="small">Giving through
-        {{ building_fund_received.date|date:"j M, o" }}
-        was
-        <strong>${{building_fund_received_ytd|floatformat:"0"|intcomma}}</strong>
-        out of
-        <strong>${{building_fund_pledged_ytd|floatformat:"0"|intcomma }}</strong>
-        pledged year to date which puts us
-        {{ahead_or_behind}}
-        by about
-        <strong>${{building_pledge_received_difference|floatformat:"0"|intcomma}}</strong>. We'll need to receive
-        <strong>${{building_goal_received_difference|floatformat:"0"|intcomma}}</strong>
-        by the end of the year to meet our building fund goal of
-        <strong>${{building_goal|floatformat:"0"|intcomma}}</strong>
-        this year.
-    </p>
-    <script>
-        $(function() {
-            $('[data-toggle="tooltip"]').tooltip({trigger: 'manual'}).tooltip('show');
-        });
-
-        $(".progress-bar").each(function() {
-            each_bar_width = $(this).attr('aria-valuenow');
-            $(this).width(each_bar_width + '%');
-        });
-        //  } });
-    </script>
-    <br/>
     <h3>Attendance:</h3>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>

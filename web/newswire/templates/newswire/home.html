@@ -12,23 +12,33 @@
         <hr class="section-end"/>
     {% endif %}
     {% if announcements %}
+        <h2 class="text-center">Announcements</h2>
         {% include "newswire/cp/includes/bulletin_announcements.html" %}
         <br/>
         <br/>
     {% endif %}
     {% if events %}
+        <h2 class="text-center">Upcoming Events</h2>
         {% include "newswire/cp/includes/bulletin_events.html" %}
         <br/>
         <br/>
         <hr class="section-end"/>
     {% endif %}
     {% if birthdays %}
+        <h2 class="text-center">Birthday Greetings</h2>
         {% include "newswire/cp/includes/bulletin_birthdays.html" %}
         <br/>
         <hr class="section-end"/>
     {% endif %}
-    {% if graph_sunday_attendance %}
-        {% include "newswire/cp/includes/bulletin_weeklysummary.html" %}
+
+    {% if graph_sunday_attendance or building_fund_received %}
+        <h2 class="text-center">Weekly Summary</h2>
+        {% if graph_sunday_attendance %}
+            {% include "newswire/cp/includes/bulletin_building_fund.html" %}
+        {% endif %}
+        {% if graph_sunday_attendance %}
+            {% include "newswire/cp/includes/bulletin_attendance.html" %}
+        {% endif %}
         <br/>
         <hr class="section-end"/>
     {% endif %}

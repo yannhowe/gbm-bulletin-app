@@ -1,30 +1,234 @@
 {% extends "newswire/cp/__base.html" %}
+{% load newswire_extras %}
+{% load humanize %}
+{% load staticfiles %}
 {% block header_title %}Dashboard - Grace Baptist Ministries{% endblock %}
 {% block content_header %}Dashboard{% endblock %}
 {% block content_sub_header %}Control Panel{% endblock %}
 {% block content %}
+    <h2 class="page-header">Upcoming Event RSVPs</h2>
+
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="box box-default">
                 <div class="box-header with-border">
-                    <h3 class="box-title">There is Nothing to See Here</h3>
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-minus"></i>
-                        </button>
-                    </div>
-                    <!-- /.box-tools -->
+                    <i class="fa fa-warning"></i>
+
+                    <h3 class="box-title">Alerts</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <p class="text-justified">
-                        One day.. there will be somethign useful here.
-                    </p>
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-ban"></i>
+                            Alert!</h4>
+                        Danger alert preview. This alert is dismissable. A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.
+                    </div>
+                    <div class="alert alert-info alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-info"></i>
+                            Alert!</h4>
+                        Info alert preview. This alert is dismissable.
+                    </div>
+                    <div class="alert alert-warning alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-warning"></i>
+                            Alert!</h4>
+                        Warning alert preview. This alert is dismissable.
+                    </div>
+                    <div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-check"></i>
+                            Alert!</h4>
+                        Success alert preview. This alert is dismissable.
+                    </div>
                 </div>
                 <!-- /.box-body -->
             </div>
+            <!-- /.box -->
         </div>
-        <!-- ./col -->
+        <!-- /.col -->
+
+        <div class="col-md-6">
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <i class="fa fa-bullhorn"></i>
+
+                    <h3 class="box-title">Callouts</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="callout callout-danger">
+                        <h4>I am a danger callout!</h4>
+
+                        <p>There is a problem that we need to fix. A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.</p>
+                    </div>
+                    <div class="callout callout-info">
+                        <h4>I am an info callout!</h4>
+
+                        <p>Follow the steps to continue to payment.</p>
+                    </div>
+                    <div class="callout callout-warning">
+                        <h4>I am a warning callout!</h4>
+
+                        <p>This is a yellow callout.</p>
+                    </div>
+                    <div class="callout callout-success">
+                        <h4>I am a success callout!</h4>
+
+                        <p>This is a green callout.</p>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
     </div>
-    <!-- /.row -->
-{% endblock %}
+
+    <div class="row">
+        {% regroup signups by event as signup_list_by_event %}
+        {% for event in signup_list_by_event %}
+            <div class="col-md-4">
+                <div class="box box-default collapsed-box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <strong>RSVP for
+                                {{ event.grouper.title }}</strong>
+                        </h3>
+                        <p>
+                            <strong>{% format_date_range event.grouper.date_start event.grouper.date_end %}
+                                &bull;
+                                {{ event.list|length }}
+                                Response{%if event.list|length < 1 %}s{%endif%}
+                                    &bull; (
+
+                                    {% regroup event.list by get_rsvp_display as event_list_by_rsvp %}
+                                    {% for rsvp in event_list_by_rsvp %}
+                                        <span>{{ rsvp.list|length }}
+                                            {{ rsvp.grouper }}
+                                            {% if not forloop.last %},
+                                            {% endif %}
+                                        </span>
+                                    {% endfor %}
+
+                                    )</strong>
+
+                            </p>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% regroup event.list by get_rsvp_display as event_list_by_rsvp %}
+                        <div class="box-body">
+                            {% for rsvp in event_list_by_rsvp %}
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center">{{ rsvp.grouper }}
+                                                ({{ rsvp.list|length }})</th>
+                                        </tr>
+                                        {% for item in rsvp.list %}
+                                            <tr>
+                                                <td>
+                                                    {{ item.user.last_name }}
+                                                    {{ item.user.first_name }}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <br/>
+                                <br/>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="col-md-4">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Recent Sunday Attendance</h3>
+                    </div>
+                    <div class="box-body">
+                        {% for attendance in recent_sunday_attendance %}
+                            <p>
+                                <strong>{{attendance.date|date:"d-m-o (D)"}}
+                                    <a href="{%  url 'attendance_edit' attendance.id  %}">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                </strong>
+                                <ul>
+                                    <li>English Service:
+                                        {{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    <li>Chinese Service:
+                                        {{attendance.chinese_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    <li>Children's Church:
+                                        {{attendance.childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    <li>Pre-Schoolers:
+                                        {{attendance.preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                    <li>Nursery:
+                                        {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                </ul>
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Active Annoucements</h3>
+                    </div>
+                    <div class="box-body">
+                        {% include "newswire/cp/includes/bulletin_announcements.html" %}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Upcoming Events</h3>
+                    </div>
+                    <div class="box-body">
+                        {% include "newswire/cp/includes/bulletin_events.html" %}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Upcoming Birthdays</h3>
+                    </div>
+                    <div class="box-body">
+                        {% include "newswire/cp/includes/bulletin_birthdays.html" %}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Building Fund</h3>
+                    </div>
+                    <div class="box-body">
+                        {% include "newswire/cp/includes/bulletin_building_fund.html" %}
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Attendance</h3>
+                    </div>
+                    <div class="box-body">
+                        {% include "newswire/cp/includes/bulletin_attendance.html" %}
+                    </div>
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+        <!-- /.row -->
+    {% endblock %}

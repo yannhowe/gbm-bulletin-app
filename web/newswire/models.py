@@ -265,6 +265,28 @@ class SundayAttendance(models.Model):
         return '%s' % (self.date)
 
 
+class BuildingFundYearGoal(models.Model):
+    name = models.TextField(max_length=80, null=True, blank=True)
+    date = models.DateField(default=datetime.now)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
+    description = models.TextField(max_length=300, null=True, blank=True)
+
+
+class BuildingFundYearPledge(models.Model):
+    name = models.TextField(max_length=80, null=True, blank=True)
+    date = models.DateField(default=datetime.now)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
+    description = models.TextField(max_length=300, null=True, blank=True)
+
+
+class BuildingFundCollection(models.Model):
+    date = models.DateField(default=datetime.now)
+    building_fund_year_pledge = models.ForeignKey(BuildingFundYearPledge)
+    building_fund_year_goal = models.ForeignKey(BuildingFundYearGoal)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
+    notes = models.TextField(max_length=300, null=True, blank=True)
+
+
 class DataSeries(models.Model):
     ATTENDANCE = 'Attendance'
     FINANCIAL = 'Financial'

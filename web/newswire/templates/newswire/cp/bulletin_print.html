@@ -30,18 +30,27 @@
             </div>
             <div class="col-xs-6">
                 {% if events %}
+                    <h2 class="text-center">Upcoming Events</h2>
                     {% include "newswire/cp/includes/bulletin_events_print.html" %}
                 {% endif %}
                 {% if birthdays %}
+                    <h2 class="text-center">Birthday Greetings</h2>
                     {% include "newswire/cp/includes/bulletin_birthdays_print.html" %}
                 {% endif %}
-                {% if graph_sunday_attendance %}
-                    {% include "newswire/cp/includes/bulletin_weeklysummary_print.html" %}
+                {% if graph_sunday_attendance or building_fund_received %}
+                    <h2 class="text-center">Weekly Summary</h2>
+                    {% if graph_sunday_attendance %}
+                        {% include "newswire/cp/includes/bulletin_building_fund_print.html" %}
+                    {% endif %}
+                    {% if graph_sunday_attendance %}
+                        {% include "newswire/cp/includes/bulletin_attendance_print.html" %}
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
         <div class="pagebreak"></div>
         {% if announcements_print %}
+            <h2 class="text-center">Announcements</h2>
             {% include "newswire/cp/includes/bulletin_announcements_print.html" %}
         {% endif %}
         <div class="pagebreak"></div>

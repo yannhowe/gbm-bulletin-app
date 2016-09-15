@@ -32,6 +32,37 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 
 
+def get_upcoming_birthdays(person_list, days, from_date=datetime.datetime.today()):
+    person_list = person_list.distinct()  # ensure persons are only in the list once
+    doblist = []
+    doblist.extend(list(person_list.filter(
+        date_of_birth__month=from_date.month, date_of_birth__day=from_date.day)))
+    next_day = from_date + datetime.timedelta(days=1)
+    for day in range(0, days):
+        doblist.extend(list(person_list.filter(
+            date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
+        next_day = next_day + datetime.timedelta(days=1)
+    for dob in doblist:
+        dob.date_of_birth = dob.date_of_birth.replace(
+            year=datetime.datetime.today().year)
+    return doblist
+
+
+def get_coming_sunday(date):
+    # coming sunday's date
+    coming_sunday = date
+    while coming_sunday.weekday() != 6:
+        coming_sunday += datetime.timedelta(1)
+    return coming_sunday
+
+
+def ahead_or_behind(received, giving):
+    if received > giving:
+        return "ahead"
+    elif received < giving:
+        return "behind"
+
+
 class LoginRequiredMixin(object):
     # mixin from https://gist.github.com/robgolding/3092600
     """
@@ -91,40 +122,6 @@ class BulletinListView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
 
-    def get_coming_sunday(self, date):
-        # coming sunday's date
-        coming_sunday = date
-        while coming_sunday.weekday() != 6:
-            coming_sunday += datetime.timedelta(1)
-        return coming_sunday
-
-    def get_upcoming_birthdays(self, person_list, days, from_date=datetime.datetime.today()):
-        person_list = person_list.distinct()  # ensure persons are only in the list once
-        doblist = []
-        doblist.extend(list(person_list.filter(
-            date_of_birth__month=from_date.month, date_of_birth__day=from_date.day)))
-        next_day = from_date + datetime.timedelta(days=1)
-        for day in range(0, days):
-            doblist.extend(list(person_list.filter(
-                date_of_birth__month=next_day.month, date_of_birth__day=next_day.day, date_of_death__isnull=True)))
-            next_day = next_day + datetime.timedelta(days=1)
-        for dob in doblist:
-            dob.date_of_birth = dob.date_of_birth.replace(
-                year=datetime.datetime.today().year)
-        return doblist
-
-    def ahead_or_behind(self, received, giving):
-        if received > giving:
-            return "ahead"
-        elif received < giving:
-            return "behind"
-
-    def merge_dicts(self, *dict_args):
-        result = {}
-        for dictionary in dict_args:
-            result.update(dictionary)
-        return result
-
     def get_context_data(self, **kwargs):
         context = super(BulletinListView, self).get_context_data(**kwargs)
         messages.info(self.request, '')
@@ -133,7 +130,7 @@ class BulletinListView(ListView):
         current_year = datetime.datetime.now().year
 
         # coming sunday's date
-        coming_sunday = self.get_coming_sunday(today)
+        coming_sunday = get_coming_sunday(today)
 
         upcoming_service = None
         try:
@@ -169,8 +166,8 @@ class BulletinListView(ListView):
                             'this_year_theme_year': config.THIS_YEAR_THEME_YEAR}
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        context['birthdays'] = self.get_upcoming_birthdays(all_birthdays, 7)
-        context['birthdays_after_coming_sunday'] = self.get_upcoming_birthdays(
+        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+        context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
             all_birthdays, 7, coming_sunday)
 
         building_fund_received_ytd = None
@@ -207,7 +204,7 @@ class BulletinListView(ListView):
             building_goal = None
         context['building_goal'] = building_goal.value
 
-        context['ahead_or_behind'] = self.ahead_or_behind(1, 2)
+        context['ahead_or_behind'] = ahead_or_behind(1, 2)
         context['building_pledge_received_difference'] = building_fund_pledged_ytd - \
             building_fund_received_ytd
         context['building_goal_received_difference'] = building_goal.value - \
@@ -215,9 +212,12 @@ class BulletinListView(ListView):
         context['building_goal_received_percent'] = building_fund_received.value / \
             building_goal.value * 100
 
-        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:25]
-        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:4]
-        context['latest_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:1]
+        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:4]
+        context['latest_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:1]
 
         try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
@@ -477,8 +477,10 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AttendanceSummary, self).get_context_data(**kwargs)
-        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:25]
-        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by('-date')[:4]
+        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:4]
         return context
 
 
@@ -655,8 +657,23 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
+        try:
+            context['signups'] = Signup.objects.order_by('event', 'rsvp')
+        except Event.DoesNotExist:
+            pass
+
+        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:4]
+
         messages.info(self.request, '')
         now = datetime.datetime.now()
+        today = datetime.datetime.today()
+        current_year = datetime.datetime.now().year
+
+        # coming sunday's date
+        coming_sunday = get_coming_sunday(today)
 
         upcoming_service = None
         try:
@@ -666,12 +683,75 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             upcoming_service = None
         context['orderofservice'] = upcoming_service
 
-        active_announcements = Announcement.objects.filter(
-            publish_start_date__lte=now).filter(publish_end_date__gte=now)
-        unread_active_announcements = Announcement.objects.exclude(
-            readannouncement__announcement__id__in=active_announcements)
-        context['announcements'] = unread_active_announcements.extra(
-            order_by=['-publish_start_date'])
+        upcoming_service_print = None
+        try:
+            upcoming_service_print = OrderOfService.objects.order_by('date').filter(
+                date=coming_sunday)[:1].get()
+        except OrderOfService.DoesNotExist:
+            upcoming_service_print = None
+        context['orderofservice_print'] = upcoming_service_print
+
+        active_announcements = Announcement.objects.filter(publish_start_date__lte=now).filter(publish_end_date__gte=now)
+        context['announcements'] = active_announcements
+
+        all_birthdays = Profile.objects.exclude(date_of_birth=None)
+        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+        context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(all_birthdays, 7, coming_sunday)
+
+        building_fund_received_ytd = None
+        try:
+            building_fund_received_ytd = DataPoint.objects.filter(
+                date__year=current_year, dataseries__name__exact="Building Fund Weekly Collection").aggregate(Sum('value')).values()[0]
+        except DataPoint.DoesNotExist:
+            building_fund_received_ytd = None
+        context['building_fund_received_ytd'] = building_fund_received_ytd
+
+        building_fund_received = None
+        try:
+            building_fund_received = DataPoint.objects.filter(
+                dataseries__name__exact="Building Fund Weekly Collection").latest('date')
+        except DataPoint.DoesNotExist:
+            building_fund_received = None
+        context['building_fund_received'] = building_fund_received
+
+        building_fund_pledged_ytd = None
+        try:
+            building_fund_pledged = DataPoint.objects.filter(
+                dataseries__name__exact="Building Fund Pledge").latest('date')
+            building_fund_pledged_ytd = building_fund_pledged.value / \
+                365 * datetime.datetime.now().timetuple().tm_yday
+        except DataPoint.DoesNotExist:
+            building_fund_pledged_ytd = None
+        context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
+
+        building_goal = None
+        try:
+            building_goal = DataPoint.objects.filter(
+                dataseries__name__exact="Building Fund Goal").latest('date')
+        except DataPoint.DoesNotExist:
+            building_goal = None
+        context['building_goal'] = building_goal.value
+
+        context['ahead_or_behind'] = ahead_or_behind(1, 2)
+        context['building_pledge_received_difference'] = building_fund_pledged_ytd - \
+            building_fund_received_ytd
+        context['building_goal_received_difference'] = building_goal.value - \
+            building_fund_received_ytd
+        context['building_goal_received_percent'] = building_fund_received.value / \
+            building_goal.value * 100
+
+        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:4]
+        context['latest_sunday_attendance'] = SundayAttendance.objects.order_by(
+            '-date')[:1]
+
+        try:
+            latest_weeklyverse = WeeklyVerse.objects.latest('date')
+        except WeeklyVerse.DoesNotExist:
+            latest_weeklyverse = None
+        context['weeklyverse'] = latest_weeklyverse
 
         try:
             active_events = Event.objects.filter(
@@ -680,6 +760,22 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             active_events = None
         context['events'] = active_events.extra(
             order_by=['date_start'])
+
+        if self.request.user.is_authenticated():
+            try:
+                signup_list = Signup.objects.filter(
+                    event__in=active_events).filter(user=self.request.user)
+            except Signup.DoesNotExist:
+                signup_list = None
+        context['signups'] = signup_list.all()
+
+        if self.request.user.is_authenticated():
+            try:
+                signup_id_list = Signup.objects.filter(
+                    event__in=active_events).filter(user=self.request.user).values_list('event_id', flat=True)
+            except Signup.DoesNotExist:
+                signup_id_list = None
+            context['signup_id_list'] = signup_id_list.all()
 
         context['categories'] = Category.objects.all()
         return context
