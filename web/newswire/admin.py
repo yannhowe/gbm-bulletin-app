@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Announcement, Category, Setting, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group, WeeklyVerse, SundayAttendance
+from .models import Announcement, Category, Setting, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, DataPoint, DataSeries, Group, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -275,3 +275,65 @@ class SundayAttendanceAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(SundayAttendance, SundayAttendanceAdmin)
+
+
+class BuildingFundYearGoalResource(resources.ModelResource):
+
+    class Meta:
+        model = BuildingFundYearGoal
+
+
+class BuildingFundYearGoalForm(ModelForm):
+
+    class Meta:
+        model = BuildingFundYearGoal
+        fields = '__all__'
+
+
+class BuildingFundYearGoalAdmin(ImportExportModelAdmin):
+    resource_class = BuildingFundYearGoalResource
+    pass
+
+admin.site.register(BuildingFundYearGoal, BuildingFundYearGoalAdmin)
+
+
+
+class BuildingFundYearPledgeResource(resources.ModelResource):
+
+    class Meta:
+        model = BuildingFundYearPledge
+
+
+class BuildingFundYearPledgeForm(ModelForm):
+
+    class Meta:
+        model = BuildingFundYearPledge
+        fields = '__all__'
+
+
+class BuildingFundYearPledgeAdmin(ImportExportModelAdmin):
+    resource_class = BuildingFundYearPledgeResource
+    pass
+
+admin.site.register(BuildingFundYearPledge, BuildingFundYearPledgeAdmin)
+
+
+
+class BuildingFundCollectionResource(resources.ModelResource):
+
+    class Meta:
+        model = BuildingFundCollection
+
+
+class BuildingFundCollectionForm(ModelForm):
+
+    class Meta:
+        model = BuildingFundCollection
+        fields = '__all__'
+
+
+class BuildingFundCollectionAdmin(ImportExportModelAdmin):
+    resource_class = BuildingFundCollectionResource
+    pass
+
+admin.site.register(BuildingFundCollection, BuildingFundCollectionAdmin)

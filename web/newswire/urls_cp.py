@@ -59,6 +59,32 @@ urlpatterns = (
     url(r'^bulletin/event/delete/(?P<pk>\d+)$',
         views.EventDelete.as_view(), name='event_delete'),
 
+    # Building Fund
+    url(r'^bulletin/buildingfund/$',
+        views.BuildingFundList.as_view(), name='buildingfund_list'),
+
+    url(r'^bulletin/buildingfundcollection/new$',
+        views.BuildingFundCollectionCreate.as_view(), name='buildingfundcollection_new'),
+    url(r'^bulletin/buildingfundcollection/edit/(?P<pk>\d+)$',
+        views.BuildingFundCollectionUpdate.as_view(), name='buildingfundcollection_edit'),
+    url(r'^bulletin/buildingfundcollection/delete/(?P<pk>\d+)$',
+        views.BuildingFundCollectionDelete.as_view(), name='buildingfundcollection_delete'),
+
+    # Building Fund Year Pledge
+    url(r'^bulletin/buildingfundyearpledge/new$',
+        views.BuildingFundYearPledgeCreate.as_view(), name='buildingfundyearpledge_new'),
+    url(r'^bulletin/buildingfundyearpledge/edit/(?P<pk>\d+)$',
+        views.BuildingFundYearPledgeUpdate.as_view(), name='buildingfundyearpledge_edit'),
+    url(r'^bulletin/buildingfundyearpledge/delete/(?P<pk>\d+)$',
+        views.BuildingFundYearPledgeDelete.as_view(), name='buildingfundyearpledge_delete'),
+
+    # Building Fund
+    url(r'^bulletin/buildingfundyeargoal/new$',
+        views.BuildingFundYearGoalCreate.as_view(), name='buildingfundyeargoal_new'),
+    url(r'^bulletin/buildingfundyeargoal/edit/(?P<pk>\d+)$',
+        views.BuildingFundYearGoalUpdate.as_view(), name='buildingfundyeargoal_edit'),
+    url(r'^bulletin/buildingfundyeargoal/delete/(?P<pk>\d+)$',
+        views.BuildingFundYearGoalDelete.as_view(), name='buildingfundyeargoal_delete'),
 
     # Profile
     url(r'^people/summary/$',
@@ -114,8 +140,6 @@ urlpatterns = (
     # Attendance Input
     url(r'^attendance/summary/$',
         views.AttendanceSummary.as_view(), name='attendance_summary'),
-    url(r'^attendance/$',
-        views.AttendanceList.as_view(), name='attendance_list'),
     url(r'^attendance/new$',
         views.AttendanceCreate.as_view(), name='attendance_new'),
     url(r'^attendance/edit/(?P<pk>\d+)$',

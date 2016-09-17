@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, SundayAttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd
-from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse, SundayAttendance
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, SundayAttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
+from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 # from datetime import datetime, timedelta
 import datetime
 from django import template
@@ -527,12 +527,6 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         return context
 
 
-class AttendanceList(StaffRequiredMixin, ListView):
-    # Filter for attendance objects
-    queryset = SundayAttendance.objects.order_by('-date')
-    template_name = 'newswire/cp/attendance_list.html'
-
-
 class AttendanceCreate(StaffRequiredMixin, CreateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_new')
@@ -626,6 +620,100 @@ class WeeklyVerseDelete(StaffRequiredMixin, DeleteView):
     model = WeeklyVerse
     success_url = reverse_lazy('weeklyverse_list')
     template_name = 'newswire/cp/weeklyverse_confirm_delete.html'
+
+
+class BuildingFundList(StaffRequiredMixin, ListView):
+    model = BuildingFundCollection
+    template_name = 'newswire/cp/buildingfund.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BuildingFundList, self).get_context_data(**kwargs)
+
+        try:
+            building_fund_collection = BuildingFundCollection.objects.all()
+            context['building_fund_collection'] = building_fund_collection
+            context['latest_building_fund_collection'] = BuildingFundCollection.objects.latest(
+                'date')
+        except BuildingFundCollection.DoesNotExist:
+            building_fund_collection = None
+
+        try:
+            building_fund_year_pledge = BuildingFundYearPledge.objects.all()
+            context['building_fund_year_pledge'] = building_fund_year_pledge
+            context['latest_building_fund_year_pledge'] = BuildingFundYearPledge.objects.latest(
+                'date')
+        except BuildingFundYearPledge.DoesNotExist:
+            building_fund_year_pledge = None
+
+        try:
+            building_fund_year_goal = BuildingFundYearGoal.objects.all()
+            context['building_fund_year_goal'] = building_fund_year_goal
+            context['latest_building_fund_year_goal'] = BuildingFundYearGoal.objects.latest(
+                'date')
+        except BuildingFundYearGoal.DoesNotExist:
+            building_fund_year_goal = None
+
+        return context
+
+
+class BuildingFundCollectionCreate(StaffRequiredMixin, CreateView):
+    model = BuildingFundCollection
+    success_url = reverse_lazy('buildingfund_list')
+    form_class = BuildingFundCollectionForm
+    template_name = 'newswire/cp/buildingfundcollection_form.html'
+
+
+class BuildingFundCollectionUpdate(StaffRequiredMixin, UpdateView):
+    model = BuildingFundCollection
+    success_url = reverse_lazy('buildingfund_list')
+    form_class = BuildingFundCollectionForm
+    template_name = 'newswire/cp/buildingfundcollection_form.html'
+
+
+class BuildingFundCollectionDelete(StaffRequiredMixin, DeleteView):
+    model = BuildingFundCollection
+    success_url = reverse_lazy('buildingfund_list')
+    template_name = 'newswire/cp/buildingfundcollection_confirm_delete.html'
+
+
+class BuildingFundYearPledgeCreate(StaffRequiredMixin, CreateView):
+    model = BuildingFundYearPledge
+    success_url = reverse_lazy('buildingfund_list')
+    form_class = BuildingFundYearPledgeForm
+    template_name = 'newswire/cp/buildingfundyearpledge_form.html'
+
+
+class BuildingFundYearPledgeUpdate(StaffRequiredMixin, UpdateView):
+    model = BuildingFundYearPledge
+    success_url = reverse_lazy('buildingfund_list')
+    form_class = BuildingFundYearPledgeForm
+    template_name = 'newswire/cp/buildingfundyearpledge_form.html'
+
+
+class BuildingFundYearPledgeDelete(StaffRequiredMixin, DeleteView):
+    model = BuildingFundYearPledge
+    success_url = reverse_lazy('buildingfund_list')
+    template_name = 'newswire/cp/buildingfundyearpledge_confirm_delete.html'
+
+
+class BuildingFundYearGoalCreate(StaffRequiredMixin, CreateView):
+    model = BuildingFundYearGoal
+    success_url = reverse_lazy('buildingfund_list')
+    form_class = BuildingFundYearGoalForm
+    template_name = 'newswire/cp/buildingfundyeargoal_form.html'
+
+
+class BuildingFundYearGoalUpdate(StaffRequiredMixin, UpdateView):
+    model = BuildingFundYearGoal
+    success_url = reverse_lazy('buildingfund_list')
+    form_class = BuildingFundYearGoalForm
+    template_name = 'newswire/cp/buildingfundyeargoal_form.html'
+
+
+class BuildingFundYearGoalDelete(StaffRequiredMixin, DeleteView):
+    model = BuildingFundYearGoal
+    success_url = reverse_lazy('buildingfund_list')
+    template_name = 'newswire/cp/buildingfundyeargoal_confirm_delete.html'
 
 
 class RsvpUpdateView(DetailView):

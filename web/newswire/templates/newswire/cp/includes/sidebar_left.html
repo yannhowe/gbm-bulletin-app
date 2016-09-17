@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% url 'attendance_list' as attendance_list %}
 {% url 'attendance_summary' as attendance_summary %}
 
 <!-- sidebar: style can be found in sidebar.less -->
@@ -48,7 +47,7 @@
                         Home</a>
                 </li>
             </ul>
-        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklyverse' in request.path or 'category' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklyverse' in request.path or 'category' in request.path or 'attendance' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-newspaper-o"></i>
                 <span>Bulletin</span>
@@ -75,115 +74,93 @@
                         <i class="fa fa-list-alt"></i>
                         Weekly Verse</a>
                 </li>
-                <li class="{% if 'print' in request.path and 'bulletin' in request.path %}active{% endif %}">
-                    <a href="{%  url 'cp_bulletin_print' %}">
-                        <i class="fa fa-print"></i>
-                        Print Bulletin for Sunday</a>
-                </li>
-            </ul>
-        </li>
-        <li class="{% if 'rsvp' in request.path or 'event' in request.path %}active{% endif %} treeview">
-            <a href="#">
-                <i class="fa fa-calendar"></i>
-                <span>Events</span>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-                <li class="{% if 'event' in request.path %}active{% endif %}">
-                    <a href="{%  url 'event_list' %}">
-                        <i class="fa fa-calendar"></i>
-                        Event List</a>
-                </li>
-                <li class="{% if 'rsvp' and not 'raw' in request.path and 'list' in request.path %}active{% endif %}">
-                    <a href="{% url 'rsvp_list' %}">
-                        <i class="fa fa-paper-plane"></i>
-                        RSVP Responses</a>
-                </li>
-                <li class="{% if 'rsvp' in request.path and 'list' in request.path and 'raw' in request.path %}active{% endif %}">
-                    <a href="{% url 'rsvp_list_raw' %}">
+                <li class="{% if 'buildingfundcollection' in request.path %}active{% endif %}">
+                    <a href="{%  url 'buildingfund_list' %}">
                         <i class="fa fa-list-alt"></i>
-                        Raw RSVP Data</a>
+                        Building Fund</a>
                 </li>
-            </ul>
-        </li>
-        <li class="{% if 'people' in request.path %}active{% endif %} treeview">
-            <a href="#">
-                <i class="fa fa-users"></i>
-                <span>People</span>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-                <li class="{% if 'people' and 'summary' in request.path %}active{% endif %}">
-                    <a href="{% url 'profile_summary' %}">
-                        <i class="fa fa-bar-chart-o"></i>
-                        Summary</a>
-                </li>
-                <li class="{% if 'people' and not 'summary' in request.path %}active{% endif %}">
-                    <a href="{% url 'profile_list' %}">
-                        <i class="fa fa-sitemap"></i>
-                        Directory</a>
-                </li>
-            </ul>
-        </li>
-        {% if request.user.is_authenticated and request.user.is_superuser %}
-            <li class="{% if 'datapoint' in request.path or 'dataseries' in request.path %}active{% endif %} treeview">
-                <a href="#">
-                    <i class="fa fa-database"></i>
-                    <span>Raw Data</span>
-                    <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <ul class="treeview-menu">
-                    <li class="{% if 'datapoint' in request.path %}active{% endif %}">
-                        <a href="{% url 'datapoint_list' %}">
-                            <i class="fa fa-file-text"></i>
-                            DataPoints</a>
-                    </li>
-                    <li class="{% if 'dataseries' in request.path %}active{% endif %}">
-                        <a href="{% url 'dataseries_list' %}">
-                            <i class="fa fa-line-chart"></i>
-                            DataSeries</a>
-                    </li>
-                </ul>
-            </li>
-        {% endif %}
-        <li class="{% if 'attendance' in request.path %}active{% endif %} treeview">
-            <a href="#">
-                <i class="fa fa-check-square-o" aria-hidden="true"></i>
-                <span>Attendance</span>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
                 <li class="{% ifequal request.path attendance_summary %}active{% endifequal %}">
                     <a href="{% url 'attendance_summary' %}">
                         <i class="fa fa-line-chart"></i>
-                        Attendance Summary</a>
+                        Attendance</a>
                 </li>
-                <li class="{% ifequal request.path attendance_list %}active{% endifequal %}">
-                    <a href="{% url 'attendance_list' %}">
-                        <i class="fa fa-file-text"></i>
-                        Raw Attendance Data</a>
+                <li class="{% if 'print' in request.path and 'bulletin' in request.path %}active{% endif %}">
+                    <a href="{%  url 'cp_bulletin_print' %}">
+                        <i class="fa fa-print"></i>
+                        Print</a>
                 </li>
-            </ul>
-        </li>
-        <li class="{% if 'finance' in request.path %}active{% endif %} treeview hidden">
+                <li class="{% if 'print' in request.path and 'bulletin' in request.path %}active{% endif %}">
+                    <a href="{%  url 'cp_bulletin_pdf' %}">
+                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                        PDF</a>
+                </li>
+            </li>
+        </ul>
+    </li>
+    <li class="{% if 'rsvp' in request.path or 'event' in request.path %}active{% endif %} treeview">
+        <a href="#">
+            <i class="fa fa-calendar"></i>
+            <span>Events</span>
+            <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+            <li class="{% if 'event' in request.path %}active{% endif %}">
+                <a href="{%  url 'event_list' %}">
+                    <i class="fa fa-calendar"></i>
+                    Event List</a>
+            </li>
+            <li class="{% if 'rsvp' and not 'raw' in request.path and 'list' in request.path %}active{% endif %}">
+                <a href="{% url 'rsvp_list' %}">
+                    <i class="fa fa-paper-plane"></i>
+                    RSVP Responses</a>
+            </li>
+            <li class="{% if 'rsvp' in request.path and 'list' in request.path and 'raw' in request.path %}active{% endif %}">
+                <a href="{% url 'rsvp_list_raw' %}">
+                    <i class="fa fa-list-alt"></i>
+                    Raw RSVP Data</a>
+            </li>
+        </ul>
+    </li>
+    <li class="{% if 'people' in request.path %}active{% endif %} treeview">
+        <a href="#">
+            <i class="fa fa-users"></i>
+            <span>People</span>
+            <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+            <li class="{% if 'people' and 'summary' in request.path %}active{% endif %}">
+                <a href="{% url 'profile_summary' %}">
+                    <i class="fa fa-bar-chart-o"></i>
+                    Summary</a>
+            </li>
+            <li class="{% if 'people' and not 'summary' in request.path %}active{% endif %}">
+                <a href="{% url 'profile_list' %}">
+                    <i class="fa fa-sitemap"></i>
+                    Directory</a>
+            </li>
+        </ul>
+    </li>
+    {% if request.user.is_authenticated and request.user.is_superuser %}
+        <li class="{% if 'datapoint' in request.path or 'dataseries' in request.path %}active{% endif %} treeview">
             <a href="#">
-                <i class="fa fa-dollar"></i>
-                <span>Finance</span>
+                <i class="fa fa-database"></i>
+                <span>Raw Data</span>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-                <li class="{% if 'finance' and not 'summary' in request.path %}active{% endif %}">
+                <li class="{% if 'datapoint' in request.path %}active{% endif %}">
                     <a href="{% url 'datapoint_list' %}">
                         <i class="fa fa-file-text"></i>
-                        Records</a>
+                        DataPoints</a>
                 </li>
-                <li class="{% if 'finance' and not 'summary' in request.path %}active{% endif %}">
-                    <a href="{% url 'datapoint_new' %}">
-                        <i class="fa fa-plus"></i>
-                        Add Record</a>
+                <li class="{% if 'dataseries' in request.path %}active{% endif %}">
+                    <a href="{% url 'dataseries_list' %}">
+                        <i class="fa fa-line-chart"></i>
+                        DataSeries</a>
                 </li>
             </ul>
         </li>
-    </ul>
+    {% endif %}
+</ul>
 </section>
 <!-- /.sidebar -->

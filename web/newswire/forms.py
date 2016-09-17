@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, Event, Profile, DataPoint, DataSeries, WeeklyVerse, SundayAttendance
+from models import OrderOfService, Announcement, Category, Event, Profile, DataPoint, DataSeries, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 
 
 class ProfileFormFrontEnd(ModelForm):
@@ -311,3 +311,65 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['title', 'date_start', 'date_end', 'track_rsvp']
+
+
+class BuildingFundCollectionForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BuildingFundCollectionForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.initial = {
+            'building_fund_year_pledge': BuildingFundYearPledge.objects.latest('date'),
+            'building_fund_year_goal': BuildingFundYearGoal.objects.latest('date')
+        }
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "buildingfund_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = BuildingFundCollection
+        fields = '__all__'
+
+
+class BuildingFundYearPledgeForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BuildingFundYearPledgeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "buildingfund_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = BuildingFundYearPledge
+        fields = '__all__'
+
+
+class BuildingFundYearGoalForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BuildingFundYearGoalForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "buildingfund_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = BuildingFundYearGoal
+        fields = '__all__'

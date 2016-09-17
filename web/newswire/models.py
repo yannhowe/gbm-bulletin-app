@@ -279,12 +279,20 @@ class BuildingFundYearGoal(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
     description = models.TextField(max_length=300, null=True, blank=True)
 
+    def __str__(self):
+        formatted_amount = '{:20,.2f}'.format(self.amount)
+        return '%s - $%s' % (self.date, formatted_amount)
+
 
 class BuildingFundYearPledge(models.Model):
     name = models.TextField(max_length=80, null=True, blank=True)
     date = models.DateField(default=datetime.now)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
     description = models.TextField(max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        formatted_amount = '{:20,.2f}'.format(self.amount)
+        return '%s - $%s' % (self.date, formatted_amount)
 
 
 class BuildingFundCollection(models.Model):
@@ -293,6 +301,10 @@ class BuildingFundCollection(models.Model):
     building_fund_year_goal = models.ForeignKey(BuildingFundYearGoal)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
     notes = models.TextField(max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        formatted_amount = '{:20,.2f}'.format(self.amount)
+        return '%s - $%s' % (self.date.strftime("%d/%m/%y"), formatted_amount)
 
 
 class DataSeries(models.Model):
