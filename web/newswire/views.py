@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, SundayAttendanceForm
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, SundayAttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd
 from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse, SundayAttendance
 # from datetime import datetime, timedelta
 import datetime
@@ -17,6 +17,7 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.template.loader import select_template, get_template, render_to_string
 from django.template.response import TemplateResponse
+from django.template import Context
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
 from django.core.urlresolvers import reverse_lazy
@@ -61,6 +62,22 @@ def ahead_or_behind(received, giving):
         return "ahead"
     elif received < giving:
         return "behind"
+
+
+class Cart(object):
+
+    pass
+
+
+class NeedsReviewMixin(object):
+
+    def form_valid(self, form):
+        submission = form.save(commit=False)
+        submission.user = self.request.user  # use your own profile here
+        submission.under_review = True
+        submission.save()
+        # TODO Email admins that new announcement has been submitted for review
+        return HttpResponseRedirect(reverse_lazy('home'))
 
 
 class LoginRequiredMixin(object):
@@ -152,7 +169,7 @@ class BulletinListView(ListView):
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
         unread_active_announcements = Announcement.objects.exclude(
             readannouncement__announcement__id__in=active_announcements)
-        published_announcements = unread_active_announcements.filter(publish_start_date__lte=today, publish_end_date__gte=today, hidden=False).extra(
+        published_announcements = unread_active_announcements.filter(publish_start_date__lte=today, publish_end_date__gte=today, hidden=False, under_review=False).extra(
             order_by=['-publish_start_date', 'publish_end_date'])
         context['announcements'] = published_announcements
         max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
@@ -212,11 +229,13 @@ class BulletinListView(ListView):
         context['building_goal_received_percent'] = building_fund_received.value / \
             building_goal.value * 100
 
-        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
+        SundayAttendanceApproved = SundayAttendance.objects.exclude(
+            under_review=True)
+        context['graph_sunday_attendance'] = SundayAttendanceApproved.order_by(
             '-date')[:25]
-        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
+        context['recent_sunday_attendance'] = SundayAttendanceApproved.order_by(
             '-date')[:4]
-        context['latest_sunday_attendance'] = SundayAttendance.objects.order_by(
+        context['latest_sunday_attendance'] = SundayAttendanceApproved.order_by(
             '-date')[:1]
 
         try:
@@ -345,6 +364,30 @@ class AnnouncementUpdate(StaffRequiredMixin, UpdateView):
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
+
+
+class AnnouncementCreateFrontEnd(AnnouncementCreate):
+    success_url = reverse_lazy('home')
+    form_class = AnnouncementForm
+    template_name = 'newswire/announcement-update.html'
+
+
+class AnnouncementCreateFrontEnd(NeedsReviewMixin, CreateView):
+    model = SundayAttendance
+    success_url = reverse_lazy('home')
+    form_class = AnnouncementFormFrontEnd
+    template_name = 'newswire/update-form.html'
+    page = Context({
+        'title': 'Announcement Review',
+        'header': 'Submit Announcement for Review',
+        'description': 'Use this to submit announcements for review.'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(AnnouncementCreateFrontEnd,
+                        self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
 
 
 class AnnouncementDelete(StaffRequiredMixin, DeleteView):
@@ -502,6 +545,24 @@ class AttendanceCreate(StaffRequiredMixin, CreateView):
             username=self.request.user)  # use your own profile here
         attendance.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class AttendanceCreateFrontEnd(NeedsReviewMixin, CreateView):
+    model = SundayAttendance
+    success_url = reverse_lazy('home')
+    form_class = AttendanceFormFrontEnd
+    template_name = 'newswire/update-form.html'
+    page = Context({
+        'title': 'Update Sunday Attendance - ',
+        'header': 'Sunday Attendance Form',
+        'description': 'Use this to submit announcements for review.'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(AttendanceCreateFrontEnd,
+                        self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
 
 
 class AttendanceUpdate(StaffRequiredMixin, UpdateView):
@@ -691,12 +752,14 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             upcoming_service_print = None
         context['orderofservice_print'] = upcoming_service_print
 
-        active_announcements = Announcement.objects.filter(publish_start_date__lte=now).filter(publish_end_date__gte=now)
+        active_announcements = Announcement.objects.filter(
+            publish_start_date__lte=now).filter(publish_end_date__gte=now)
         context['announcements'] = active_announcements
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
-        context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(all_birthdays, 7, coming_sunday)
+        context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
+            all_birthdays, 7, coming_sunday)
 
         building_fund_received_ytd = None
         try:

@@ -31,6 +31,7 @@ def get_default_publish_end_date():
 
 
 class Announcement(models.Model):
+    user = models.ForeignKey(User, db_index=True)
     title = models.CharField(max_length=200, default='')
     body = models.TextField(max_length=1200, default='')
     publish_start_date = models.DateField(
@@ -40,6 +41,7 @@ class Announcement(models.Model):
     category = models.ForeignKey(Category, default='')
     link = models.CharField(max_length=400, blank=True, default='')
     hidden = models.BooleanField(default=False)
+    under_review = models.BooleanField(default=True)
     contact = models.CharField(max_length=200, blank=True, default='')
 
     def is_published(self):
@@ -48,6 +50,10 @@ class Announcement(models.Model):
         if self.publish_start_date <= today <= self.publish_end_date:
             return True
         return False
+
+    #def save(self, force_insert=False, force_update=False):
+    #    self.under_review = True
+    #    super(Announcement, self).save(force_insert, force_update)
 
     def __str__(self):
         return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
@@ -253,12 +259,14 @@ class Relationship(models.Model):
 
 
 class SundayAttendance(models.Model):
+    user = models.ForeignKey(User, db_index=True)
     date = models.DateField(default=datetime.now)
     english_congregation = models.PositiveSmallIntegerField(default=0)
     chinese_congregation = models.PositiveSmallIntegerField(default=0)
     childrens_church = models.PositiveSmallIntegerField(default=0)
     preschoolers = models.PositiveSmallIntegerField(default=0)
     nursery = models.PositiveSmallIntegerField(default=0)
+    under_review = models.BooleanField(default=True)
     notes = models.TextField(max_length=300, null=True, blank=True)
 
     def __str__(self):

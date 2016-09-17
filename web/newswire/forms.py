@@ -115,7 +115,25 @@ class AttendanceForm(ModelForm):
     class Meta:
         model = SundayAttendance
         fields = '__all__'
-        # exclude = ["user"]
+
+
+class AttendanceFormFrontEnd(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AttendanceFormFrontEnd, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "attendance_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = SundayAttendance
+        exclude = ['user', 'under_review']
 
 
 class DataSeriesForm(ModelForm):
@@ -174,6 +192,7 @@ class SundayAttendanceForm(ModelForm):
         model = SundayAttendance
         fields = '__all__'
 
+
 class OrderOfServiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -209,6 +228,7 @@ class AnnouncementForm(forms.ModelForm):
                 'publish_end_date', '<i class="fa fa-calendar"></i>', css_class="dateinput"),
             Field('category', 'link', ),
             Field('hidden', title="Hide this Announcement"),
+            Field('under_review', title="Under review"),
             Field('contact'),
 
             FormActions(
@@ -221,7 +241,32 @@ class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
         fields = ['title', 'body', 'publish_start_date',
-                  'publish_end_date', 'category', 'link', 'hidden', 'contact', ]
+                  'publish_end_date', 'category', 'link', 'hidden', 'under_review', 'contact', ]
+
+
+class AnnouncementFormFrontEnd(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AnnouncementFormFrontEnd, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field('title', 'body'),
+            PrependedText(
+                'publish_start_date', '<i class="fa fa-calendar"></i>', css_class="dateinput"),
+            PrependedText(
+                'publish_end_date', '<i class="fa fa-calendar"></i>', css_class="dateinput"),
+            Field('category', 'link', ),
+            Field('contact'),
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "announcement_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = Announcement
+        exclude = ['hidden', 'user', 'under_review']
 
 
 class CategoryForm(forms.ModelForm):

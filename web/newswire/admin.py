@@ -12,8 +12,7 @@ class AnnouncementForm(ModelForm):
 
     class Meta:
         model = Announcement
-        fields = {'title', 'body', 'publish_start_date',
-                  'publish_end_date', 'category', 'link', 'hidden', 'contact'}
+        fields = '__all__'
         widgets = {
             #'publish_start_date': SuitDateWidget,
             #'publish_end_date': SuitDateWidget,

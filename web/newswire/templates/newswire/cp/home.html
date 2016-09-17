@@ -162,7 +162,7 @@
                         {% for attendance in recent_sunday_attendance %}
                             <p>
                                 <strong>{{attendance.date|date:"d-m-o (D)"}}
-                                    <a href="{%  url 'attendance_edit' attendance.id  %}">
+                                    <a href="{%  url 'attendance_edit' attendance.pk  %}">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                 </strong>

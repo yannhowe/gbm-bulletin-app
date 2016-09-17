@@ -28,7 +28,7 @@
     {% for announcement in object_list %}
         <div class="box collapsed-box">
             <div class="box-header with-border">
-                <h3 class="box-title {% if not announcement.is_published or announcement.hidden %}text-muted{% endif %}">
+                <h3 class="box-title {% if not announcement.is_published or announcement.hidden or announcement.under_review %}text-muted{% endif %}">
                     <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
                         {% if announcement.is_published and not announcement.hidden %}
                             <button type="button" class="btn btn-xs btn-success pull-left">
@@ -37,6 +37,10 @@
                         {% if announcement.hidden %}
                             <button type="button" class="btn btn-xs btn-warning pull-left">
                                 Hidden</button>
+                        {% endif %}
+                        {% if announcement.under_review %}
+                            <button type="button" class="btn btn-xs btn-warning pull-left">
+                                Under Review</button>
                         {% endif %}
                     </div>
                     <strong>{{ announcement.title }}&nbsp;
