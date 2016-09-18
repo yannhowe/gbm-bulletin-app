@@ -47,7 +47,7 @@
                         Home</a>
                 </li>
             </ul>
-        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklyverse' in request.path or 'category' in request.path or 'attendance' in request.path %}active{% endif %} treeview">
+        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklyverse' in request.path or 'category' in request.path or 'attendance' in request.path or 'buildingfund' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-newspaper-o"></i>
                 <span>Bulletin</span>
@@ -74,7 +74,7 @@
                         <i class="fa fa-list-alt"></i>
                         Weekly Verse</a>
                 </li>
-                <li class="{% if 'buildingfundcollection' in request.path %}active{% endif %}">
+                <li class="{% if 'buildingfund' in request.path %}active{% endif %}">
                     <a href="{%  url 'buildingfund_list' %}">
                         <i class="fa fa-list-alt"></i>
                         Building Fund</a>

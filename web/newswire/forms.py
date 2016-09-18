@@ -108,13 +108,13 @@ class AttendanceForm(ModelForm):
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
-                    '<a class="btn" href={% url "attendance_list" %}>Cancel</a>'),
+                    '<a class="btn" href={% url "attendance_summary" %}>Cancel</a>'),
             )
         )
 
     class Meta:
         model = SundayAttendance
-        fields = '__all__'
+        exclude = ['user']
 
 
 class AttendanceFormFrontEnd(ModelForm):
@@ -127,13 +127,33 @@ class AttendanceFormFrontEnd(ModelForm):
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
-                    '<a class="btn" href={% url "attendance_list" %}>Cancel</a>'),
+                    '<a class="btn" href={% url "attendance_summary" %}>Cancel</a>'),
             )
         )
 
     class Meta:
         model = SundayAttendance
         exclude = ['user', 'under_review']
+
+
+class AttendanceForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(AttendanceForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "weeklyverse_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = SundayAttendance
+        fields = '__all__'
+
 
 
 class DataSeriesForm(ModelForm):
@@ -172,26 +192,6 @@ class WeeklyVerseForm(ModelForm):
     class Meta:
         model = WeeklyVerse
         fields = '__all__'
-
-
-class SundayAttendanceForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(SundayAttendanceForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-
-        self.helper.layout.append(
-            FormActions(
-                Submit('save', 'Save changes'),
-                HTML(
-                    '<a class="btn" href={% url "weeklyverse_list" %}>Cancel</a>'),
-            )
-        )
-
-    class Meta:
-        model = SundayAttendance
-        fields = '__all__'
-
 
 class OrderOfServiceForm(forms.ModelForm):
 
@@ -240,8 +240,7 @@ class AnnouncementForm(forms.ModelForm):
 
     class Meta:
         model = Announcement
-        fields = ['title', 'body', 'publish_start_date',
-                  'publish_end_date', 'category', 'link', 'hidden', 'under_review', 'contact', ]
+        exclude = ['user']
 
 
 class AnnouncementFormFrontEnd(forms.ModelForm):

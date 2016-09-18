@@ -31,9 +31,9 @@
         <hr class="section-end"/>
     {% endif %}
 
-    {% if graph_sunday_attendance or building_fund_received %}
+    {% if graph_sunday_attendance or building_fund_collection_latest %}
         <h2 class="text-center">Weekly Summary</h2>
-        {% if graph_sunday_attendance %}
+        {% if building_fund_collection_latest%}
             {% include "newswire/cp/includes/bulletin_building_fund.html" %}
         {% endif %}
         {% if graph_sunday_attendance %}

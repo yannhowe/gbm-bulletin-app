@@ -263,7 +263,7 @@ class SundayAttendanceResource(resources.ModelResource):
         model = SundayAttendance
 
 
-class SundayAttendanceForm(ModelForm):
+class AttendanceForm(ModelForm):
 
     class Meta:
         model = SundayAttendance

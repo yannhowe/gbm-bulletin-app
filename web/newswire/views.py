@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, SundayAttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
 from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 # from datetime import datetime, timedelta
 import datetime
@@ -57,10 +57,10 @@ def get_coming_sunday(date):
     return coming_sunday
 
 
-def ahead_or_behind(received, giving):
-    if received > giving:
+def ahead_or_behind(collection, goal):
+    if collection > goal:
         return "ahead"
-    elif received < giving:
+    elif collection < goal:
         return "behind"
 
 
@@ -145,11 +145,8 @@ class BulletinListView(ListView):
         now = datetime.datetime.now()
         today = datetime.datetime.today()
         current_year = datetime.datetime.now().year
-
-        # coming sunday's date
         coming_sunday = get_coming_sunday(today)
 
-        upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.order_by('date').filter(
                 date__gte=datetime.datetime.now())[:1].get()
@@ -157,7 +154,6 @@ class BulletinListView(ListView):
             upcoming_service = None
         context['orderofservice'] = upcoming_service
 
-        upcoming_service_print = None
         try:
             upcoming_service_print = OrderOfService.objects.order_by('date').filter(
                 date=coming_sunday)[:1].get()
@@ -187,48 +183,6 @@ class BulletinListView(ListView):
         context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
             all_birthdays, 7, coming_sunday)
 
-        building_fund_received_ytd = None
-        try:
-            building_fund_received_ytd = DataPoint.objects.filter(
-                date__year=current_year, dataseries__name__exact="Building Fund Weekly Collection").aggregate(Sum('value')).values()[0]
-        except DataPoint.DoesNotExist:
-            building_fund_received_ytd = None
-        context['building_fund_received_ytd'] = building_fund_received_ytd
-
-        building_fund_received = None
-        try:
-            building_fund_received = DataPoint.objects.filter(
-                dataseries__name__exact="Building Fund Weekly Collection").latest('date')
-        except DataPoint.DoesNotExist:
-            building_fund_received = None
-        context['building_fund_received'] = building_fund_received
-
-        building_fund_pledged_ytd = None
-        try:
-            building_fund_pledged = DataPoint.objects.filter(
-                dataseries__name__exact="Building Fund Pledge").latest('date')
-            building_fund_pledged_ytd = building_fund_pledged.value / \
-                365 * datetime.datetime.now().timetuple().tm_yday
-        except DataPoint.DoesNotExist:
-            building_fund_pledged_ytd = None
-        context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
-
-        building_goal = None
-        try:
-            building_goal = DataPoint.objects.filter(
-                dataseries__name__exact="Building Fund Goal").latest('date')
-        except DataPoint.DoesNotExist:
-            building_goal = None
-        context['building_goal'] = building_goal.value
-
-        context['ahead_or_behind'] = ahead_or_behind(1, 2)
-        context['building_pledge_received_difference'] = building_fund_pledged_ytd - \
-            building_fund_received_ytd
-        context['building_goal_received_difference'] = building_goal.value - \
-            building_fund_received_ytd
-        context['building_goal_received_percent'] = building_fund_received.value / \
-            building_goal.value * 100
-
         SundayAttendanceApproved = SundayAttendance.objects.exclude(
             under_review=True)
         context['graph_sunday_attendance'] = SundayAttendanceApproved.order_by(
@@ -251,6 +205,50 @@ class BulletinListView(ListView):
             active_events = None
         context['events'] = active_events.extra(
             order_by=['date_start'])
+
+        try:
+            building_fund_year_goal = BuildingFundYearGoal.objects.all()
+        except BuildingFundYearGoal.DoesNotExist:
+            building_fund_year_goal = None
+
+        try:
+            building_fund_year_pledge = BuildingFundYearPledge.objects.all()
+        except BuildingFundYearPledge.DoesNotExist:
+            building_fund_year_pledge = None
+
+        try:
+            building_fund_collection = BuildingFundCollection.objects.all()
+        except BuildingFundCollection.DoesNotExist:
+            building_fund_collection = None
+
+        if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
+            building_fund_collection_ytd = building_fund_collection.filter(
+                date__year=current_year).aggregate(Sum('amount')).values()[0]
+            building_fund_pledged_ytd = building_fund_year_pledge.latest(
+                'date').amount / 365 * datetime.datetime.now().timetuple().tm_yday
+            building_fund_year_goal = building_fund_year_goal.latest(
+                'date').amount
+            building_pledge_and_ytd_collection_difference = building_fund_pledged_ytd - \
+                building_fund_collection_ytd
+            building_goal_and_ytd_collection_difference = building_fund_year_goal - \
+                building_fund_collection_ytd
+            building_goal_and_ytd_collection_percent = building_fund_collection_ytd / \
+                building_fund_year_goal * 100
+            ahead_or_behind_goal = ahead_or_behind(
+                building_fund_collection_ytd, building_fund_year_goal)
+
+            context['building_fund_collection_latest'] = building_fund_collection.latest(
+                'date')
+            context['building_fund_collection_ytd'] = building_fund_collection_ytd
+            context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
+            context['building_fund_year_goal'] = building_fund_year_goal
+            context['building_pledge_and_ytd_collection_difference'] = abs(
+                building_pledge_and_ytd_collection_difference)
+            context['building_goal_and_ytd_collection_difference'] = abs(
+                building_goal_and_ytd_collection_difference)
+            context[
+                'building_goal_and_ytd_collection_percent'] = building_goal_and_ytd_collection_percent
+            context['ahead_or_behind'] = ahead_or_behind_goal
 
         if self.request.user.is_authenticated():
             try:
@@ -358,6 +356,13 @@ class AnnouncementCreate(StaffRequiredMixin, CreateView):
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
 
+    def form_valid(self, form):
+        data = form.save(commit=False)
+        data.user = User.objects.get(
+            username=self.request.user)  # use your own profile here
+        data.save()
+        return HttpResponseRedirect(self.success_url)
+
 
 class AnnouncementUpdate(StaffRequiredMixin, UpdateView):
     model = Announcement
@@ -382,6 +387,13 @@ class AnnouncementCreateFrontEnd(NeedsReviewMixin, CreateView):
         'header': 'Submit Announcement for Review',
         'description': 'Use this to submit announcements for review.'
     })
+
+    def form_valid(self, form):
+        data = form.save(commit=False)
+        data.user = User.objects.get(
+            username=self.request.user)  # use your own profile here
+        data.save()
+        return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super(AnnouncementCreateFrontEnd,
@@ -534,11 +546,11 @@ class AttendanceCreate(StaffRequiredMixin, CreateView):
     template_name = 'newswire/cp/attendance_form.html'
 
     def form_valid(self, form):
-        attendance = form.save(commit=False)
-        attendance.user = User.objects.get(
+        data = form.save(commit=False)
+        data.user = User.objects.get(
             username=self.request.user)  # use your own profile here
-        attendance.save()
-        return HttpResponseRedirect(self.get_success_url())
+        data.save()
+        return HttpResponseRedirect(self.success_url)
 
 
 class AttendanceCreateFrontEnd(NeedsReviewMixin, CreateView):
@@ -552,6 +564,13 @@ class AttendanceCreateFrontEnd(NeedsReviewMixin, CreateView):
         'description': 'Use this to submit announcements for review.'
     })
 
+    def form_valid(self, form):
+        data = form.save(commit=False)
+        data.user = User.objects.get(
+            username=self.request.user)  # use your own profile here
+        data.save()
+        return HttpResponseRedirect(self.success_url)
+
     def get_context_data(self, **kwargs):
         context = super(AttendanceCreateFrontEnd,
                         self).get_context_data(**kwargs)
@@ -561,14 +580,14 @@ class AttendanceCreateFrontEnd(NeedsReviewMixin, CreateView):
 
 class AttendanceUpdate(StaffRequiredMixin, UpdateView):
     model = SundayAttendance
-    success_url = reverse_lazy('attendance_list')
+    success_url = reverse_lazy('attendance_summary')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
 
 class AttendanceDelete(StaffRequiredMixin, DeleteView):
     model = SundayAttendance
-    success_url = reverse_lazy('attendance_list')
+    success_url = reverse_lazy('attendance_summary')
     template_name = 'newswire/cp/attendance_confirm_delete.html'
 
 
@@ -824,7 +843,6 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
         # coming sunday's date
         coming_sunday = get_coming_sunday(today)
 
-        upcoming_service = None
         try:
             upcoming_service = OrderOfService.objects.order_by('date').filter(
                 date__gte=datetime.datetime.now())[:1].get()
@@ -832,7 +850,6 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             upcoming_service = None
         context['orderofservice'] = upcoming_service
 
-        upcoming_service_print = None
         try:
             upcoming_service_print = OrderOfService.objects.order_by('date').filter(
                 date=coming_sunday)[:1].get()
@@ -848,48 +865,6 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
         context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
         context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
             all_birthdays, 7, coming_sunday)
-
-        building_fund_received_ytd = None
-        try:
-            building_fund_received_ytd = DataPoint.objects.filter(
-                date__year=current_year, dataseries__name__exact="Building Fund Weekly Collection").aggregate(Sum('value')).values()[0]
-        except DataPoint.DoesNotExist:
-            building_fund_received_ytd = None
-        context['building_fund_received_ytd'] = building_fund_received_ytd
-
-        building_fund_received = None
-        try:
-            building_fund_received = DataPoint.objects.filter(
-                dataseries__name__exact="Building Fund Weekly Collection").latest('date')
-        except DataPoint.DoesNotExist:
-            building_fund_received = None
-        context['building_fund_received'] = building_fund_received
-
-        building_fund_pledged_ytd = None
-        try:
-            building_fund_pledged = DataPoint.objects.filter(
-                dataseries__name__exact="Building Fund Pledge").latest('date')
-            building_fund_pledged_ytd = building_fund_pledged.value / \
-                365 * datetime.datetime.now().timetuple().tm_yday
-        except DataPoint.DoesNotExist:
-            building_fund_pledged_ytd = None
-        context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
-
-        building_goal = None
-        try:
-            building_goal = DataPoint.objects.filter(
-                dataseries__name__exact="Building Fund Goal").latest('date')
-        except DataPoint.DoesNotExist:
-            building_goal = None
-        context['building_goal'] = building_goal.value
-
-        context['ahead_or_behind'] = ahead_or_behind(1, 2)
-        context['building_pledge_received_difference'] = building_fund_pledged_ytd - \
-            building_fund_received_ytd
-        context['building_goal_received_difference'] = building_goal.value - \
-            building_fund_received_ytd
-        context['building_goal_received_percent'] = building_fund_received.value / \
-            building_goal.value * 100
 
         context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
             '-date')[:25]
@@ -911,6 +886,50 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             active_events = None
         context['events'] = active_events.extra(
             order_by=['date_start'])
+
+        try:
+            building_fund_year_goal = BuildingFundYearGoal.objects.all()
+        except BuildingFundYearGoal.DoesNotExist:
+            building_fund_year_goal = None
+
+        try:
+            building_fund_year_pledge = BuildingFundYearPledge.objects.all()
+        except BuildingFundYearPledge.DoesNotExist:
+            building_fund_year_pledge = None
+
+        try:
+            building_fund_collection = BuildingFundCollection.objects.all()
+        except BuildingFundCollection.DoesNotExist:
+            building_fund_collection = None
+
+        if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
+            building_fund_collection_ytd = building_fund_collection.filter(
+                date__year=current_year).aggregate(Sum('amount')).values()[0]
+            building_fund_pledged_ytd = building_fund_year_pledge.latest(
+                'date').amount / 365 * datetime.datetime.now().timetuple().tm_yday
+            building_fund_year_goal = building_fund_year_goal.latest(
+                'date').amount
+            building_pledge_and_ytd_collection_difference = building_fund_pledged_ytd - \
+                building_fund_collection_ytd
+            building_goal_and_ytd_collection_difference = building_fund_year_goal - \
+                building_fund_collection_ytd
+            building_goal_and_ytd_collection_percent = building_fund_collection_ytd / \
+                building_fund_year_goal * 100
+            ahead_or_behind_goal = ahead_or_behind(
+                building_fund_collection_ytd, building_fund_year_goal)
+
+            context['building_fund_collection_latest'] = building_fund_collection.latest(
+                'date')
+            context['building_fund_collection_ytd'] = building_fund_collection_ytd
+            context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
+            context['building_fund_year_goal'] = building_fund_year_goal
+            context['building_pledge_and_ytd_collection_difference'] = abs(
+                building_pledge_and_ytd_collection_difference)
+            context['building_goal_and_ytd_collection_difference'] = abs(
+                building_goal_and_ytd_collection_difference)
+            context[
+                'building_goal_and_ytd_collection_percent'] = building_goal_and_ytd_collection_percent
+            context['ahead_or_behind'] = ahead_or_behind_goal
 
         if self.request.user.is_authenticated():
             try:
