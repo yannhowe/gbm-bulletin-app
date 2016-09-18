@@ -140,27 +140,6 @@
             </li>
         </ul>
     </li>
-    {% if request.user.is_authenticated and request.user.is_superuser %}
-        <li class="{% if 'datapoint' in request.path or 'dataseries' in request.path %}active{% endif %} treeview">
-            <a href="#">
-                <i class="fa fa-database"></i>
-                <span>Raw Data</span>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-                <li class="{% if 'datapoint' in request.path %}active{% endif %}">
-                    <a href="{% url 'datapoint_list' %}">
-                        <i class="fa fa-file-text"></i>
-                        DataPoints</a>
-                </li>
-                <li class="{% if 'dataseries' in request.path %}active{% endif %}">
-                    <a href="{% url 'dataseries_list' %}">
-                        <i class="fa fa-line-chart"></i>
-                        DataSeries</a>
-                </li>
-            </ul>
-        </li>
-    {% endif %}
 </ul>
 </section>
 <!-- /.sidebar -->

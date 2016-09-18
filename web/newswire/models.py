@@ -50,11 +50,7 @@ class Announcement(models.Model):
         if self.publish_start_date <= today <= self.publish_end_date:
             return True
         return False
-
-    #def save(self, force_insert=False, force_update=False):
-    #    self.under_review = True
-    #    super(Announcement, self).save(force_insert, force_update)
-
+        
     def __str__(self):
         return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
 
@@ -305,49 +301,6 @@ class BuildingFundCollection(models.Model):
     def __str__(self):
         formatted_amount = '{:20,.2f}'.format(self.amount)
         return '%s - $%s' % (self.date.strftime("%d/%m/%y"), formatted_amount)
-
-
-class DataSeries(models.Model):
-    ATTENDANCE = 'Attendance'
-    FINANCIAL = 'Financial'
-    DATA_SERIES_TYPE_CHOICES = (
-        ('ATTENDANCE', 'Attendance'),
-        ('FINANCIAL', 'Financial'),
-    )
-
-    name = models.CharField(max_length=80)
-    type = models.CharField(
-        max_length=32, choices=DATA_SERIES_TYPE_CHOICES)
-    owner_group = models.ForeignKey(
-        Group, related_name='owner_group_dataseries', null=True, blank=True, default='')
-    viewer_group = models.ForeignKey(
-        Group, related_name='viewer_group_dataseries', null=True, blank=True, default='')
-    owner = models.ManyToManyField(
-        User, related_name='owner_dataseries', blank=True, default='')
-    viewer = models.ManyToManyField(
-        User, related_name='viewer_dataseries', blank=True, default='')
-    notes = models.TextField(max_length=300, null=True, blank=True)
-
-    def __str__(self):
-        return '%s - %s' % (self.type, self.name)
-
-
-class DataPoint(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True, default='')
-    value = models.DecimalField(max_digits=10, decimal_places=2, default='0')
-    dataseries = models.ForeignKey(
-        DataSeries, null=True, blank=True, default='')
-    date_added = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-    date = models.DateTimeField(
-        'Date & Time of the metric', null=True, blank=True, default=datetime.now)
-    notes = models.TextField(max_length=300, null=True, blank=True)
-
-#    def __str__(self):
-#        return '%s' % (self.id)
-# return '%s - %s - %d' % (self.dataseries.type, self.dataseries.name,
-# self.value)
-
 
 class WeeklyVerse(models.Model):
     date = models.DateField(default=get_default_publish_end_date)

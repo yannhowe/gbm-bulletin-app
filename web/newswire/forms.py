@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, Event, Profile, DataPoint, DataSeries, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 
 
 class ProfileFormFrontEnd(ModelForm):
@@ -79,24 +79,6 @@ class ProfileForm(ModelForm):
                   'date_of_death', 'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code', 'is_regular', 'is_member']
 
 
-class DataPointForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(DataPointForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-
-        self.helper.layout.append(
-            FormActions(
-                Submit('save', 'Save changes'),
-                HTML(
-                    '<a class="btn" href={% url "datapoint_list" %}>Cancel</a>'),
-            )
-        )
-
-    class Meta:
-        model = DataPoint
-        fields = '__all__'
-
 
 class AttendanceForm(ModelForm):
 
@@ -152,26 +134,6 @@ class AttendanceForm(ModelForm):
 
     class Meta:
         model = SundayAttendance
-        fields = '__all__'
-
-
-
-class DataSeriesForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(DataSeriesForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-
-        self.helper.layout.append(
-            FormActions(
-                Submit('save', 'Save changes'),
-                HTML(
-                    '<a class="btn" href={% url "dataseries_list" %}>Cancel</a>'),
-            )
-        )
-
-    class Meta:
-        model = DataSeries
         fields = '__all__'
 
 

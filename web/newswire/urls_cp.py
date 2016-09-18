@@ -98,33 +98,6 @@ urlpatterns = (
     url(r'^people/delete/(?P<pk>\d+)$',
         views.ProfileDelete.as_view(), name='profile_delete'),
 
-
-    # DataPoint
-    url(r'^datapoint/summary/$',
-        views.DataPointList.as_view(), name='datapoint_summary'),
-    url(r'^datapoint/$',
-        views.DataPointList.as_view(), name='datapoint_list'),
-    url(r'^datapoint/new$',
-        views.DataPointCreate.as_view(), name='datapoint_new'),
-    url(r'^datapoint/edit/(?P<pk>\d+)$',
-        views.DataPointUpdate.as_view(), name='datapoint_edit'),
-    url(r'^datapoint/delete/(?P<pk>\d+)$',
-        views.DataPointDelete.as_view(), name='datapoint_delete'),
-
-
-    # DataSeries
-    url(r'^dataseries/summary/$',
-        views.DataSeriesList.as_view(), name='dataseries_summary'),
-    url(r'^dataseries/$',
-        views.DataSeriesList.as_view(), name='dataseries_list'),
-    url(r'^dataseries/new$',
-        views.DataSeriesCreate.as_view(), name='dataseries_new'),
-    url(r'^dataseries/edit/(?P<pk>\d+)$',
-        views.DataSeriesUpdate.as_view(), name='dataseries_edit'),
-    url(r'^dataseries/delete/(?P<pk>\d+)$',
-        views.DataSeriesDelete.as_view(), name='dataseries_delete'),
-
-
     # WeeklyVerse
     url(r'^weeklyverse/$',
         views.WeeklyVerseList.as_view(), name='weeklyverse_list'),
@@ -134,7 +107,6 @@ urlpatterns = (
         views.WeeklyVerseUpdate.as_view(), name='weeklyverse_edit'),
     url(r'^weeklyverse/delete/(?P<pk>\d+)$',
         views.WeeklyVerseDelete.as_view(), name='weeklyverse_delete'),
-
 
 
     # Attendance Input

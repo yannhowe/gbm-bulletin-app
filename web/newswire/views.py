@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, DataPointForm, DataSeriesForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
-from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, DataPoint, DataSeries, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
+from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 # from datetime import datetime, timedelta
 import datetime
 from django import template
@@ -501,31 +501,6 @@ class ProfileUpdateFrontEndView(UpdateView):
         return get_object_or_404(User, pk=self.request.user.id)
 
 
-class DataPointList(SuperUserRequiredMixin, ListView):
-    queryset = DataPoint.objects.all()
-    template_name = 'newswire/cp/datapoint_list.html'
-
-
-class DataPointCreate(SuperUserRequiredMixin, CreateView):
-    model = DataPoint
-    success_url = reverse_lazy('datapoint_list')
-    form_class = DataPointForm
-    template_name = 'newswire/cp/datapoint_form.html'
-
-
-class DataPointUpdate(SuperUserRequiredMixin, UpdateView):
-    model = DataPoint
-    success_url = reverse_lazy('datapoint_list')
-    form_class = DataPointForm
-    template_name = 'newswire/cp/datapoint_form.html'
-
-
-class DataPointDelete(SuperUserRequiredMixin, DeleteView):
-    model = DataPoint
-    success_url = reverse_lazy('datapoint_list')
-    template_name = 'newswire/cp/datapoint_confirm_delete.html'
-
-
 class AttendanceSummary(StaffRequiredMixin, ListView):
     queryset = SundayAttendance.objects.all()
     template_name = 'newswire/cp/attendance_summary.html'
@@ -589,31 +564,6 @@ class AttendanceDelete(StaffRequiredMixin, DeleteView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_summary')
     template_name = 'newswire/cp/attendance_confirm_delete.html'
-
-
-class DataSeriesList(SuperUserRequiredMixin, ListView):
-    queryset = DataSeries.objects.all()
-    template_name = 'newswire/cp/dataseries_list.html'
-
-
-class DataSeriesCreate(SuperUserRequiredMixin, CreateView):
-    model = DataSeries
-    success_url = reverse_lazy('dataseries_list')
-    form_class = DataSeriesForm
-    template_name = 'newswire/cp/dataseries_form.html'
-
-
-class DataSeriesUpdate(SuperUserRequiredMixin, UpdateView):
-    model = DataSeries
-    success_url = reverse_lazy('dataseries_list')
-    form_class = DataSeriesForm
-    template_name = 'newswire/cp/dataseries_form.html'
-
-
-class DataSeriesDelete(SuperUserRequiredMixin, DeleteView):
-    model = DataSeries
-    success_url = reverse_lazy('dataseries_list')
-    template_name = 'newswire/cp/dataseries_confirm_delete.html'
 
 
 class WeeklyVerseList(StaffRequiredMixin, ListView):
