@@ -24,7 +24,7 @@ $(function() {
 
             // handle a successful response
             success: function(json) {
-                //$('#announcement-' + approve_announcement_id).addClass('hidden');
+                $('#announcement-' + approve_announcement_id).addClass('hidden');
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
             },
