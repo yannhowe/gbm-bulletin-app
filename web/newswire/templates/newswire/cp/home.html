@@ -6,100 +6,112 @@
 {% block content_header %}Dashboard{% endblock %}
 {% block content_sub_header %}Control Panel{% endblock %}
 {% block content %}
-    <h2 class="page-header">Upcoming Event RSVPs</h2>
-
     <div class="row">
         <div class="col-md-6">
             <div class="box box-default">
                 <div class="box-header with-border">
-                    <i class="fa fa-warning"></i>
-
-                    <h3 class="box-title">Alerts</h3>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h4>
-                            <i class="icon fa fa-ban"></i>
-                            Alert!</h4>
-                        Danger alert preview. This alert is dismissable. A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.
-                    </div>
-                    <div class="alert alert-info alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h4>
-                            <i class="icon fa fa-info"></i>
-                            Alert!</h4>
-                        Info alert preview. This alert is dismissable.
-                    </div>
-                    <div class="alert alert-warning alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h4>
-                            <i class="icon fa fa-warning"></i>
-                            Alert!</h4>
-                        Warning alert preview. This alert is dismissable.
-                    </div>
-                    <div class="alert alert-success alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h4>
-                            <i class="icon fa fa-check"></i>
-                            Alert!</h4>
-                        Success alert preview. This alert is dismissable.
+                    <h3 class="box-title">Action Required</h3>
+                    <div class="box-tools pull-right">
+                        <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
                     </div>
                 </div>
-                <!-- /.box-body -->
+                <div class="box-body no-padding">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li>
+                            <a href="{% url 'underreview_list' %}">
+                                <strong>Announcements to Review
+                                    {% if announcements_under_review_count %}
+                                        <span class="pull-right label label-warning">
+                                            {{announcements_under_review_count}}</span>
+                                    {% else %}
+                                        <span class="pull-right label label-success">
+                                            0</span>
+                                    {% endif %}
+                                </strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'underreview_list' %}">
+                                <strong>Attendance Records to Review
+                                    {% if sunday_attendance_under_review_count %}
+                                        <span class="pull-right label label-warning">
+                                            {{sunday_attendance_under_review_count}}</span>
+                                    {% else %}
+                                        <span class="pull-right label label-success">
+                                            0</span>
+                                    {% endif %}
+                                </strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'orderofservice_list' %}">
+                                <strong>Order of Service for Sunday:
+                                    {% if orderofservice_updated_or_not %}
+                                        <span class="pull-right text-green">Updated</span>
+                                    {% else %}
+                                        <span class="pull-right text-red">Not Updated</span>
+                                    {% endif %}
+                                </strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'weeklyverse_list' %}">
+                                <strong>Verse of the Week for Sunday:
+                                    {% if weeklyverse_updated_or_not %}
+                                        <span class="pull-right text-green">Updated</span>
+                                    {% else %}
+                                        <span class="pull-right text-red">Not Updated</span>
+                                    {% endif %}
+                                </strong>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="box-footer clearfix"></div>
             </div>
-            <!-- /.box -->
-        </div>
-        <!-- /.col -->
-
-        <div class="col-md-6">
             <div class="box box-default">
                 <div class="box-header with-border">
-                    <i class="fa fa-bullhorn"></i>
-
-                    <h3 class="box-title">Callouts</h3>
+                    <h3 class="box-title">Recent Sunday Attendance</h3>
+                    <div class="box-tools pull-right">
+                        <a href="{% url 'attendance_summary' %}" class="btn btn-sm">View Details</a>
+                    </div>
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body">
-                    <div class="callout callout-danger">
-                        <h4>I am a danger callout!</h4>
-
-                        <p>There is a problem that we need to fix. A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.</p>
-                    </div>
-                    <div class="callout callout-info">
-                        <h4>I am an info callout!</h4>
-
-                        <p>Follow the steps to continue to payment.</p>
-                    </div>
-                    <div class="callout callout-warning">
-                        <h4>I am a warning callout!</h4>
-
-                        <p>This is a yellow callout.</p>
-                    </div>
-                    <div class="callout callout-success">
-                        <h4>I am a success callout!</h4>
-
-                        <p>This is a green callout.</p>
-                    </div>
+                    {% for attendance in recent_sunday_attendance %}
+                        <p>
+                            <strong>{{attendance.date|date:"d-m-o (D)"}}
+                                <a href="{%  url 'attendance_edit' attendance.pk  %}">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </strong>
+                            <ul>
+                                <li>English Service:
+                                    {{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Chinese Service:
+                                    {{attendance.chinese_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Children's Church:
+                                    {{attendance.childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Pre-Schoolers:
+                                    {{attendance.preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                                <li>Nursery:
+                                    {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
+                            </ul>
+                        </p>
+                    {% endfor %}
                 </div>
-                <!-- /.box-body -->
             </div>
-            <!-- /.box -->
-        </div>
-        <!-- /.col -->
-    </div>
 
-    <div class="row">
-        {% regroup signups by event as signup_list_by_event %}
-        {% for event in signup_list_by_event %}
-            <div class="col-md-4">
+            {% regroup signups by event as signup_list_by_event %}
+            {% for event in signup_list_by_event %}
                 <div class="box box-default collapsed-box">
                     <div class="box-header with-border">
                         <h3 class="box-title">
                             <strong>RSVP for
                                 {{ event.grouper.title }}</strong>
                         </h3>
+                        <div class="box-tools pull-right">
+                            <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
+                        </div>
                         <p>
                             <strong>{% format_date_range event.grouper.date_start event.grouper.date_end %}
                                 &bull;
@@ -150,51 +162,39 @@
                             {% endfor %}
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+            <!-- /.col -->
 
-            <div class="col-md-4">
-                <div class="box">
+            <div class="col-md-6">
+                <div class="box box-default">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Recent Sunday Attendance</h3>
+                        <h3 class="box-title">Order of Service</h3>
+                        <div class="box-tools pull-right">
+                            <a href="{%  url 'orderofservice_list' %}" class="btn btn-sm">View Details</a>
+                        </div>
                     </div>
                     <div class="box-body">
-                        {% for attendance in recent_sunday_attendance %}
-                            <p>
-                                <strong>{{attendance.date|date:"d-m-o (D)"}}
-                                    <a href="{%  url 'attendance_edit' attendance.pk  %}">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                </strong>
-                                <ul>
-                                    <li>English Service:
-                                        {{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
-                                    <li>Chinese Service:
-                                        {{attendance.chinese_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
-                                    <li>Children's Church:
-                                        {{attendance.childrens_church|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
-                                    <li>Pre-Schoolers:
-                                        {{attendance.preschoolers|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
-                                    <li>Nursery:
-                                        {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
-                                </ul>
-                            </p>
-                        {% endfor %}
+                        {% include "newswire/cp/includes/bulletin_oos.html" %}
                     </div>
                 </div>
-
-                <div class="box">
+                <div class="box box-default">
                     <div class="box-header with-border">
                         <h3 class="box-title">Active Annoucements</h3>
+                        <div class="box-tools pull-right">
+                            <a href="{%  url 'announcement_list' %}" class="btn btn-sm">View Details</a>
+                        </div>
                     </div>
                     <div class="box-body">
                         {% include "newswire/cp/includes/bulletin_announcements.html" %}
                     </div>
                 </div>
-
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">Upcoming Events</h3>
+                        <div class="box-tools pull-right">
+                            <a href="{%  url 'event_list' %}" class="btn btn-sm">View Details</a>
+                        </div>
                     </div>
                     <div class="box-body">
                         {% include "newswire/cp/includes/bulletin_events.html" %}
@@ -213,6 +213,9 @@
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">Building Fund</h3>
+                        <div class="box-tools pull-right">
+                            <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
+                        </div>
                     </div>
                     <div class="box-body">
                         {% include "newswire/cp/includes/bulletin_building_fund.html" %}
@@ -222,13 +225,15 @@
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">Attendance</h3>
+                        <div class="box-tools pull-right">
+                            <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
+                        </div>
                     </div>
                     <div class="box-body">
                         {% include "newswire/cp/includes/bulletin_attendance.html" %}
                     </div>
                 </div>
             </div>
-            <!-- ./col -->
+            <!-- /.col -->
         </div>
-        <!-- /.row -->
     {% endblock %}

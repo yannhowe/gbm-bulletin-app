@@ -34,20 +34,13 @@
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
-        <li class="treeview">
-            <a href="#">
+        <li class="{% if request.path == "/cp/" %}active{% endif %}">
+            <a href="{% url 'cp_home' %}">
                 <i class="fa fa-dashboard"></i>
                 <span>Dashboard</span>
-                <i class="fa fa-angle-left pull-right"></i>
             </a>
-            <ul class="treeview-menu">
-                <li class="">
-                    <a href="{% url 'cp_home' %}">
-                        <i class="fa fa-home"></i>
-                        Home</a>
-                </li>
-            </ul>
-        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'weeklyverse' in request.path or 'category' in request.path or 'attendance' in request.path or 'buildingfund' in request.path %}active{% endif %} treeview">
+        </li>
+        <li class="{% if 'orderofservice' in request.path or 'announcement' in request.path or 'event' in request.path or 'weeklyverse' in request.path or 'category' in request.path or 'attendance' in request.path or 'buildingfund' in request.path %}active{% endif %} treeview">
             <a href="#">
                 <i class="fa fa-newspaper-o"></i>
                 <span>Bulletin</span>
@@ -74,6 +67,11 @@
                         <i class="fa fa-list-alt"></i>
                         Weekly Verse</a>
                 </li>
+                <li class="{% if 'event' in request.path %}active{% endif %}">
+                    <a href="{%  url 'event_list' %}">
+                        <i class="fa fa-calendar"></i>
+                        Event List</a>
+                </li>
                 <li class="{% if 'buildingfund' in request.path %}active{% endif %}">
                     <a href="{%  url 'buildingfund_list' %}">
                         <i class="fa fa-list-alt"></i>
@@ -97,18 +95,13 @@
             </li>
         </ul>
     </li>
-    <li class="{% if 'rsvp' in request.path or 'event' in request.path %}active{% endif %} treeview">
+    <li class="{% if 'rsvp' in request.path %}active{% endif %} treeview">
         <a href="#">
             <i class="fa fa-calendar"></i>
-            <span>Events</span>
+            <span>RSVPs</span>
             <i class="fa fa-angle-left pull-right"></i>
         </a>
         <ul class="treeview-menu">
-            <li class="{% if 'event' in request.path %}active{% endif %}">
-                <a href="{%  url 'event_list' %}">
-                    <i class="fa fa-calendar"></i>
-                    Event List</a>
-            </li>
             <li class="{% if 'rsvp' and not 'raw' in request.path and 'list' in request.path %}active{% endif %}">
                 <a href="{% url 'rsvp_list' %}">
                     <i class="fa fa-paper-plane"></i>
@@ -139,6 +132,15 @@
                     Directory</a>
             </li>
         </ul>
+    </li>
+    <li>
+        <a href="{% url 'underreview_list' %}">
+            <i class="fa fa-book"></i>
+            <span>Under Review</span>
+            <span class="pull-right-container">
+                <small class="label pull-right bg-red">{{ total_under_review_count }}</small>
+            </span>
+        </a>
     </li>
 </ul>
 </section>

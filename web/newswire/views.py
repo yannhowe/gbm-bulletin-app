@@ -33,6 +33,11 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 
 
+now = datetime.datetime.now()
+today = datetime.datetime.today()
+current_year = datetime.datetime.now().year
+
+
 def get_upcoming_birthdays(person_list, days, from_date=datetime.datetime.today()):
     person_list = person_list.distinct()  # ensure persons are only in the list once
     doblist = []
@@ -56,6 +61,8 @@ def get_coming_sunday(date):
         coming_sunday += datetime.timedelta(1)
     return coming_sunday
 
+coming_sunday = get_coming_sunday(today)
+
 
 def ahead_or_behind(collection, goal):
     if collection > goal:
@@ -64,9 +71,19 @@ def ahead_or_behind(collection, goal):
         return "behind"
 
 
-class Cart(object):
-
-    pass
+def updated_or_not(object_date, expected_date):
+    try:
+        a = object_date.date()
+    except Exception as e:
+        a = object_date
+    try:
+        b = expected_date.date()
+    except Exception as e:
+        b = object_date
+    if a == b:
+        return True
+    else:
+        return False
 
 
 class NeedsReviewMixin(object):
@@ -135,31 +152,70 @@ class PdfResponseMixin(object, ):
         return response
 
 
+class UnderReviewListView(ListView):
+    model = Announcement
+    template_name = 'newswire/cp/under_review_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UnderReviewListView, self).get_context_data(**kwargs)
+
+        try:
+            announcements = Announcement.objects.all()
+        except Announcement.DoesNotExist:
+            announcements = None
+
+        if announcements:
+            announcements_under_review = announcements.filter(
+                publish_start_date__lte=now, publish_end_date__gte=now, under_review=True)
+            announcements_under_review_count = announcements_under_review.count()
+            context['announcements_under_review'] = announcements_under_review
+            context[
+                'announcements_under_review_count'] = announcements_under_review_count
+
+        try:
+            sunday_attendance = SundayAttendance.objects.all()
+        except SundayAttendance.DoesNotExist:
+            sunday_attendance = None
+
+        if sunday_attendance:
+            sunday_attendance_under_review = sunday_attendance.filter(
+                under_review=True)
+            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
+            context['sunday_attendance_under_review'] = sunday_attendance_under_review
+            context['graph_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:25]
+            context['recent_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:4]
+            context[
+                'sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
+
+        if sunday_attendance and announcements:
+            context['total_under_review_count'] = announcements_under_review_count + \
+                sunday_attendance_under_review_count
+
+        return context
+
+
 class BulletinListView(ListView):
     model = Announcement
     template_name = 'newswire/home.html'
 
     def get_context_data(self, **kwargs):
         context = super(BulletinListView, self).get_context_data(**kwargs)
-        messages.info(self.request, '')
-        now = datetime.datetime.now()
-        today = datetime.datetime.today()
-        current_year = datetime.datetime.now().year
-        coming_sunday = get_coming_sunday(today)
 
         try:
-            upcoming_service = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.datetime.now())[:1].get()
+            order_of_service = OrderOfService.objects.all()
         except OrderOfService.DoesNotExist:
-            upcoming_service = None
-        context['orderofservice'] = upcoming_service
+            order_of_service = None
 
-        try:
-            upcoming_service_print = OrderOfService.objects.order_by('date').filter(
-                date=coming_sunday)[:1].get()
-        except OrderOfService.DoesNotExist:
-            upcoming_service_print = None
-        context['orderofservice_print'] = upcoming_service_print
+        if order_of_service:
+            coming_sunday_order_of_service = order_of_service.order_by(
+                'date').filter(date=coming_sunday)[:1].get()
+            if coming_sunday_order_of_service:
+                context[
+                    'coming_sunday_order_of_service'] = coming_sunday_order_of_service
+                context['orderofservice_updated_or_not'] = updated_or_not(
+                    coming_sunday_order_of_service.date, coming_sunday)
 
         active_announcements = Announcement.objects.filter(
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
@@ -406,6 +462,56 @@ class AnnouncementDelete(StaffRequiredMixin, DeleteView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     template_name = 'newswire/cp/announcement_confirm_delete.html'
+
+
+
+class AnnouncementApprove(DetailView):
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+
+            the_user = request.user
+            response_data = {}
+            announcenment = Announcement()
+
+            try:
+                announcenment = Announcement.objects.get(pk=request.POST.get('approve_announcement_id'))
+            except:
+                pass
+
+            response_data['announcenment.under_review-before'] = announcenment.under_review
+            announcenment.under_review = False
+            announcenment.user = the_user
+            announcenment.save()
+
+            response_data['announcenment.id'] = announcenment.id
+            response_data['announcenment.title'] = announcenment.title
+            response_data['announcenment.under_review-after'] = announcenment.under_review
+
+            if announcenment.under_review:
+                response_data['announcenment.under_review'] = "UPDATED"
+                return HttpResponse(
+                    json.dumps(response_data),
+                    content_type="application/json"
+                )
+            else:
+                response_data['announcenment.under_review'] = "Hello"
+                return HttpResponse(
+                    json.dumps(response_data),
+                    content_type="application/json"
+                )
+
+        else:
+            return HttpResponse(
+                json.dumps({"nothing to see": "this isn't happening"}),
+                content_type="application/json"
+            )
+
+    def get_success_url(self):
+        return reverse('home')
+
+    def get_object(self):
+        return get_object_or_404(User, pk=self.request.user.id)
 
 
 class EventList(StaffRequiredMixin, ListView):
@@ -775,40 +881,64 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
+
+        try:
+            announcements = Announcement.objects.all()
+        except Announcement.DoesNotExist:
+            announcements = None
+
+        if announcements:
+            announcements_under_review = announcements.filter(
+                publish_start_date__lte=now, publish_end_date__gte=now, under_review=True)
+            announcements_under_review_count = announcements_under_review.count()
+            context['announcements_under_review'] = announcements_under_review
+            context[
+                'announcements_under_review_count'] = announcements_under_review_count
+
+        try:
+            sunday_attendance = SundayAttendance.objects.all()
+        except SundayAttendance.DoesNotExist:
+            sunday_attendance = None
+
+        if sunday_attendance:
+            sunday_attendance_under_review = sunday_attendance.filter(
+                under_review=True)
+            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
+            context['sunday_attendance_under_review'] = sunday_attendance_under_review
+            context['graph_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:25]
+            context['recent_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:4]
+            context[
+                'sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
+
+        if sunday_attendance and announcements:
+            context['total_under_review_count'] = announcements_under_review_count + \
+                sunday_attendance_under_review_count
+
         try:
             context['signups'] = Signup.objects.order_by('event', 'rsvp')
         except Event.DoesNotExist:
             pass
 
-        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
-            '-date')[:25]
-        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
-            '-date')[:4]
-
-        messages.info(self.request, '')
-        now = datetime.datetime.now()
-        today = datetime.datetime.today()
-        current_year = datetime.datetime.now().year
-
-        # coming sunday's date
-        coming_sunday = get_coming_sunday(today)
-
         try:
-            upcoming_service = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.datetime.now())[:1].get()
+            order_of_service = OrderOfService.objects.all()
         except OrderOfService.DoesNotExist:
-            upcoming_service = None
-        context['orderofservice'] = upcoming_service
+            order_of_service = None
 
-        try:
-            upcoming_service_print = OrderOfService.objects.order_by('date').filter(
-                date=coming_sunday)[:1].get()
-        except OrderOfService.DoesNotExist:
-            upcoming_service_print = None
-        context['orderofservice_print'] = upcoming_service_print
+        if order_of_service:
+            coming_sunday_order_of_service = order_of_service.order_by(
+                'date').filter(date=coming_sunday)[:1].get()
+            if coming_sunday_order_of_service:
+                context['coming_sunday'] = coming_sunday.date
+                context[
+                    'coming_sunday_order_of_service'] = coming_sunday_order_of_service
+                context['orderofservice_updated_or_not'] = updated_or_not(
+                    coming_sunday_order_of_service.date, coming_sunday.date)
+                context['orderofservice_print'] = coming_sunday_order_of_service
 
         active_announcements = Announcement.objects.filter(
-            publish_start_date__lte=now).filter(publish_end_date__gte=now)
+            publish_start_date__lte=now, publish_end_date__gte=now, under_review=False)
         context['announcements'] = active_announcements
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
@@ -816,18 +946,16 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
         context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
             all_birthdays, 7, coming_sunday)
 
-        context['graph_sunday_attendance'] = SundayAttendance.objects.order_by(
-            '-date')[:25]
-        context['recent_sunday_attendance'] = SundayAttendance.objects.order_by(
-            '-date')[:4]
-        context['latest_sunday_attendance'] = SundayAttendance.objects.order_by(
-            '-date')[:1]
-
         try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
         except WeeklyVerse.DoesNotExist:
             latest_weeklyverse = None
-        context['weeklyverse'] = latest_weeklyverse
+
+        if latest_weeklyverse:
+            weeklyverse = latest_weeklyverse
+            context['weeklyverse'] = weeklyverse
+            context['weeklyverse_updated_or_not'] = updated_or_not(
+                weeklyverse.date, coming_sunday.date)
 
         try:
             active_events = Event.objects.filter(

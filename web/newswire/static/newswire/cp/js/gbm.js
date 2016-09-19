@@ -1,38 +1,30 @@
 $(function() {
 
-    //Get the button value on submit
-    $('#rsvpModal').on('shown.bs.modal', function() {
-        $('#myInput').focus()
-    })
-
     $('form').on('click', 'button[type=submit]', function(e) {
         $(this.form).data('clicked', this.value);
+        console.log("BUTTON VALUE: " + this.value); // another sanity check
     });
 
-    // Update rsvp on submit
-    $('#rsvp-form').on('submit', function(event) {
+    // Approve on submit
+    $('#approve-announcement-form').on('submit', function(event) {
+        console.log("BUTTON ID " + approve_announcement_id + " CLICKED"); // another sanity check
         event.preventDefault();
-        var the_rsvp = $(this).data('clicked').split('-')[0]; // get the_rsvp from button value
-        var the_event = $(this).data('clicked').split('-')[1]; // get the_event_id from button value
-        update_rsvp(the_rsvp, the_event);
-        $('.modal').modal('hide');
+        var approve_announcement_id = $(this).data('clicked').split('-')[1]; // get approve_announcement_id
+        approve_announcement(approve_announcement_id);
     });
 
-    // AJAX for rsvp
-    function update_rsvp(the_rsvp, the_event) {
-
+    // AJAX
+    function approve_announcement(approve_announcement_id) {
         $.ajax({
-            url: "rsvp/update/", // the endpoint
+            url: "../announcement/approve", // the endpoint
             type: "POST", // http method
             data: {
-                the_rsvp,
-                the_event
+                approve_announcement_id
             }, // data sent with the post request
 
             // handle a successful response
             success: function(json) {
-                $('#rsvpbtn-' + the_event).addClass('rsvp-' + the_rsvp + '');
-                $('#rsvpbtn-' + the_event).replaceWith('<button type="button" id="rsvpbtn-' + the_event + '" class="btn btn-default btn-xs rsvp rsvp-' + the_rsvp + '" data-toggle="modal" data-target="#rsvpModal-' + the_event + '">' + the_rsvp + '</button>');
+                //$('#announcement-' + approve_announcement_id).addClass('hidden');
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
             },

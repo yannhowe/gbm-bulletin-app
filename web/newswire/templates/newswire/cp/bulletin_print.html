@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>
             {% block header_title %}GBM Bulletin -
-                {{ orderofservice.date }}{% endblock %}
+                {{ coming_sunday_order_of_service.date }}{% endblock %}
         </title>
         <!-- Bootstrap -->
         <link rel="stylesheet" href="{% static 'newswire/cp/css/bootstrap.min.css' %}">
@@ -23,7 +23,7 @@
         <div class="pagebreak"></div>
         <div class="row">
             <div class="col-xs-6">
-                {% if orderofservice %}
+                {% if coming_sunday_order_of_service %}
                     {% include "newswire/cp/includes/bulletin_oos.html" %}
                 {% endif %}
                 {% include "newswire/cp/includes/bulletin_theme.html" %}

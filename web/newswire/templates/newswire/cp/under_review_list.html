@@ -1,0 +1,168 @@
+{% extends "newswire/cp/__base.html" %}
+{% load newswire_extras %}
+{% block header_title %}Under Review - Grace Baptist Ministries{% endblock %}
+{% block content_header %}Under Review{% endblock %}
+{% block content_sub_header %}{% endblock %}
+
+{% block header_includes %}{% endblock %}
+
+{% block content %}
+    <div class="box box-default collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">How this works</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+            <!-- /.box-tools -->
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body" style="display: none;"></div>
+        <!-- /.box-body -->
+    </div>
+
+    <h3>Announcenments</h3>
+    {% for announcement in announcements_under_review %}
+        <div class="box" id="announcement-{{ announcement.id }}">
+            <div class="box-header with-border">
+                <h3 class="box-title">
+                    <strong>{{ announcement.title }} {{ announcement.under_review }}
+                    </strong>
+                </h3>
+                <!-- Buttons, labels, and many other things can be placed here! -->
+                <!-- Here is a label for example -->
+                <div class="box-tools pull-right">
+                    <a href="{% url 'announcement_edit' announcement.id %}">
+                        <i class="fa fa-pencil"></i>
+                        Edit
+                    </a>
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="text-right col-xs-6">
+                                <strong>
+                                    Title:
+                                </strong>
+                            </td>
+                            <td class="text-left col-xs-6">
+                                {{ announcement.title }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right col-xs-6">
+                                <strong>
+                                    Text:
+                                </strong>
+                            </td>
+                            <td class="text-left col-xs-6">{{ announcement.body }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right col-xs-6">
+                                <strong>
+                                    Display Dates:
+                                </strong>
+                            </td>
+                            <td class="text-left col-xs-6">
+                                {% format_date_range announcement.publish_start_date announcement.publish_end_date %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right col-xs-6">
+                                <strong>
+                                    Submitted by:
+                                </strong>
+                            </td>
+                            <td class="text-left col-xs-6">
+                                {{ announcement.user }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <form action="{% url 'underreview_list' %}" method="POST" id="approve-announcement-form">
+                    {% csrf_token %}
+                    <button id="approve-{{announcement.pk}}" form="approve-announcement-form"  type="submit" value="approve-{{announcement.pk}}" form="approve-form" class="btn btn-primary pull-left">Approve</button>
+                </form>
+                <div class="pull-right">
+                    <a class="btn text-danger pull-right" href="{% url 'announcement_delete' announcement.id %}">
+                        <i class="fa fa-trash"></i>
+                        Delete
+                    </a>
+                </div>
+            </div>
+            <!-- box-footer -->
+        </div>
+    {% endfor %}
+
+    <h3>Attendance</h3>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box ">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Records for Review</h3>
+                </div>
+                <div class="box-body">
+                    <table id="memberlist" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>English Congregation</th>
+                                <th>Chinese Congregation</th>
+                                <th>Children's Church</th>
+                                <th>Preschoolers</th>
+                                <th>Nursery</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in sunday_attendance_under_review %}
+                                <tr>
+                                    <td>{{ attendance.date|date:"o-m-d" }}
+                                        <a href="{%  url 'attendance_edit' attendance.id  %}">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a href="{%  url 'attendance_delete' attendance.id  %}">
+                                            <i class="text-danger fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                    <td>{{ attendance.english_congregation }}</td>
+                                    <td>{{ attendance.chinese_congregation }}</td>
+                                    <td>{{ attendance.childrens_church }}</td>
+                                    <td>{{ attendance.preschoolers }}</td>
+                                    <td>{{ attendance.nursery }}</td>
+                                    <td>{{ attendance.notes }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Date</th>
+                                <th>English Congregation</th>
+                                <th>Chinese Congregation</th>
+                                <th>Children's Church</th>
+                                <th>Preschoolers</th>
+                                <th>Nursery</th>
+                                <th>Notes</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer_includes %}{% endblock %}
