@@ -6,25 +6,38 @@ $(function() {
     });
 
     // Approve on submit
-    $('#approve-announcement-form').on('submit', function(event) {
-        console.log("BUTTON ID " + approve_announcement_id + " CLICKED"); // another sanity check
+    $("body").find('form').filter('[id^=approve-][id$=-form]').on('submit', function(event) {
         event.preventDefault();
-        var approve_announcement_id = $(this).data('clicked').split('-')[1]; // get approve_announcement_id
-        approve_announcement(approve_announcement_id);
+        var approval_object_type = $(this).data('clicked').split('-')[1]; // get onject_id
+        var approval_object_id = $(this).data('clicked').split('-')[2]; // get onject_id
+        console.log("BUTTON ID " + approval_object_type + " " + approval_object_id + " CLICKED"); // another sanity check
+        var box = $(this).parents(".box").first();
+        approve_object(approval_object_type, approval_object_id, box);
     });
 
     // AJAX
-    function approve_announcement(approve_announcement_id) {
+    function approve_object(approval_object_type, approval_object_id, box) {
         $.ajax({
-            url: "../announcement/approve", // the endpoint
+            url: "/cp/bulletin/under-review/approve/", // the endpoint
             type: "POST", // http method
             data: {
-                approve_announcement_id
+                approval_object_type,
+                approval_object_id
             }, // data sent with the post request
 
             // handle a successful response
             success: function(json) {
-                $('#announcement-' + approve_announcement_id).addClass('hidden');
+                var bf = box.find(".box-body, .box-footer");
+                $('#approved-label-' + approval_object_id).removeClass("hidden")
+                if (!$('#' + approval_object_type + '-' + approval_object_id).children().hasClass("fa-plus")) {
+                    $('#' + approval_object_type + '-' + approval_object_id).children(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
+                    bf.slideUp();
+                } else {
+                    //Convert plus into minus
+                    $('#' + approval_object_type + '-' + approval_object_id).children(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
+                    bf.slideDown();
+                }
+
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
             },

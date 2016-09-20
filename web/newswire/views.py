@@ -209,13 +209,17 @@ class BulletinListView(ListView):
             order_of_service = None
 
         if order_of_service:
-            coming_sunday_order_of_service = order_of_service.order_by(
-                'date').filter(date=coming_sunday)[:1].get()
-            if coming_sunday_order_of_service:
-                context[
-                    'coming_sunday_order_of_service'] = coming_sunday_order_of_service
-                context['orderofservice_updated_or_not'] = updated_or_not(
-                    coming_sunday_order_of_service.date, coming_sunday)
+            try:
+                coming_sunday_order_of_service = order_of_service.order_by(
+                    'date').filter(date=coming_sunday)[:1].get()
+            except OrderOfService.DoesNotExist:
+                coming_sunday_order_of_service = None
+
+        if coming_sunday_order_of_service:
+            context[
+                'coming_sunday_order_of_service'] = coming_sunday_order_of_service
+            context['orderofservice_updated_or_not'] = updated_or_not(
+                coming_sunday_order_of_service.date, coming_sunday)
 
         active_announcements = Announcement.objects.filter(
             publish_start_date__lte=now).filter(publish_end_date__gte=now)
@@ -347,10 +351,11 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         template = self.get_template_names()[0]
         html_string = render_to_string(template, context)
         rendered_html = HTML(string=html_string)
+        filename = coming_sunday.strftime('%Y%m%d') + '_gbm_bulletin.pdf'
         pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(
             settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
         response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'filename="gbm_bulletin.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         return response
 
 
@@ -464,8 +469,7 @@ class AnnouncementDelete(StaffRequiredMixin, DeleteView):
     template_name = 'newswire/cp/announcement_confirm_delete.html'
 
 
-
-class AnnouncementApprove(DetailView):
+class UnderReviewApproveView(DetailView):
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
@@ -474,28 +478,42 @@ class AnnouncementApprove(DetailView):
             response_data = {}
             announcenment = Announcement()
 
-            try:
-                announcenment = Announcement.objects.get(pk=request.POST.get('approve_announcement_id'))
-            except:
-                pass
+            approval_object_id = request.POST.get('approval_object_id')
+            approval_object_type = request.POST.get('approval_object_type')
+            something_updated_successfully = False
 
-            response_data['announcenment.under_review-before'] = announcenment.under_review
-            announcenment.under_review = False
-            announcenment.user = the_user
-            announcenment.save()
+            if approval_object_type == "announcement":
+                try:
+                    announcenment = Announcement()
+                    announcenment = Announcement.objects.get(
+                        pk=approval_object_id)
+                    announcenment.under_review = False
+                    announcenment.user = the_user
+                    announcenment.save()
+                    something_updated_successfully = True
+                except:
+                    pass
 
-            response_data['announcenment.id'] = announcenment.id
-            response_data['announcenment.title'] = announcenment.title
-            response_data['announcenment.under_review-after'] = announcenment.under_review
+            if approval_object_type == "attendance":
+                try:
+                    attendance = SundayAttendance()
+                    attendance = SundayAttendance.objects.get(
+                        pk=approval_object_id)
+                    attendance.under_review = False
+                    attendance.user = the_user
+                    attendance.save()
+                    something_updated_successfully = True
+                except:
+                    pass
 
-            if announcenment.under_review:
-                response_data['announcenment.under_review'] = "UPDATED"
+            if something_updated_successfully:
+                response_data['approval_object_status'] = "Updated"
                 return HttpResponse(
                     json.dumps(response_data),
                     content_type="application/json"
                 )
             else:
-                response_data['announcenment.under_review'] = "Hello"
+                response_data['approval_object_status'] = "Update Failed"
                 return HttpResponse(
                     json.dumps(response_data),
                     content_type="application/json"
@@ -927,15 +945,28 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             order_of_service = None
 
         if order_of_service:
-            coming_sunday_order_of_service = order_of_service.order_by(
-                'date').filter(date=coming_sunday)[:1].get()
-            if coming_sunday_order_of_service:
-                context['coming_sunday'] = coming_sunday.date
-                context[
-                    'coming_sunday_order_of_service'] = coming_sunday_order_of_service
-                context['orderofservice_updated_or_not'] = updated_or_not(
-                    coming_sunday_order_of_service.date, coming_sunday.date)
-                context['orderofservice_print'] = coming_sunday_order_of_service
+            try:
+                coming_sunday_order_of_service = order_of_service.order_by(
+                    'date').filter(date=coming_sunday)[:1].get()
+            except OrderOfService.DoesNotExist:
+                coming_sunday_order_of_service = None
+
+        if coming_sunday_order_of_service:
+            context['coming_sunday'] = coming_sunday.date
+            context[
+                'coming_sunday_order_of_service'] = coming_sunday_order_of_service
+            context['orderofservice_updated_or_not'] = updated_or_not(
+                coming_sunday_order_of_service.date, coming_sunday.date)
+            context['orderofservice_print'] = coming_sunday_order_of_service
+
+
+
+        try:
+            order_of_service = OrderOfService.objects.all()
+        except OrderOfService.DoesNotExist:
+            order_of_service = None
+
+
 
         active_announcements = Announcement.objects.filter(
             publish_start_date__lte=now, publish_end_date__gte=now, under_review=False)

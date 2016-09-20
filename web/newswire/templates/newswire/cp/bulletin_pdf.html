@@ -62,7 +62,7 @@
             }
             @page {
                 size: A5 portrait;
-                margin: 30pt;
+                margin: 5pt 15pt;
             }
             @page:blank {
                 @top-center {
@@ -90,12 +90,12 @@
                 page-break-inside: avoid;
             }
             @page:right {
-                @bottom-center {
+                @xbottom-center {
                     content: "Page " counter(page) " of " counter(pages);
                 }
             }
             @page:left {
-                @bottom-center {
+                @xbottom-center {
                     content: "Page " counter(page) " of " counter(pages);
                 }
             }
@@ -179,18 +179,39 @@
                 }
             }
 
+            .no-margin-bottom {
+                margin-bottom: 0;
+            }
+            .our-theme {
+                margin-bottom: 5px;
+            }
+
         </style>
         {% block header_includes %}{% endblock %}
     </head>
     <body>
-        <br/><br/><br/><br/>
-        {% include "newswire/cp/includes/bulletin_pdf_cover.html" %}
-        <div class="pagebreak"></div>
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-xs-12">
+                <br/><br/><br/>
+                <h1 class="text-center cover-title no-margin-bottom"><img class="logo" src="http://staging.gbm.sg/images/gbm_logo_2016.png"/>Grace Baptist Ministries</h1>
+                <p class="text-center">
+                    A CHURCH THAT PREACHES THE GOSPEL TO THE LOST AND GRACE TO THE SAVED.
+                </p>
+                <p class="text-center">
+                    <strong>{{ coming_sunday_order_of_service.date }}</strong>
+                </p>
+                <br/>
                 {% if coming_sunday_order_of_service %}
-                    <h2>Order of Service</h2>
-                    {% include "newswire/cp/includes/bulletin_oos.html" %}
+                    <h3 class="text-center">ORDER OF SERVICE</h3>
+                    <div class="text-center">
+                        <p>
+                            {% if weeklyverse %}
+                                {% include "newswire/cp/includes/bulletin_weeklyverse.html" %}
+                            {% endif %}
+                            {{ coming_sunday_order_of_service.text|linebreaks }}
+                        </p>
+                    </div>
+
                 {% else %}
                     <div class="text-center">
                         <h2>Order of Service</h2>
@@ -198,15 +219,49 @@
                             <strong>** date placeholder **</strong>
                         </h3>
                         <p>
-                            ** <br />Order of service for this <br />Sunday has not been entered yet <br />**
+                            **
+                            <br/>Order of service for this
+                            <br/>Sunday has not been entered yet
+                            <br/>**
                         </p>
                     </div>
                 {% endif %}
+                {% if theme.this_year_theme and theme.this_year_theme_verse %}
+                    <div class="col-xs-8 col-xs-offset-2">
+                        <div class="text-center">
+                            <h3 class="our-theme">OUR THEME</h3>
+                            <p class="text-justified">
+                                <strong>{{ theme.this_year_theme_year }}:
+                                    {{theme.this_year_theme}}</strong><br/>
+                                {{theme.this_year_theme_verse|safe}}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="pagebreak"></div>
+
+        <div class="row">
+            <div class="col-xs-6">
+                {% if announcements_print %}
+                    <h2 class="text-center">Announcements</h2>
+                    {% include "newswire/cp/includes/bulletin_announcements_print.html" %}
+                {% endif %}
             </div>
             <div class="col-xs-6">
-                {% if theme.this_year_theme and theme.this_year_theme_verse %}
-                    {% include "newswire/cp/includes/bulletin_theme.html" %}
-                {% endif %}
+                <h2 class="text-center">OUR VISION</h2>
+                <p class="text-center">
+                    Glorifying God by building and developing a church of genuine Christians to fulfill the Great Commission.
+                </p>
+                <h2 class="text-center">OUR MISSION</h2>
+                <p class="text-center">
+                    <strong>G</strong>lorify God in Worship &bull;
+                    <strong>R</strong>ely on the Holy Spirit &bull;
+                    <strong>A</strong>dvance the Gospel &bull;
+                    <strong>C</strong>are for the Body &bull;
+                    <strong>E</strong>quip God’s disciples &bull;
+                </p>
                 {% if events %}
                     <h2 class="text-center">Upcoming Events</h2>
                     {% include "newswire/cp/includes/bulletin_events_print.html" %}
@@ -224,20 +279,18 @@
                         {% include "newswire/cp/includes/bulletin_attendance_pdf.html" %}
                     {% endif %}
                 {% endif %}
+                <h2 class="text-center">Pray For</h2>
+                <p class="text-justify">
+                    <strong>Salvation of Loved Ones:</strong>
+                    Parents &middot; Spouses &middot; Family Members &middot; Co-workers &middot; Friends
+                    <strong>Those with Medical Needs:
+                    </strong>
+                    Terence Garon &middot; Karon Halstead &middot; Kandra Hopple &middot; Brittany Ager &middot; Jessi Patin &middot; Yung Westrick &middot; Iesha Easter &middot; Tiana Dwight &middot; Leland Whitchurch &middot; Marisha Tweedie &middot;
+                    <strong>Those Overseas:</strong>
+                    Terence Garon &middot; Karon Halstead &middot; Kandra Hopple &middot; Brittany Ager &middot; Jessi Patin &middot; Yung Westrick &middot; Iesha Easter &middot; Tiana Dwight &middot; Leland Whitchurch &middot; Marisha Tweedie &middot;
+                </p>
             </div>
         </div>
-        <div class="pagebreak"></div>
-        {% if announcements_print %}
-            <h2 class="text-center">Announcements</h2>
-            {% include "newswire/cp/includes/bulletin_announcements_print.html" %}
-        {% endif %}
-        <div class="pagebreak"></div>
-        {% include "newswire/cp/includes/bulletin_back_cover.html" %}
-
-        <!-- /.row -->
-        <!-- ./wrapper -->
-
         {% block footer_includes %}{% endblock %}
-    </div>
-</body>
+    </body>
 </html>

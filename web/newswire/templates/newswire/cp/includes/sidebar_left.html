@@ -137,9 +137,11 @@
         <a href="{% url 'underreview_list' %}">
             <i class="fa fa-book"></i>
             <span>Under Review</span>
+            {% if total_under_review_count %}
             <span class="pull-right-container">
                 <small class="label pull-right bg-red">{{ total_under_review_count }}</small>
             </span>
+            {% endif %}
         </a>
     </li>
 </ul>

@@ -20,6 +20,8 @@ urlpatterns = (
     url(r'^bulletin/print/pdf$', BulletinPdfView.as_view(), name='cp_bulletin_pdf'),
     url(r'^bulletin/under-review/$',
         views.UnderReviewListView.as_view(), name='underreview_list'),
+    url(r'^bulletin/under-review/approve/$',
+        views.UnderReviewApproveView.as_view(), name='underreview_approve'),
 
     # OrderOfService
     url(r'^bulletin/orderofservice/$',
@@ -40,8 +42,6 @@ urlpatterns = (
         views.AnnouncementUpdate.as_view(), name='announcement_edit'),
     url(r'^bulletin/announcement/delete/(?P<pk>\d+)$',
         views.AnnouncementDelete.as_view(), name='announcement_delete'),
-    url(r'^bulletin/announcement/approve$',
-        views.AnnouncementApprove.as_view(), name='announcement_approve'),
 
     # Category
     url(r'^bulletin/category/$',

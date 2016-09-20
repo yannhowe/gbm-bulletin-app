@@ -125,6 +125,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 # constance
                 'constance.context_processors.config',
+                # newswire count under-review items
+                'newswire.context_processors.under_review_count_processor',
             ],
         },
     },
