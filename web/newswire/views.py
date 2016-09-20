@@ -79,7 +79,7 @@ def updated_or_not(object_date, expected_date):
     try:
         b = expected_date.date()
     except Exception as e:
-        b = object_date
+        b = expected_date
     if a == b:
         return True
     else:
@@ -355,7 +355,8 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(
             settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
         response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        response[
+            'Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         return response
 
 
@@ -900,6 +901,8 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
 
+        context['coming_sunday'] = coming_sunday.date
+
         try:
             announcements = Announcement.objects.all()
         except Announcement.DoesNotExist:
@@ -952,21 +955,16 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
                 coming_sunday_order_of_service = None
 
         if coming_sunday_order_of_service:
-            context['coming_sunday'] = coming_sunday.date
             context[
                 'coming_sunday_order_of_service'] = coming_sunday_order_of_service
             context['orderofservice_updated_or_not'] = updated_or_not(
                 coming_sunday_order_of_service.date, coming_sunday.date)
             context['orderofservice_print'] = coming_sunday_order_of_service
 
-
-
         try:
             order_of_service = OrderOfService.objects.all()
         except OrderOfService.DoesNotExist:
             order_of_service = None
-
-
 
         active_announcements = Announcement.objects.filter(
             publish_start_date__lte=now, publish_end_date__gte=now, under_review=False)
@@ -983,10 +981,9 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             latest_weeklyverse = None
 
         if latest_weeklyverse:
-            weeklyverse = latest_weeklyverse
-            context['weeklyverse'] = weeklyverse
+            context['weeklyverse'] = latest_weeklyverse
             context['weeklyverse_updated_or_not'] = updated_or_not(
-                weeklyverse.date, coming_sunday.date)
+                latest_weeklyverse.date, today.date)
 
         try:
             active_events = Event.objects.filter(
