@@ -3,6 +3,8 @@ from . import views
 from .views import BulletinHomePageView, ProfileDetailFrontEndView, ProfileUpdateFrontEndView, RsvpUpdateView, RsvpListView, RsvpListViewRaw, AttendanceCreateFrontEnd, AnnouncementCreateFrontEnd, BulletinPdfView
 from django.contrib.auth.decorators import login_required
 
+from django.views.generic import TemplateView
+
 urlpatterns = (
     url(r'^bulletin/$', BulletinHomePageView.as_view(), name='home'),
     url(r'^bulletin/rsvp/update/$',
@@ -18,4 +20,6 @@ urlpatterns = (
     url(r'^bulletin/submit/announcement/$',
         login_required(AnnouncementCreateFrontEnd.as_view()), name='announcement_front_end_new'),
     url(r'^bulletin/pdf/$', BulletinPdfView.as_view(), name='bulletin_pdf'),
+    url(r'^bulletin/404/$', TemplateView.as_view(template_name='404.html')),
+    url(r'^bulletin/500/$', TemplateView.as_view(template_name='500.html')),
 )

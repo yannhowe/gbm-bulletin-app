@@ -32,6 +32,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# COMMENT OUT INSTEAD OF SETTING TO FALSE This line only checks if env variable exists, not whether it is true/false.
 DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = [
