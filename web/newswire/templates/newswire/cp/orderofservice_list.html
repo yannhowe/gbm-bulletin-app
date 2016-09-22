@@ -53,7 +53,7 @@
                 <h3 class="box-title">
                     <strong>{{ orderofservice.get_service_name_display }}
                         -
-                        {{ orderofservice.date }}</strong>
+                        {{ orderofservice.date }} {{orderofservice.num_of_lines}} {{highlight.oos_tip_lines}} {{highlight.oos_warning_lines}}</strong>
                 </h3>
                 <!-- Buttons, labels, and many other things can be placed here! -->
                 <!-- Here is a label for example -->
@@ -70,23 +70,23 @@
             </div>
             <!-- /.box-header -->
 
-            {% if orderofservice.num_of_lines > 21 %}
-                <div class="callout {% if orderofservice.num_of_lines > 23 %}callout-warning{% else %}callout-info{% endif %}">
+            {% if orderofservice.num_of_lines > highlight.oos_tip_lines %}
+                <div class="callout {% if orderofservice.num_of_lines > highlight.oos_warning_lines %}callout-warning{% else %}callout-info{% endif %}">
                     <h4>
-                        {% if orderofservice.num_of_lines > 23 %}Warning!{% else %}Tip{% endif %}
+                        {% if orderofservice.num_of_lines > highlight.oos_warning_lines %}Warning!{% else %}Tip{% endif %}
                     </h4>
                     <p>
                         This order of service has
                         {{ orderofservice.num_of_lines }}
                         lines,
-                        {% if orderofservice.num_of_lines > 23 %}
+                        {% if orderofservice.num_of_lines > highlight.oos_warning_lines %}
                             more than
                         {% else %}
                             very close to
                         {% endif %}
-                        the recommended 23 lines. It may not fit in the printed bulletin.
-                        {% if orderofservice.is_print %}Check the print preview
-                            <a href="{% url 'cp_bulletin_print' %}">here</a>.
+                        the recommended {{ highlight.oos_warning_lines }} lines. It may not fit in the <a href="{% url 'bulletin_pdf' %}">pdf bulletin</a>.
+                        {% if orderofservice.is_print %}You can also check the print preview
+                            <a href="{% url 'cp_bulletin_print' %}">here</a> but it does not show page breaks.
                         {% endif %}
                     </p>
                 </div>

@@ -38,7 +38,8 @@ DEBUG = os.environ.get('DEBUG', False)
 ALLOWED_HOSTS = [
     'gbm.sg',
     'bulletin.gbm.sg',
-    'preview.gbm.sg'
+    'preview.gbm.sg',
+    'staging.gbm.sg'
 ]
 
 SITE_ID = 1
@@ -262,5 +263,6 @@ CONSTANCE_CONFIG = {
     'CONTACT_ADDRESS': ('146B Paya Lebar Road,<br/>ACE Building, #05-01<br/>Singapore 409017', 'Mailing Address appearing in footer/bottom of page'),
     'CONTACT_ADDRESS_URL': ('https://goo.gl/maps/55FGkrEbUf72', 'Google maps link for above address'),
     'MAX_PRINT_ANNOUCEMENTS': ('7', 'Maximum number of annoucements to print', int),
-
+    'ORDER_OF_SERVICE_TIP_LINES': (28, 'Number of lines before the tip is triggered'),
+    'ORDER_OF_SERVICE_WARNING_LINES': (30, 'Number of lines before the warning is triggered'),
 }
