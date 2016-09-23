@@ -31,7 +31,8 @@ def get_default_publish_end_date():
 
 
 class Announcement(models.Model):
-    user = models.ForeignKey(User, db_index=True)
+    submitter = models.ForeignKey(User, db_index=True, related_name="announcement_submitter")
+    approver = models.ForeignKey(User, db_index=True, related_name="announcement_approver")
     title = models.CharField(max_length=200, default='')
     body = models.TextField(max_length=1200, default='')
     publish_start_date = models.DateField(
@@ -50,7 +51,7 @@ class Announcement(models.Model):
         if self.publish_start_date <= today <= self.publish_end_date:
             return True
         return False
-        
+
     def __str__(self):
         return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
 
@@ -255,7 +256,8 @@ class Relationship(models.Model):
 
 
 class SundayAttendance(models.Model):
-    user = models.ForeignKey(User, db_index=True)
+    submitter = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_submitter")
+    approver = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_approver")
     date = models.DateField(default=datetime.now)
     english_congregation = models.PositiveSmallIntegerField(default=0)
     chinese_congregation = models.PositiveSmallIntegerField(default=0)
@@ -301,6 +303,7 @@ class BuildingFundCollection(models.Model):
     def __str__(self):
         formatted_amount = '{:20,.2f}'.format(self.amount)
         return '%s - $%s' % (self.date.strftime("%d/%m/%y"), formatted_amount)
+
 
 class WeeklyVerse(models.Model):
     date = models.DateField(default=get_default_publish_end_date)
