@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load humanize %}
+{% if building_fund_collection_latest %}
 <div class="post-preview">
     <h3>{{ building_fund_collection_latest.date|date:"o" }}
         building fund progress:</h3>
@@ -36,3 +37,4 @@
         //  } });
     </script>
 </div>
+{% endif %}

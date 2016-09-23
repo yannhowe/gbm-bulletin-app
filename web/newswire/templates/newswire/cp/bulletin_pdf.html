@@ -272,23 +272,13 @@
                 {% endif %}
                 {% if graph_sunday_attendance or building_fund_received %}
                     <h2 class="text-center">Weekly Summary</h2>
-                    {% if graph_sunday_attendance %}
+                    {% if building_fund_received %}
                         {% include "newswire/cp/includes/bulletin_building_fund_pdf.html" %}
                     {% endif %}
                     {% if graph_sunday_attendance %}
                         {% include "newswire/cp/includes/bulletin_attendance_pdf.html" %}
                     {% endif %}
                 {% endif %}
-                <h2 class="text-center">Pray For</h2>
-                <p class="text-justify">
-                    <strong>Salvation of Loved Ones:</strong>
-                    Parents &middot; Spouses &middot; Family Members &middot; Co-workers &middot; Friends
-                    <strong>Those with Medical Needs:
-                    </strong>
-                    Terence Garon &middot; Karon Halstead &middot; Kandra Hopple &middot; Brittany Ager &middot; Jessi Patin &middot; Yung Westrick &middot; Iesha Easter &middot; Tiana Dwight &middot; Leland Whitchurch &middot; Marisha Tweedie &middot;
-                    <strong>Those Overseas:</strong>
-                    Terence Garon &middot; Karon Halstead &middot; Kandra Hopple &middot; Brittany Ager &middot; Jessi Patin &middot; Yung Westrick &middot; Iesha Easter &middot; Tiana Dwight &middot; Leland Whitchurch &middot; Marisha Tweedie &middot;
-                </p>
             </div>
         </div>
         {% block footer_includes %}{% endblock %}
