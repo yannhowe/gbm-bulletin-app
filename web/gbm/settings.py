@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import sys
+import logging
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -32,8 +33,12 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# COMMENT OUT INSTEAD OF SETTING TO FALSE This line only checks if env variable exists, not whether it is true/false.
+# COMMENT OUT INSTEAD OF SETTING TO FALSE This line only checks if env
+# variable exists, not whether it is true/false.
 DEBUG = os.environ.get('DEBUG', False)
+
+#ADMINS = os.environ['ADMINS']
+ADMINS = [('Yann Howe', 'yannhowe@gmail.com'),]
 
 ALLOWED_HOSTS = [
     'gbm.sg',
@@ -265,4 +270,5 @@ CONSTANCE_CONFIG = {
     'MAX_PRINT_ANNOUCEMENTS': ('7', 'Maximum number of annoucements to print', int),
     'ORDER_OF_SERVICE_TIP_LINES': (28, 'Number of lines before the tip is triggered'),
     'ORDER_OF_SERVICE_WARNING_LINES': (30, 'Number of lines before the warning is triggered'),
+    'UNDER_REVIEW_ADMINS': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to send alerts for new items to review, one each line'),
 }

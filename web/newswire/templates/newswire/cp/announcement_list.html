@@ -80,7 +80,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title {% if not announcement.is_published or announcement.hidden or announcement.under_review %}text-muted{% endif %}">
                     <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
-                        {% if announcement.is_published and not announcement.hidden %}
+                        {% if announcement.is_published and not announcement.hidden and not announcement.under_review %}
                             <button type="button" class="btn btn-xs btn-success pull-left">
                                 Live</button>
                         {% endif %}
