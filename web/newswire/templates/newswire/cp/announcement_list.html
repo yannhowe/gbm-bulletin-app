@@ -21,8 +21,58 @@
             <!-- /.box-tools -->
         </div>
         <!-- /.box-header -->
-        <div class="box-body" style="display: none;">The announcements are sorted by latest publish start date first, then by closest publish end date. This is so that more recent annoucements published for a shorter time are published at the top and announcments that are longer term show up lower in the order.</div>
+        <div class="box-body" style="display: none;">The announcements are sorted by latest publish start date first, then by closest publish end date. This is so that more recent annoucements published for a shorter time are published at the top and
+            announcments that are longer term show up lower in the order. This page also allows you to add new categories to anouncements. When you assign an announcement to a category, the announcement category will show on the top right along with the background color selected here
+        </div>
+    </div>
+    <div class="box box-default collapsed-box">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                Announcement Categories
+            </h3>
+            <!-- Buttons, labels, and many other things can be placed here! -->
+            <!-- Here is a label for example -->
+            <div class="box-tools pull-right">
+
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+            <!-- /.box-tools -->
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Name/Color</th>
+                        <th>Description</th>
+                    </tr>
+                    {% for category in categories %}
+                        <tr>
+                            <td>
+                                <span style="background-color: {{ category.color }}; width: 100%;" class="badge">{{ category.name }}</span>
+                            </td>
+                            <td>{{ category.description }}
+                                <div class="btn-group pull-right">
+                                    <a class="btn btn-xs" href="{% url 'category_edit' category.id %}">
+                                        <i class="fa fa-pencil"></i>
+                                        Edit
+                                    </a>
+                                    <a class="btn btn-xs text-danger" href="{% url 'category_delete' category.id %}">
+                                        <i class="fa fa-trash"></i>
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <!-- /.box-body -->
+        <div class="box-footer text-right"></div>
+        <!-- box-footer -->
     </div>
 
     {% for announcement in object_list %}
@@ -45,13 +95,6 @@
                     </div>
                     <strong>{{ announcement.title }}&nbsp;
                     </strong>
-                    <small>
-                        <strong>
-                            {{ announcement.publish_start_date }}
-                            to
-                            {{ announcement.publish_end_date }}
-                        </strong>
-                    </small>
                 </h3>
                 <!-- Buttons, labels, and many other things can be placed here! -->
                 <!-- Here is a label for example -->
@@ -69,13 +112,21 @@
             <!-- /.box-header -->
             <div class="box-body {% if not announcement.is_published or announcement.hidden %}text-muted{% endif %}">
                 <p>
-                    <strong>
-                        Display Dates:
-                        {{ announcement.publish_start_date }}
-                        to
-                        {{ announcement.publish_end_date }}</strong>
+                    {{ announcement.body }}
                 </p>
-                {{ announcement.body }}
+                <p>
+                    <strong>
+                        Display Dates:</strong>
+                    {{ announcement.publish_start_date }}
+                    to
+                    {{ announcement.publish_end_date }}<br/>
+                    <strong>
+                        Submitter:</strong>
+                    {{ announcement.submitter }}<br/>
+                    <strong>
+                        Approver:</strong>
+                    {{ announcement.approver }}
+                </p>
             </div>
             <!-- /.box-body -->
             <div class="box-footer">

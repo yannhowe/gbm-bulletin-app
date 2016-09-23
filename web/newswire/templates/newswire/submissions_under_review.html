@@ -18,8 +18,8 @@
 {% endblock %}
 
 {% block content %}
-    <p>This is a list of all the items you've submitted. Once the item is approved it will appear on the
-        <a href="{% url 'home' %}">bulletin</a>. Items updated after being approved will require reviewing again.</p>
+    <p>This is a list of all the items you've submitted dated within the last 28 days. Once the item is approved it will appear on the
+        <a href="{% url 'home' %}">bulletin</a>. <strong>Items updated after being approved will require reviewing again.</strong></p>
     <h2>Announcenments
         <small>
             <a href="{% url 'announcement_front_end_new' %}" type="button" class="btn btn-primary btn-xs">
@@ -27,7 +27,8 @@
                 Create New</a>
         </small>
     </h2>
-    <h3>Under Review {{ announcements_under_review.count|default:"" }}</h3>
+    <h3>{{ announcements_under_review.count|default:"" }} Under Review
+        </h3>
     {% if not announcements_under_review %}
         <div class="box">
             <div class="box-header with-border">
@@ -51,7 +52,8 @@
                         Edit
                     </a>
                     <h2>{{ announcement.title }}
-                        <br/><small>{% format_date_range announcement.publish_start_date announcement.publish_end_date %}</small>
+                        <br/>
+                        <small>{% format_date_range announcement.publish_start_date announcement.publish_end_date %}</small>
                     </h2>
                     <p>{{ announcement.body }}</p>
                 </div>
@@ -74,10 +76,11 @@
                         Edit
                     </a>
                     <h2>{{ announcement.title }}
-                        <br/><small>{% format_date_range announcement.publish_start_date announcement.publish_end_date %}</small>
+                        <br/>
+                        <small>{% format_date_range announcement.publish_start_date announcement.publish_end_date %}</small>
                     </h2>
                     <p>{{ announcement.body }}</p>
-                    <p>
+                    <p class="text-right">
                         <em>Approved by:
                             {{ announcement.approver|default:"none" }}</em>
                     </p>
@@ -93,7 +96,7 @@
                 Create New</a>
         </small>
     </h2>
-    <h3>Under Review</h3>
+    <h3>{{ sunday_attendance_under_review.count|default:"" }} Under Review</h3>
     {% if not sunday_attendance_under_review %}
         <div class="box">
             <div class="box-header with-border">
@@ -131,6 +134,8 @@
                             <li>Nursery:
                                 {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                         </ul>
+                        <p>Notes:
+                            {{attendance.notes|default_if_none:""}}</p>
                     </p>
                 </div>
             </div>
@@ -166,8 +171,10 @@
                             <li>Nursery:
                                 {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                         </ul>
+                        <p>Notes:
+                            {{attendance.notes|default_if_none:""}}</p>
                     </p>
-                    <p>
+                    <p class="text-right">
                         <em>Approved by:
                             {{ attendance.approver|default:"none" }}</em>
                     </p>

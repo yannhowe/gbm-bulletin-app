@@ -31,8 +31,10 @@ def get_default_publish_end_date():
 
 
 class Announcement(models.Model):
-    submitter = models.ForeignKey(User, db_index=True, related_name="announcement_submitter")
-    approver = models.ForeignKey(User, db_index=True, related_name="announcement_approver")
+    submitter = models.ForeignKey(
+        User, db_index=True, related_name="announcement_submitter", null=True, blank=True, default=None)
+    approver = models.ForeignKey(
+        User, db_index=True, related_name="announcement_approver", null=True, blank=True, default=None)
     title = models.CharField(max_length=200, default='')
     body = models.TextField(max_length=1200, default='')
     publish_start_date = models.DateField(
@@ -256,8 +258,10 @@ class Relationship(models.Model):
 
 
 class SundayAttendance(models.Model):
-    submitter = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_submitter")
-    approver = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_approver")
+    submitter = models.ForeignKey(
+        User, db_index=True, related_name="sunday_attendance_submitter", null=True, blank=True, default=None)
+    approver = models.ForeignKey(
+        User, db_index=True, related_name="sunday_attendance_approver", null=True, blank=True, default=None)
     date = models.DateField(default=datetime.now)
     english_congregation = models.PositiveSmallIntegerField(default=0)
     chinese_congregation = models.PositiveSmallIntegerField(default=0)

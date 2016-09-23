@@ -90,7 +90,9 @@ class NeedsReviewMixin(object):
 
     def form_valid(self, form):
         submission = form.save(commit=False)
-        submission.user = self.request.user  # use your own profile here
+        submission.submitter = User.objects.get(
+            username=self.request.user)
+        submission.approver = None
         submission.under_review = True
         submission.save()
         # TODO Email admins that new announcement has been submitted for review
@@ -416,19 +418,24 @@ class AnnouncementList(StaffRequiredMixin, ListView):
     template_name = 'newswire/cp/announcement_list.html'
 
 
+    def get_context_data(self, **kwargs):
+        context = super(AnnouncementList, self).get_context_data(**kwargs)
+        now = datetime.datetime.now()
+
+        try:
+            categories = Category.objects.all()
+        except Category.DoesNotExist:
+            categories = None
+        context['categories'] = categories
+        return context
+
+
+
 class AnnouncementCreate(StaffRequiredMixin, CreateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
-
-    def form_valid(self, form):
-        data = form.save(commit=False)
-        data.user = User.objects.get(
-            username=self.request.user)  # use your own profile here
-        data.save()
-        return HttpResponseRedirect(self.success_url)
-
 
 class AnnouncementUpdate(StaffRequiredMixin, UpdateView):
     model = Announcement
@@ -446,24 +453,29 @@ class UnderReviewFrontEndListView(ListView):
                         self).get_context_data(**kwargs)
 
         try:
-            announcements = Announcement.objects.filter(user=self.request.user)
+            announcements = Announcement.objects.filter(
+                submitter=self.request.user, publish_end_date__gte=today - datetime.timedelta(days=28))
         except Announcement.DoesNotExist:
             announcements = None
 
         if announcements:
-            announcements_under_review = announcements.filter(under_review=True)
+            announcements_under_review = announcements.filter(
+                under_review=True)
             announcements_approved = announcements.filter(under_review=False)
             context['announcements_under_review'] = announcements_under_review
             context['announcements_approved'] = announcements_approved
 
         try:
-            sunday_attendance = SundayAttendance.objects.filter(user=self.request.user)
+            sunday_attendance = SundayAttendance.objects.filter(
+                submitter=self.request.user, date__gte=today - datetime.timedelta(days=28))
         except SundayAttendance.DoesNotExist:
             sunday_attendance = None
 
         if sunday_attendance:
-            sunday_attendance_under_review = sunday_attendance.filter(under_review=True)
-            sunday_attendance_approved = sunday_attendance.filter(under_review=False)
+            sunday_attendance_under_review = sunday_attendance.filter(
+                under_review=True)
+            sunday_attendance_approved = sunday_attendance.filter(
+                under_review=False)
             context['sunday_attendance_under_review'] = sunday_attendance_under_review
             context['sunday_attendance_approved'] = sunday_attendance_approved
 
@@ -498,14 +510,6 @@ class AnnouncementFrontEndUpdate(NeedsReviewMixin, UpdateView):
         'header': 'Update Sunday Announcement',
         'description': 'Use this to update announcements'
     })
-
-    def form_valid(self, form):
-        data = form.save(commit=False)
-        data.user = User.objects.get(
-            username=self.request.user)  # use your own profile here
-        data.under_review = True
-        data.save()
-        return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super(AnnouncementFrontEndUpdate,
@@ -556,7 +560,7 @@ class UnderReviewApproveView(DetailView):
                     announcenment = Announcement.objects.get(
                         pk=approval_object_id)
                     announcenment.under_review = False
-                    announcenment.user = the_user
+                    announcenment.approver = the_user
                     announcenment.save()
                     something_updated_successfully = True
                 except:
@@ -568,7 +572,7 @@ class UnderReviewApproveView(DetailView):
                     attendance = SundayAttendance.objects.get(
                         pk=approval_object_id)
                     attendance.under_review = False
-                    attendance.user = the_user
+                    attendance.approver = the_user
                     attendance.save()
                     something_updated_successfully = True
                 except:
@@ -632,21 +636,21 @@ class CategoryList(StaffRequiredMixin, ListView):
 
 class CategoryCreate(StaffRequiredMixin, CreateView):
     model = Category
-    success_url = reverse_lazy('category_list')
+    success_url = reverse_lazy('announcement_list')
     form_class = CategoryForm
     template_name = 'newswire/cp/category_form.html'
 
 
 class CategoryUpdate(StaffRequiredMixin, UpdateView):
     model = Category
-    success_url = reverse_lazy('category_list')
+    success_url = reverse_lazy('announcement_list')
     form_class = CategoryForm
     template_name = 'newswire/cp/category_form.html'
 
 
 class CategoryDelete(StaffRequiredMixin, DeleteView):
     model = Category
-    success_url = reverse_lazy('category_list')
+    success_url = reverse_lazy('announcement_list')
     template_name = 'newswire/cp/category_confirm_delete.html'
 
 
@@ -706,18 +710,12 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         return context
 
 
-class AttendanceCreate(StaffRequiredMixin, CreateView):
+class AttendanceCreate(StaffRequiredMixin,  CreateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_new')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
-    def form_valid(self, form):
-        data = form.save(commit=False)
-        data.user = User.objects.get(
-            username=self.request.user)  # use your own profile here
-        data.save()
-        return HttpResponseRedirect(self.success_url)
 
 
 class AttendanceUpdate(StaffRequiredMixin, UpdateView):
@@ -741,7 +739,7 @@ class AttendanceFrontEndCreate(NeedsReviewMixin, CreateView):
     page = Context({
         'title': 'Create Sunday Attendance - ',
         'header': 'Sunday Attendance Form',
-        'description': 'Use this to submit announcements for review'
+        'description': 'Use this to submit attendance records for review'
     })
 
     def get_context_data(self, **kwargs):
@@ -759,7 +757,7 @@ class AttendanceFrontEndUpdate(NeedsReviewMixin, UpdateView):
     page = Context({
         'title': 'Update Sunday Attendance - ',
         'header': 'Update Sunday Attendance',
-        'description': 'Use this to update announcements'
+        'description': 'Use this to update attendance records'
     })
 
 
@@ -770,7 +768,7 @@ class AttendanceFrontEndDelete(DeleteView):
     page = Context({
         'title': 'Delete Sunday Attendance - ',
         'header': 'Delete Sunday Attendance',
-        'description': 'Use this to delete announcements'
+        'description': 'Use this to delete attendance records'
     })
 
 

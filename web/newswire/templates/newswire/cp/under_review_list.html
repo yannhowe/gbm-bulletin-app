@@ -54,7 +54,7 @@
                 <!-- /.box-tools -->
             </div>
             <!-- /.box-header -->
-            <div class="box-body">
+            <div class="box-body" id="announcement-box-body-{{announcement.id}}">
                 <table class="table">
                     <tbody>
                         <tr>
@@ -96,21 +96,23 @@
                                 {{ announcement.submitter }}
                             </td>
                         </tr>
-                        <tr>
-                            <td class="text-right col-xs-6">
-                                <strong>
-                                    Approved by:
-                                </strong>
-                            </td>
-                            <td class="text-left col-xs-6">
-                                {{ announcement.approver|default:'Not yet approved' }}
-                            </td>
-                        </tr>
+                        {% if announcement.approver %}
+                            <tr>
+                                <td class="text-right col-xs-6">
+                                    <strong>
+                                        Approved by:
+                                    </strong>
+                                </td>
+                                <td class="text-left col-xs-6">
+                                    {{ announcement.approver|default:'Not yet approved' }}
+                                </td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
             <!-- /.box-body -->
-            <div class="box-footer">
+            <div class="box-footer" id="announcement-box-footer-{{announcement.id}}">
                 <form action="{% url 'underreview_list' %}" method="POST" id="approve-announcement-form">
                     {% csrf_token %}
                     <button id="approve-announcement-{{announcement.pk}}" form="approve-announcement-form" type="submit" value="approve-announcement-{{announcement.pk}}" form="approve-form" class="btn btn-primary pull-left">Approve</button>
@@ -139,7 +141,7 @@
     <div class="row">
         <div class="col-xs-12">
             {% for attendance in sunday_attendance_under_review %}
-                <div class="box ">
+                <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">
                             <strong>{{ attendance.date }}</strong>
@@ -159,7 +161,7 @@
                         <!-- /.box-tools -->
                     </div>
                     <!-- /.box-header -->
-                    <div class="box-body">
+                    <div class="box-body" id="attendance-box-body-{{attendance.id}}">
                         <p>
                             <strong>{{attendance.date|date:"d-m-o (D)"}}
                                 <a href="{%  url 'attendance_edit' attendance.pk  %}">
@@ -178,9 +180,21 @@
                                 <li>Nursery:
                                     {{attendance.nursery|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
                             </ul>
+                            {% if attendance.submitter %}
+                                <p>
+                                    <strong>Submitted by:</strong>
+                                    {{attendance.submitter}}</p>
+                            {% endif %}
+                            {% if attendance.approver %}
+                                <p>
+                                    <strong>Approved by:</strong>
+                                    {{attendance.approver}}</p>
+                            {% endif %}
+                            <p>Notes:
+                                {{attendance.notes|default_if_none:""}}</p>
                         </p>
                     </div>
-                    <div class="box-footer">
+                    <div class="box-footer" id="attendance-box-footer-{{attendance.id}}">
                         <form action="{% url 'underreview_list' %}" method="POST" id="approve-attendance-form">
                             {% csrf_token %}
                             <button id="approve-attendance-{{attendance.pk}}" form="approve-attendance-form" type="submit" value="approve-attendance-{{attendance.pk}}" form="approve-form" class="btn btn-primary pull-left">Approve</button>

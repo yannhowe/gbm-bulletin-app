@@ -31,8 +31,6 @@
                                 </a>
                             </dt>
                             <dd>
-                                Submitted by:
-                                {{attendance.user}}
                                 <ul>
                                     <li>English Service:
                                         {{attendance.english_congregation|default_if_none:"0"|floatformat:"0"|intcomma}}</li>
@@ -47,6 +45,11 @@
                                 </ul>
                             </dd>
                             <br/>
+                            <strong>Submitted by:</strong>
+                            {{attendance.submitter}}
+                            <br/>
+                            <strong>Approved by:</strong>
+                            {{attendance.approver}}
                         {% endfor %}
                     </dl>
                 </div>
@@ -124,6 +127,8 @@
                                 <th>Preschoolers</th>
                                 <th>Nursery</th>
                                 <th>Notes</th>
+                                <th>Submitter</th>
+                                <th>Approver</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,6 +148,8 @@
                                     <td>{{ attendance.preschoolers }}</td>
                                     <td>{{ attendance.nursery }}</td>
                                     <td>{{ attendance.notes }}</td>
+                                    <td>{{ attendance.submitter }}</td>
+                                    <td>{{ attendance.approver }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -155,6 +162,8 @@
                                 <th>Preschoolers</th>
                                 <th>Nursery</th>
                                 <th>Notes</th>
+                                <th>Submitter</th>
+                                <th>Approver</th>
                             </tr>
                         </tfoot>
                     </table>

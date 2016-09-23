@@ -27,15 +27,19 @@ $(function() {
 
             // handle a successful response
             success: function(json) {
-                var bf = box.find('#approved-label-' + approval_object_id);
+                //var bf = box.find('#approved-label-' + approval_object_id);
+                var box_body = box.find("#" + approval_object_type + "-box-body-" + approval_object_id);
+                var box_footer = box.find("#" + approval_object_type + "-box-footer-" + approval_object_id);
                 $('#approved-label-' + approval_object_id).removeClass("hidden")
                 if (!$('#' + approval_object_type + '-' + approval_object_id).children().hasClass("fa-plus")) {
                     $('#' + approval_object_type + '-' + approval_object_id).children(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
-                    bf.slideUp();
+                    box_body.slideUp();
+                    box_footer.slideUp();
                 } else {
                     //Convert plus into minus
                     $('#' + approval_object_type + '-' + approval_object_id).children(".fa-plus").removeClass("fa-plus").addClass("fa-minus");
-                    bf.slideDown();
+                    box_body.slideDown();
+                    box_footer.slideUp();
                 }
 
                 console.log(json); // log the returned json to the console

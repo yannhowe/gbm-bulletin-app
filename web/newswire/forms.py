@@ -79,7 +79,6 @@ class ProfileForm(ModelForm):
                   'date_of_death', 'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code', 'is_regular', 'is_member']
 
 
-
 class AttendanceForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -115,7 +114,7 @@ class AttendanceFormFrontEnd(ModelForm):
 
     class Meta:
         model = SundayAttendance
-        exclude = ['user', 'under_review']
+        exclude = ['submitter', 'approver', 'under_review']
 
 
 class AttendanceForm(ModelForm):
@@ -154,6 +153,7 @@ class WeeklyVerseForm(ModelForm):
     class Meta:
         model = WeeklyVerse
         fields = '__all__'
+
 
 class OrderOfServiceForm(forms.ModelForm):
 
@@ -227,7 +227,7 @@ class AnnouncementFormFrontEnd(forms.ModelForm):
 
     class Meta:
         model = Announcement
-        exclude = ['hidden', 'user', 'under_review']
+        exclude = ['submitter', 'approver', 'hidden', 'under_review']
 
 
 class CategoryForm(forms.ModelForm):

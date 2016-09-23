@@ -57,11 +57,6 @@
                         <i class="fa fa-thumb-tack"></i>
                         Announcements</a>
                 </li>
-                <li class="{% if 'category' in request.path %}active{% endif %}">
-                    <a href="{%  url 'category_list' %}">
-                        <i class="fa fa-list-alt"></i>
-                        Announcement Categories</a>
-                </li>
                 <li class="{% if 'weeklyverse' in request.path %}active{% endif %}">
                     <a href="{%  url 'weeklyverse_list' %}">
                         <i class="fa fa-list-alt"></i>
