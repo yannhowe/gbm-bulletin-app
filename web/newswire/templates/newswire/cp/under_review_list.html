@@ -93,7 +93,17 @@
                                 </strong>
                             </td>
                             <td class="text-left col-xs-6">
-                                {{ announcement.user }}
+                                {{ announcement.submitter }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right col-xs-6">
+                                <strong>
+                                    Approved by:
+                                </strong>
+                            </td>
+                            <td class="text-left col-xs-6">
+                                {{ announcement.approver|default:'Not yet approved' }}
                             </td>
                         </tr>
                     </tbody>

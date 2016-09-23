@@ -27,7 +27,7 @@ $(function() {
 
             // handle a successful response
             success: function(json) {
-                var bf = box.find(".box-body, .box-footer");
+                var bf = box.find('#approved-label-' + approval_object_id);
                 $('#approved-label-' + approval_object_id).removeClass("hidden")
                 if (!$('#' + approval_object_type + '-' + approval_object_id).children().hasClass("fa-plus")) {
                     $('#' + approval_object_type + '-' + approval_object_id).children(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
