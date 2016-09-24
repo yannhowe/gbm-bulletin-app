@@ -480,7 +480,7 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
             settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response[
-            'Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+            'Content-Disposition'] = 'filename="{}"'.format(filename)
         return response
 
 

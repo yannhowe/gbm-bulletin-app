@@ -7,6 +7,8 @@ server {
     access_log  /var/log/nginx/access.log;
     error_log   /var/log/nginx/error.log;
 
+    error_page  404 = /404.html;
+    error_page  500 502 503 504 /50x.html;
 
     location /static {
         alias /usr/src/app/static;
@@ -44,5 +46,4 @@ server {
         alias /var/www/;
         index index.html;
     }
-
 }
