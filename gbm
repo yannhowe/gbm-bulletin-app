@@ -22,6 +22,13 @@ case "$1" in
             docker-compose up --build -d
             docker-compose ps
             ;;
+        dev)
+            docker-compose stop -t 1
+            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose pull
+            docker-compose -f docker-compose.dev.yml up --build -d
+            docker-compose ps
+            ;;
         status)
             docker-compose ps
             ;;
@@ -50,7 +57,7 @@ case "$1" in
             ;;
 
         *)
-            echo $"Usage: $0 {start|stop|rebuild|status|clean|nuke|init|migrate|dump_live}"
+            echo $"Usage: $0 {start|stop|rebuild|dev|status|clean|nuke|init|migrate|dump_live}"
             exit 1
 
 esac
