@@ -1,0 +1,51 @@
+#!/bin/bash
+
+DATE = `date +%Y-%m-%d:%H:%M:%S`
+
+case "$1" in
+        start)
+            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose pull
+            docker-compose up --build -d
+            docker-compose ps
+            ;;
+
+        stop)
+            docker-compose stop -t 1
+            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose ps
+            ;;
+        rebuild)
+            docker-compose stop -t 1
+            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose pull
+            docker-compose up --build -d
+            docker-compose ps
+            ;;
+        status)
+            docker-compose ps
+            ;;
+        nuke)
+            docker stop $(docker ps -a -q)
+            docker rm $(docker ps -a -q)
+            docker rmi $(docker images -a)
+            ;;
+        init)
+            echo running migrations....
+            docker-compose run --rm bulletin python manage.py migrate
+            echo creating superuser
+            docker-compose run --rm bulletin python manage.py createsuperuser --username admin --email yannhowe@gmail.com
+            ;;
+        migrate)
+            docker-compose run --rm bulletin python manage.py migrate
+            ;;
+        dump_live)
+            echo dumping data only from gbm.sg
+            pg_dump -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.dump
+            ;;
+
+        *)
+            echo $"Usage: $0 {start|stop|rebuild|status|nuke|init|migrate|dump_live}"
+            exit 1
+
+esac

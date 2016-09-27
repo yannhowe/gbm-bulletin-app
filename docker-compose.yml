@@ -1,55 +1,74 @@
-web:
-  restart: always
-  build: ./web
-  expose:
-    - "8000"
-  links:
-    - postgres:postgres
-    - redis:redis
-#
-#
-  env_file: .env
-  command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 -b :8000
+version: '2'
+services:
+  nginx:
+    restart: always
+    build: ./gbm-nginx/
+    depends_on:
+      - website
+      - bulletin
+    volumes:
+      - /www/static
+      - /var/www
+    volumes_from:
+      - website
+      - bulletin
+      - bulletin-static
+    links:
+      - bulletin:bulletin
+    ports:
+      - "80:80"
 
-web-static:
-  build: ./web
-  volumes:
-    - /usr/src/app/static
-  env_file: .env
-  command: python manage.py collectstatic --noinput
+  website:
+    build: ./gbm-website/
+    command: >
+             --destination="/var/www"
+    volumes:
+      - /var/www
 
-nginx:
-  restart: always
-  build: ./nginx/
-  ports:
-    - "80:80"
-  volumes:
-    - /www/static
-    - /var/www
-  volumes_from:
-    - web
-    - web-static
-  links:
-    - web:web
+  bulletin:
+    restart: always
+    build: ./gbm-bulletin/
+    depends_on:
+      - bulletin-postgres
+      - bulletin-static
+      - bulletin-redis
+    expose:
+      - "8000"
+    depends_on:
+        - bulletin-postgres
+        - bulletin-redis
+    links:
+      - bulletin-postgres:bulletin-postgres
+      - bulletin-redis:bulletin-redis
+    env_file: .env
+    command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 -b :8000
 
-postgres:
-  restart: always
-  image: postgres:latest
-  volumes_from:
-    - data
-  ports:
-    - "5432:5432"
+  bulletin-static:
+    build: ./gbm-bulletin/
+    volumes:
+      - /usr/src/app/static
+    env_file: .env
+    command: python manage.py collectstatic --noinput
 
-redis:
-  restart: always
-  image: redis:latest
-#
-#
+  bulletin-postgres:
+    restart: always
+    image: postgres:latest
+    depends_on:
+      - bulletin-data
+    volumes_from:
+      - bulletin-data
+    env_file: .env
+    ports:
+      - "5432:5432"
 
-data:
-  restart: always
-  image: postgres:latest
-  volumes:
+  bulletin-redis:
+    restart: always
+    image: redis:latest
+
+  bulletin-data:
+    restart: always
+    image: postgres:latest
+    volumes:
     - /var/lib/postgresql
-  env_file: .env
-  command: "true"
+    env_file: .env
+    command: "true"

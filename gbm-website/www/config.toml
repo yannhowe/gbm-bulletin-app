@@ -1,0 +1,6 @@
+theme = "gbm"
+baseurl = "http://staging.gbm.sg/"
+languageCode = "en-us"
+title = "Grace Baptist Ministries"
+MetaDataFormat = "toml"
+SectionPagesMenu = "main"

@@ -1,0 +1,60 @@
+{{ partial "header.html" . }}
+
+<!-- Page Wrapper -->
+<div id="page-wrapper">
+
+    <!-- Header -->
+
+    <header id="header">
+        <h1>
+            <a href="/index.html"><img src="/images/gbm_logo_2016.png" alt=""/>
+                Grace Baptist Ministries</a>
+        </h1>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Menu -->
+    <nav id="menu">
+        <div class="inner">
+            <h2>Menu</h2>
+            <ul class="links">
+                <li>
+                    <a href="/index.html">Home</a>
+                </li>
+                <li>
+                    <a href="/bulletin/">Bulletin</a>
+                </li>
+                {{ $currentNode := . }}
+                {{ range .Site.Menus.main }}
+                    <li>
+                        <a class="sidebar-nav-item{{if or ($currentNode.IsMenuCurrent " main" .) ($currentNode.HasMenuCurrent " main" .) }} active{{end}}" href="{{.URL}}">{{ .Name }}</a>
+                    </li>
+                {{ end }}
+            </ul>
+            <a href="#" class="close">Close</a>
+        </div>
+    </nav>
+
+    <!-- Wrapper -->
+    <section id="wrapper">
+        <header>
+            <div class="inner text-center">
+                <h2>{{ .Title }}</h2>
+                <p>{{ .Description }}</p>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="wrapper">
+            <div class="inner">
+
+                {{ .Content }}
+
+            </div>
+        </div>
+
+    </section>
+
+    {{ partial "footer.html" . }}
