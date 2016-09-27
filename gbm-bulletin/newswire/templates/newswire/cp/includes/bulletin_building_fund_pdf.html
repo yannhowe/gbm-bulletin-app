@@ -1,0 +1,25 @@
+{% load staticfiles %}
+{% load humanize %}
+<div class="post-preview">
+    <p>
+        <strong>
+            {{ building_fund_collection_latest.date|date:"o" }}
+            Building Fund Progress:
+        </strong>
+    </p>
+    <p class="small">Giving through
+        {{ building_fund_collection_latest.date|date:"j M, o" }}
+        was
+        <strong>${{building_fund_collection_ytd|default_if_none:'0'|floatformat:"0"|intcomma}}</strong>
+        out of
+        <strong>${{building_fund_pledged_ytd|default_if_none:'0'|floatformat:"0"|intcomma }}</strong>
+        pledged year to date which puts us
+        {{ahead_or_behind}}
+        by about
+        <strong>${{building_pledge_and_ytd_collection_difference|default_if_none:'0'|floatformat:"0"|intcomma}}</strong>. We'll need to receive
+        <strong>${{building_goal_and_ytd_collection_difference|default_if_none:'0'|floatformat:"0"|intcomma}}</strong>
+        by the end of the year to meet our building fund goal of
+        <strong>${{building_fund_year_goal|default_if_none:'0'|floatformat:"0"|intcomma}}</strong>
+        this year.
+    </p>
+</div>
