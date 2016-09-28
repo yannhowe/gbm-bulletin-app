@@ -34,6 +34,18 @@
 	        <a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-lg btn-block omb_btn-facebook">
 		        <i class="fa fa-facebook"></i>
 	        </a>
+          <br/><br/>
+          <h2 class="text-center">or use your email address:</h2>
+          <form class="login" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
+            <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <a class="button secondaryAction" href="{{ signup_url }}">sign up</a>
+          </form>
         </div>
 	</div>
 </div>

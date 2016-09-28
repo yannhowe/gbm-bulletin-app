@@ -41,9 +41,9 @@ services:
       - bulletin-redis
     volumes:
       # Production
-      #- gbm-bulletin:/usr/src/app
+      - gbm-bulletin:/usr/src/app
       # Development
-      - ./gbm-bulletin/:/usr/src/app
+      #- ./gbm-bulletin/:/usr/src/app
       - bulletin-static:/usr/src/app/static
     expose:
       - "8000"
@@ -56,8 +56,6 @@ services:
       - bulletin-redis
     env_file: .env
     command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 -b :8000
-    ports:
-      - "8000:8000"
 
   bulletin-static:
     build: ./gbm-bulletin
