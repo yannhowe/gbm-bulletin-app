@@ -1,54 +1,68 @@
 version: '2'
+
+volumes:
+  gbm-bulletin:
+  gbm-postgres:
+  bulletin-static:
+  website:
+
 services:
+
   nginx:
     restart: always
-    build: ./gbm-nginx/
+    build: ./gbm-nginx
     depends_on:
       - website
       - bulletin
-    volumes:
-      - /www/static
-      - /var/www
-    volumes_from:
-      - website
-      - bulletin
       - bulletin-static
+      - bulletin-postgres
+    volumes:
+      - website:/var/www/
+      - bulletin-static:/usr/src/app/static
     links:
       - bulletin:bulletin
     ports:
       - "80:80"
 
   website:
-    build: ./gbm-website/
+    build: ./gbm-website
     command: >
-             --destination="/var/www"
+             -v
+             --destination="/var/www/"
     volumes:
-      - /var/www
+      - website:/var/www/
 
   bulletin:
     restart: always
-    build: ./gbm-bulletin/
+    build: ./gbm-bulletin
     depends_on:
       - bulletin-postgres
       - bulletin-static
       - bulletin-redis
-#
-#
+    volumes:
+      # Production
+      #- gbm-bulletin:/usr/src/app
+      # Development
+      - ./gbm-bulletin/:/usr/src/app
+      - bulletin-static:/usr/src/app/static
     expose:
       - "8000"
     depends_on:
         - bulletin-postgres
+        - bulletin-static
         - bulletin-redis
     links:
       - bulletin-postgres
       - bulletin-redis
     env_file: .env
     command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 -b :8000
+    ports:
+      - "8000:8000"
 
   bulletin-static:
-    build: ./gbm-bulletin/
+    build: ./gbm-bulletin
     volumes:
-      - /usr/src/app/static
+      - bulletin-static:/usr/src/app/static
     env_file: .env
     command: python manage.py collectstatic --noinput
 
@@ -63,6 +77,3 @@ services:
 
   bulletin-redis:
     image: redis:latest
-
-volumes:
-  gbm-postgres:

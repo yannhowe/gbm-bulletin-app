@@ -1,5 +1,5 @@
 theme = "gbm"
-baseurl = "http://staging.gbm.sg/"
+baseurl = "http://gbm.sg/"
 languageCode = "en-us"
 title = "Grace Baptist Ministries"
 MetaDataFormat = "toml"
