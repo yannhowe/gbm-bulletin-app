@@ -46,7 +46,7 @@ case "$1" in
             echo running migrations....
             docker-compose run --rm bulletin python manage.py migrate
             echo creating superuser
-            docker-compose run --rm bulletin python manage.py createsuperuser --username admin --email yannhowe@gmail.com
+            docker-compose run --rm bulletin python manage.py createsuperuser --username admin
             ;;
         migrate)
             docker-compose run --rm bulletin python manage.py migrate

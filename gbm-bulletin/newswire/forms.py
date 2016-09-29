@@ -29,14 +29,14 @@ class ProfileForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
-        self.fields['member'].label = "Account to Attach this Profile to"
+        self.fields['user'].label = "Account to Attach this Profile to"
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Field(
                 'first_name',
                 'last_name',
             ),
-            Field('member', css_class='select_user_to_attach'),
+            Field('user', css_class='select_user_to_attach'),
             PrependedText('email', '<i class="fa fa-envelope"></i>',
                           type="email"),
             Field(
@@ -75,7 +75,7 @@ class ProfileForm(ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'member', 'email', 'prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
+        fields = ['first_name', 'last_name', 'user', 'email', 'prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
                   'date_of_death', 'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code', 'is_regular', 'is_member']
 
 

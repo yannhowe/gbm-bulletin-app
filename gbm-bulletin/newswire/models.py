@@ -8,6 +8,9 @@ import calendar
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Category(models.Model):
 
@@ -192,8 +195,8 @@ class Profile(models.Model):
         (F, 'Female'),
     )
 
-    member = models.OneToOneField(
-        User, related_name='member_detail', null=True, blank=True)
+    user = models.OneToOneField(
+        User, null=True, blank=True)
     group = models.ManyToManyField(
         Group, blank=True, related_name="group_profile")
     first_name = models.CharField(max_length=80, null=True, blank=True)
@@ -204,9 +207,10 @@ class Profile(models.Model):
     maiden_name = models.CharField(max_length=80, null=True, blank=True)
 
     gender = models.CharField(
-        max_length=1, choices=GENDER_CHOICES, blank=False, default='M')
+        max_length=1, choices=GENDER_CHOICES, null=True, blank=True, default='M')
 
-    date_record_updated = models.DateField(default=datetime.now)
+    date_record_updated = models.DateField(
+        null=True, blank=True, default=datetime.now)
 
     # important dates
     date_of_birth = models.DateField(null=True, blank=True)
@@ -229,7 +233,18 @@ class Profile(models.Model):
     is_member = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s, %s' % (self.first_name, self.last_name)
+        return '%s, %s %s' % (self.user.username, self.user.first_name, self.user.last_name)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 # family relationships
 
@@ -248,13 +263,13 @@ class Relationship(models.Model):
         ('GRDAUG', 'Grand Daughter'),
     )
 
-    member = models.OneToOneField(User, related_name='member_relationship')
-    person = models.ForeignKey(User, related_name='person_relationship')
+    user = models.OneToOneField(User, null=True, related_name='user_relationship')
+    person = models.ForeignKey(User, null=True, related_name='person_relationship')
     relationship = models.CharField(
         max_length=10, choices=MEMBER_RELATIONSHIP_CHOICES)
 
     def __str__(self):
-        return '%s, %s, %s' % (self.person, self.member, self.relationship)
+        return '%s, %s, %s' % (self.person, self.user, self.relationship)
 
 
 class SundayAttendance(models.Model):

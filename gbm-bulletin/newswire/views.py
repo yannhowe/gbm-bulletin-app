@@ -230,7 +230,6 @@ class LoginRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(self, request, *args, **kwargs)
 
-
 class StaffRequiredMixin(object):
     # mixin from https://gist.github.com/robgolding/3092600
 
