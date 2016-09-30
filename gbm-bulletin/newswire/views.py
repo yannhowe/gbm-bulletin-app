@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFormFrontEnd, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
+from .forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
 from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 # from datetime import datetime, timedelta
 import datetime
@@ -229,6 +229,7 @@ class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(self, request, *args, **kwargs)
+
 
 class StaffRequiredMixin(object):
     # mixin from https://gist.github.com/robgolding/3092600
@@ -811,8 +812,14 @@ class ProfileDetailFrontEndView(DetailView):
 
 
 class ProfileUpdateFrontEndView(UpdateView):
-    form_class = ProfileFormFrontEnd
+    form_class = ProfileFrontEndForm
     template_name = 'newswire/profile-update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileUpdateFrontEndView, self).get_context_data(**kwargs)
+        context['user'] = UserFormFrontEndForm(self.request.GET)
+        context['profile'] = ProfileFrontEndForm(self.request.GET)
+        return context
 
     def get_success_url(self):
         return reverse('profile_front_end_detail')

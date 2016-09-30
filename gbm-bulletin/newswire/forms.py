@@ -8,21 +8,65 @@ from django import forms
 from models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 
 
-class ProfileFormFrontEnd(ModelForm):
+class UserFormFrontEndForm(ModelForm):
 
     class Meta:
         model = User
         fields = ['first_name', 'last_name']
 
     def __init__(self, *args, **kwargs):
-        super(ProfileFormFrontEnd, self).__init__(*args, **kwargs)
+        super(UserFormFrontEndForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.layout.append(
+        self.helper.form_tag = False
+
+
+class ProfileFrontEndForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileFrontEndForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            PrependedText('email', '<i class="fa fa-envelope"></i>',
+                          type="email"),
+            Field(
+                'prefered_name',
+                'maiden_name',
+                'gender'
+            ),
+            PrependedText('date_of_birth', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_of_marriage', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_of_baptism', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_of_death', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('mobile_number', '<i class="fa fa-phone"></i>',
+                          type="text",),
+            PrependedText('home_number', '<i class="fa fa-phone"></i>',
+                          type="text",),
+            Field(
+                'address_block',
+                'address_street',
+                'address_unit',
+                'country',
+                'postal_code',
+                'is_regular',
+                'is_member'
+            ),
             FormActions(
-                Submit('save', 'Update'),
+                Submit('save', 'Save changes'),
                 HTML(
-                    """<a href="{% url 'profile_front_end_detail' %}" class="btn btn-secondary" role="button">Cancel</a>"""),
-            ))
+                    '<a class="btn" href={% url "profile_list" %}>Cancel</a>'),
+            )
+        )
+        gender = forms.ChoiceField(choices=(('M', 'Male'), ('F', 'Female')))
+
+    class Meta:
+        model = Profile
+        fields = ['prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
+                  'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code']
 
 
 class ProfileForm(ModelForm):
