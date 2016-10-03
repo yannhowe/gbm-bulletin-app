@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
-from . import views
-from .views import BulletinHomePageView, ProfileDetailFrontEndView, ProfileUpdateFrontEndView, RsvpUpdateView, RsvpListView, RsvpListViewRaw, AttendanceFrontEndCreate, AttendanceFrontEndUpdate, AttendanceFrontEndDelete, AnnouncementFrontEndCreate, AnnouncementFrontEndUpdate, AnnouncementFrontEndDelete, BulletinPdfView, UnderReviewFrontEndListView
+from newswire import views
+from newswire.views import BulletinHomePageView, ProfileDetailFrontEndView, ProfileUpdateFrontEndView, RsvpUpdateView, RsvpListView, RsvpListViewRaw, AttendanceFrontEndCreate, AttendanceFrontEndUpdate, AttendanceFrontEndDelete, AnnouncementFrontEndCreate, AnnouncementFrontEndUpdate, AnnouncementFrontEndDelete, BulletinPdfView, UnderReviewFrontEndListView
 from django.contrib.auth.decorators import login_required
 
 from django.views.generic import TemplateView
@@ -11,7 +11,7 @@ urlpatterns = (
         login_required(RsvpUpdateView.as_view()), name='update-rsvp'),
     url(r'^bulletin/send/bulletin/',
         login_required(views.send_bulletin), name='send-bulletin'),
-        
+
     url(r'^accounts/profile/update/$',
         login_required(ProfileUpdateFrontEndView.as_view()), name='profile_front_end_update'),
     url(r'^accounts/profile/$',

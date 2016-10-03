@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from newswire.models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 
 
 class UserFormFrontEndForm(ModelForm):

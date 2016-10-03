@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from .forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
-from .models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
+from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 # from datetime import datetime, timedelta
 import datetime
 from django import template
@@ -21,7 +21,6 @@ from django.template import Context
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
 from django.core.urlresolvers import reverse_lazy
-from email.Utils import formataddr
 import os
 import json
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -135,7 +134,7 @@ def template_email(template_name, extra_context=None, *args, **kwargs):
     except template.TemplateDoesNotExist:
         html = None
 
-    print html
+    print(html)
 
     # The remainder of the templates are text only, so turn off autoescaping.
     context.autoescape = False
@@ -168,26 +167,6 @@ def template_email(template_name, extra_context=None, *args, **kwargs):
         message.body = html
 
     return message
-
-
-def _template_email_convenience(to, fail_silently=False, **kwargs):
-    to = [formataddr(recipient) for recipient in to]
-    final_kwargs = {'from_email': settings.SERVER_EMAIL}
-    final_kwargs.update(kwargs)
-
-    message = template_email(to=to, **final_kwargs)
-    if settings.EMAIL_SUBJECT_PREFIX:
-        message.subject = (
-            settings.EMAIL_SUBJECT_PREFIX + message.subject)
-    message.send(fail_silently=fail_silently)
-
-
-def template_mail_managers(**kwargs):
-    return _template_email_convenience(to=settings.MANAGERS, **kwargs)
-
-
-def template_mail_admins(**kwargs):
-    return _template_email_convenience(to=settings.ADMINS, **kwargs)
 
 
 def send_bulletin(request):
@@ -343,29 +322,39 @@ class BulletinListView(ListView):
             except OrderOfService.DoesNotExist:
                 coming_sunday_order_of_service = None
 
-        if coming_sunday_order_of_service:
+        if coming_sunday_order_of_service is not None:
             context[
                 'coming_sunday_order_of_service'] = coming_sunday_order_of_service
             context['orderofservice_updated_or_not'] = updated_or_not(
                 coming_sunday_order_of_service.date, coming_sunday)
 
+        try:
+            published_announcements = Announcement.objects.filter(publish_start_date__lte=now).filter(publish_end_date__gte=now, hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
+        except published_announcements.DoesNotExist:
+            published_announcements = None
 
-        published_announcements = Announcement.objects.filter(publish_start_date__lte=now).filter(publish_end_date__gte=now, hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
-        context['announcements'] = published_announcements
-        max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
-        context['announcements_print'] = published_announcements[
-            :max_print_annoucements]
-        context['more_annoucements_online_count'] = published_announcements.count(
-        ) - max_print_annoucements
+        if published_announcements is not None:
+            context['announcements'] = published_announcements
+            max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
+            context['announcements_print'] = published_announcements[
+                :max_print_annoucements]
+            context['more_annoucements_online_count'] = published_announcements.count(
+            ) - max_print_annoucements
 
         context['theme'] = {'this_year_theme': config.THIS_YEAR_THEME,
                             'this_year_theme_verse': config.THIS_YEAR_THEME_VERSE,
                             'this_year_theme_year': config.THIS_YEAR_THEME_YEAR}
 
-        all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
-        context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
-            all_birthdays, 7, coming_sunday)
+
+        try:
+            all_birthdays = Profile.objects.exclude(date_of_birth=None)
+        except all_birthdays.DoesNotExist:
+            all_birthdays = None
+
+        if all_birthdays is not None:
+            context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+            context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
+                all_birthdays, 7, coming_sunday)
 
         SundayAttendanceApproved = SundayAttendance.objects.exclude(
             under_review=True)
@@ -380,7 +369,9 @@ class BulletinListView(ListView):
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
         except WeeklyVerse.DoesNotExist:
             latest_weeklyverse = None
-        context['weeklyverse'] = latest_weeklyverse
+
+        if all_birthdays is not None:
+            context['weeklyverse'] = latest_weeklyverse
 
         try:
             active_events = Event.objects.filter(

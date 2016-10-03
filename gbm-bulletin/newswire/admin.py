@@ -2,7 +2,7 @@
 from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
-from .models import Announcement, Category, Setting, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, Group, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
+from newswire.models import Announcement, Category, Setting, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, Group, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget

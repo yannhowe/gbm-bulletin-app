@@ -43,9 +43,9 @@ services:
       - bulletin-redis
     volumes:
       # Production
-      #- gbm-bulletin:/usr/src/app
+      - gbm-bulletin:/usr/src/app
       # Development
-      - ./gbm-bulletin/:/usr/src/app
+      #- ./gbm-bulletin/:/usr/src/app
       - bulletin-static:/usr/src/app/static
     expose:
       - "8000"
@@ -68,7 +68,7 @@ services:
 
   bulletin-postgres:
     restart: always
-    image: postgres:latest
+    image: postgres:9.5
     volumes:
       - gbm-postgres:/var/lib/postgresql/data/pgdata
     env_file: .env
@@ -76,4 +76,4 @@ services:
       - "5432:5432"
 
   bulletin-redis:
-    image: redis:latest
+    image: redis:3.2-alpine

@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from . import views
-from .views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView
+from newswire import views
+from newswire.views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView
 from django.contrib.auth.decorators import login_required
 
 
