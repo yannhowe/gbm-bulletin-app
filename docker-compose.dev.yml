@@ -57,7 +57,7 @@ services:
       - bulletin-postgres
       - bulletin-redis
     env_file: .env
-    command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 -b :8000
+    command: /usr/local/bin/gunicorn gbm.wsgi:application -w 2 --reload -b :8000
 
   bulletin-static:
     build: ./gbm-bulletin

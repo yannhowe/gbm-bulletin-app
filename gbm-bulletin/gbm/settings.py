@@ -64,6 +64,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_SESSION_REMEMBER = True
 
 # Application definition
 
@@ -83,8 +84,8 @@ INSTALLED_APPS = [
 
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.facebook',
 
     'paintstore',
     'crispy_forms',
@@ -151,12 +152,12 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'SCOPE': ['email'],
-        'METHOD': 'js_sdk'  # instead of 'oauth2'
-    }
-}
+#SOCIALACCOUNT_PROVIDERS = {
+#    'facebook': {
+#        'SCOPE': ['email'],
+#        'METHOD': 'js_sdk'  # instead of 'oauth2'
+#    }
+#}
 
 WSGI_APPLICATION = 'gbm.wsgi.application'
 

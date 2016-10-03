@@ -20,10 +20,13 @@
 
             <header id="header">
                 <h1>
-                    <a href="/index.html"><img src="/images/gbm_logo_2016.png" alt=""/>
+                    <a href="/"><img src="/images/gbm_logo_2016.png" alt=""/>
                         Grace Baptist Ministries</a>
                 </h1>
                 <nav>
+                    {% if not user.is_authenticated %}
+                    <a href="/accounts/login/">Sign In</a>
+                    {% endif %}
                     <a href="#menu">Menu</a>
                 </nav>
             </header>
@@ -33,7 +36,7 @@
                     <h2>Menu</h2>
                     <ul class="links">
                         <li>
-                            <a href="/index.html">Home</a>
+                            <a href="/">Home</a>
                         </li>
                         <li>
                             <a href="/bulletin/">Bulletin</a>
@@ -51,10 +54,6 @@
                             <li>
                                 <a href="{% url 'account_logout' %}">Sign Out</a>
                             </li>
-                        {% else %}
-                            <li>
-                                <a href="{% url 'account_login' %}">Log In</a>
-                            </li>
                         {% endif %}
                     </ul>
                     <a href="#" class="close">Close</a>
@@ -67,8 +66,7 @@
                         <div class="inner text-center">
                             <h2>The Bulletin</h2>
                             <p>
-                                {% now "l" %},
-                                {% now "g:i A, j F o" %}</p>
+                                {{ now|date:"l g:i A, j F o" }}
                         </div>
                     </header>
                 {% endblock %}
