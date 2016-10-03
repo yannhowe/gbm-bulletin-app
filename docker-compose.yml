@@ -66,7 +66,7 @@ services:
 
   bulletin-postgres:
     restart: always
-    image: postgres:latest
+    image: postgres:9.5
     volumes:
       - gbm-postgres:/var/lib/postgresql/data/pgdata
     env_file: .env
@@ -74,4 +74,4 @@ services:
       - "5432:5432"
 
   bulletin-redis:
-    image: redis:latest
+    image: redis:3.2-alpine
