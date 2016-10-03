@@ -38,7 +38,7 @@ today = datetime.datetime.today()
 current_year = datetime.datetime.now().year
 
 
-def get_upcoming_birthdays(person_list, days, from_date=datetime.datetime.today()):
+def get_upcoming_birthdays(person_list, days, from_date=today):
     person_list = person_list.distinct()  # ensure persons are only in the list once
     doblist = []
     doblist.extend(list(person_list.filter(
@@ -349,12 +349,8 @@ class BulletinListView(ListView):
             context['orderofservice_updated_or_not'] = updated_or_not(
                 coming_sunday_order_of_service.date, coming_sunday)
 
-        active_announcements = Announcement.objects.filter(
-            publish_start_date__lte=now).filter(publish_end_date__gte=now)
-        unread_active_announcements = Announcement.objects.exclude(
-            readannouncement__announcement__id__in=active_announcements)
-        published_announcements = unread_active_announcements.filter(publish_start_date__lte=today, publish_end_date__gte=today, hidden=False, under_review=False).extra(
-            order_by=['-publish_start_date', 'publish_end_date'])
+
+        published_announcements = Announcement.objects.filter(publish_start_date__lte=now).filter(publish_end_date__gte=now, hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
         context['announcements'] = published_announcements
         max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
         context['announcements_print'] = published_announcements[
@@ -393,6 +389,8 @@ class BulletinListView(ListView):
             active_events = None
         context['events'] = active_events.extra(
             order_by=['date_start'])
+
+        context['now'] = now
 
         try:
             building_fund_year_goal = BuildingFundYearGoal.objects.all()

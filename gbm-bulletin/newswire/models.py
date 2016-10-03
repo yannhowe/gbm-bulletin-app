@@ -233,7 +233,7 @@ class Profile(models.Model):
     is_member = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s, %s %s' % (self.user.username, self.user.first_name, self.user.last_name)
+        return '%s, %s %s' % (self.user, self.first_name, self.last_name)
 
 
 @receiver(post_save, sender=User)
