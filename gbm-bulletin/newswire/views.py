@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
 from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
-# from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 import datetime
+
+from django.utils import timezone
+
 from django import template
 from django.conf import settings
 from django.contrib import messages
@@ -31,8 +34,13 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 
+def get_today():
+    return datetime.datetime(timezone.now().year, timezone.now().month, timezone.now().day)
 
-def get_upcoming_birthdays(person_list, days, from_date=datetime.datetime.today()):
+def get_now():
+    return timezone.now()
+
+def get_upcoming_birthdays(person_list, days, from_date=get_today()):
     person_list = person_list.distinct()  # ensure persons are only in the list once
     doblist = []
     doblist.extend(list(person_list.filter(
@@ -44,7 +52,7 @@ def get_upcoming_birthdays(person_list, days, from_date=datetime.datetime.today(
         next_day = next_day + datetime.timedelta(days=1)
     for dob in doblist:
         dob.date_of_birth = dob.date_of_birth.replace(
-            year=datetime.datetime.today().year)
+            year=get_today().year)
     return doblist
 
 
@@ -55,7 +63,7 @@ def get_coming_sunday(date):
         coming_sunday += datetime.timedelta(1)
     return coming_sunday
 
-coming_sunday = get_coming_sunday(datetime.datetime.today())
+coming_sunday = get_coming_sunday(get_today())
 
 
 def ahead_or_behind(collection, goal):
@@ -263,8 +271,7 @@ class UnderReviewListView(ListView):
             announcements = None
 
         if announcements:
-            announcements_under_review = announcements.filter(
-                publish_start_date__lte=datetime.datetime.now(), publish_end_date__gte=datetime.datetime.now(), under_review=True)
+            announcements_under_review = announcements.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=True)
             announcements_under_review_count = announcements_under_review.count()
             context['announcements_under_review'] = announcements_under_review
             context[
@@ -324,8 +331,7 @@ class BulletinListView(ListView):
                 coming_sunday_order_of_service.date, coming_sunday)
 
         try:
-            published_announcements = Announcement.objects.filter(publish_start_date__lte=datetime.datetime.now()).filter(
-                publish_end_date__gte=datetime.datetime.now(), hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
+            published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now()).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
         except Announcement.DoesNotExist:
             published_announcements = None
 
@@ -370,13 +376,14 @@ class BulletinListView(ListView):
 
         try:
             active_events = Event.objects.filter(
-                Q(date_end__gte=datetime.datetime.now()) | Q(date_start__gte=datetime.datetime.now()))
+                Q(date_end__gte=get_now()) | Q(date_start__gte=get_now()))
         except Event.DoesNotExist:
             active_events = None
         context['events'] = active_events.extra(
             order_by=['date_start'])
 
-        context['now'] = datetime.datetime.now()
+        context['now'] = get_now()
+        context['today'] = get_today()
 
         try:
             building_fund_year_goal = BuildingFundYearGoal.objects.all()
@@ -395,9 +402,9 @@ class BulletinListView(ListView):
 
         if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
             building_fund_collection_ytd = building_fund_collection.filter(
-                date__year=datetime.datetime.now().year).aggregate(Sum('amount')).values()[0]
+                date__year=get_now().year).aggregate(Sum('amount')).values()[0]
             building_fund_pledged_ytd = building_fund_year_pledge.latest(
-                'date').amount / 365 * datetime.datetime.now().timetuple().tm_yday
+                'date').amount / 365 * get_now().timetuple().tm_yday
             building_fund_year_goal = building_fund_year_goal.latest(
                 'date').amount
             building_pledge_and_ytd_collection_difference = building_fund_pledged_ytd - \
@@ -483,7 +490,7 @@ class OrderOfServiceList(StaffRequiredMixin, ListView):
         liveorderofservice = None
         try:
             liveorderofservice = OrderOfService.objects.order_by('date').filter(
-                date__gte=datetime.datetime.now())[:1].get()
+                date__gte=get_now())[:1].get()
         except OrderOfService.DoesNotExist:
             liveorderofservice = None
         context['live_orderofservice'] = liveorderofservice
@@ -561,7 +568,7 @@ class UnderReviewFrontEndListView(ListView):
 
         try:
             announcements = Announcement.objects.filter(
-                submitter=self.request.user, publish_end_date__gte=datetime.datetime.today() - datetime.timedelta(days=28))
+                submitter=self.request.user, publish_end_date__gte=get_today() - datetime.timedelta(days=28))
         except Announcement.DoesNotExist:
             announcements = None
 
@@ -574,7 +581,7 @@ class UnderReviewFrontEndListView(ListView):
 
         try:
             sunday_attendance = SundayAttendance.objects.filter(
-                submitter=self.request.user, date__gte=datetime.datetime.today() - datetime.timedelta(days=28))
+                submitter=self.request.user, date__gte=get_today() - datetime.timedelta(days=28))
         except SundayAttendance.DoesNotExist:
             sunday_attendance = None
 
@@ -1104,7 +1111,7 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
 
         if announcements:
             announcements_under_review = announcements.filter(
-                publish_start_date__lte=datetime.datetime.now(), publish_end_date__gte=datetime.datetime.now(), under_review=True)
+                publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=True)
             announcements_under_review_count = announcements_under_review.count()
             context['announcements_under_review'] = announcements_under_review
             context[
@@ -1161,7 +1168,7 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
             order_of_service = None
 
         active_announcements = Announcement.objects.filter(
-            publish_start_date__lte=datetime.datetime.now(), publish_end_date__gte=datetime.datetime.now(), under_review=False)
+            publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=False)
         context['announcements'] = active_announcements
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
@@ -1177,11 +1184,11 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
         if latest_weeklyverse:
             context['weeklyverse'] = latest_weeklyverse
             context['weeklyverse_updated_or_not'] = updated_or_not(
-                latest_weeklyverse.date, datetime.datetime.today().date)
+                latest_weeklyverse.date, get_today().date)
 
         try:
             active_events = Event.objects.filter(
-                Q(date_end__gte=datetime.datetime.now()) | Q(date_start__gte=datetime.datetime.now()))
+                Q(date_end__gte=get_now()) | Q(date_start__gte=get_now()))
         except Event.DoesNotExist:
             active_events = None
         context['events'] = active_events.extra(
@@ -1204,9 +1211,9 @@ class ControlPanelHomeView(StaffRequiredMixin, ListView):
 
         if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
             building_fund_collection_ytd = building_fund_collection.filter(
-                date__year=datetime.datetime.now().year).aggregate(Sum('amount')).values()[0]
+                date__year=get_now().year).aggregate(Sum('amount')).values()[0]
             building_fund_pledged_ytd = building_fund_year_pledge.latest(
-                'date').amount / 365 * datetime.datetime.now().timetuple().tm_yday
+                'date').amount / 365 * get_now().timetuple().tm_yday
             building_fund_year_goal = building_fund_year_goal.latest(
                 'date').amount
             building_pledge_and_ytd_collection_difference = building_fund_pledged_ytd - \
