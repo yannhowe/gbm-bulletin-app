@@ -4,29 +4,34 @@ DATE=`date +%Y-%m-%d-%H-%M-%S`
 
 case "$1" in
         start)
-            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
             docker-compose pull
-            docker-compose up --build -d
+            docker-compose build
+            docker-compose up -d
             docker-compose ps
             ;;
-
         stop)
-            docker-compose stop -t 1
-            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose down
+            docker-compose ps
+            ;;
+        restart)
+            docker-compose down
+            docker-compose pull
+            docker-compose build
+            docker-compose up -d
             docker-compose ps
             ;;
         rebuild)
-            docker-compose stop -t 1
-            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose down
             docker-compose pull
-            docker-compose up --build -d
+            docker-compose build --no-cache
+            docker-compose up -d --force-recreate
             docker-compose ps
             ;;
         dev)
-            docker-compose stop -t 1
-            docker-compose rm -f nginx website bulletin bulletin-static bulletin-postgres bulletin-redis
+            docker-compose down
             docker-compose pull
-            docker-compose -f docker-compose.dev.yml up --build -d
+            docker-compose build --no-cache
+            docker-compose -f docker-compose.dev.yml up  --force-recreate -d
             docker-compose ps
             ;;
         status)
@@ -53,14 +58,12 @@ case "$1" in
             docker-compose run --rm bulletin python manage.py migrate
             ;;
         dump_live)
-            echo dumping data only from gbm.sg
-            pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
-            pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
+            #pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
+            #pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
             pg_dump -v -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.full.dump
             ;;
-
         *)
-            echo $"Usage: $0 {start|stop|rebuild|dev|status|clean|nuke|init|migrate|dump_live}"
+            echo $"Usage: $0 {start|stop|restart|rebuild|dev|status|clean|nuke|init|migrate|dump_live}"
             exit 1
 
 esac
