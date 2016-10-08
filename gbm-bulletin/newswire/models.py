@@ -239,7 +239,15 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
+        if instance.email==None:
+            return none
+        else:
+            email_matching=Profile.objects.filter(email=instance.email).first()
+            if email_matching!=None:
+                email_matching.user=instance
+                email_matching.save()
+            else:
+                Profile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)
