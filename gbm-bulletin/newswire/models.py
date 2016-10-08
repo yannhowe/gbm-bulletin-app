@@ -246,6 +246,9 @@ def create_user_profile(sender, instance, created, **kwargs):
             if email_matching!=None:
                 email_matching.user=instance
                 email_matching.save()
+                instance.first_name=email_matching.first_name
+                instance.last_name=email_matching.last_name
+                instance.save()
             else:
                 Profile.objects.create(user=instance)
 
