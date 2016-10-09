@@ -17,10 +17,7 @@
 {% block content %}
     <div id="profile-update" class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-12">
-            <form method="post">
-                {% crispy user %}
-                {% crispy profile %}
-            </form>
+                {% crispy form %}
         </div>
     </div>
 {% endblock %}

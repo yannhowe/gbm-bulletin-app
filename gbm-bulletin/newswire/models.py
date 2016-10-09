@@ -199,15 +199,15 @@ class Profile(models.Model):
         User, null=True, blank=True)
     group = models.ManyToManyField(
         Group, blank=True, related_name="group_profile")
-    first_name = models.CharField(max_length=80, null=True, blank=True)
-    last_name = models.CharField(max_length=80, null=True, blank=True)
-    email = models.EmailField(max_length=254, null=True, blank=True)
+    first_name = models.CharField("First Name", max_length=80, null=True, blank=True)
+    last_name = models.CharField("Last Name", max_length=80, null=True, blank=True)
+    email = models.EmailField("Email Address", max_length=254, null=True, blank=True)
 
-    prefered_name = models.CharField(max_length=120, null=True, blank=True)
-    maiden_name = models.CharField(max_length=80, null=True, blank=True)
+    prefered_name = models.CharField("Preferred Name", max_length=120, null=True, blank=True, help_text="We will use this name around the site instead of a combination of last+first name.")
+    maiden_name = models.CharField("Maiden Name", max_length=80, null=True, blank=True)
 
-    gender = models.CharField(
-        max_length=1, choices=GENDER_CHOICES, null=True, blank=True, default='M')
+    gender = models.CharField("Gender",
+        max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 
     date_record_updated = models.DateField(
         null=True, blank=True, default=datetime.now)

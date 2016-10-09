@@ -203,6 +203,19 @@ class NeedsReviewMixin(object):
         return HttpResponseRedirect(self.success_url)
 
 
+
+class NoNeedReviewMixin(object):
+
+    def form_valid(self, form):
+        submission = form.save(commit=False)
+        submission.submitter = User.objects.get(
+            username=self.request.user)
+        submission.approver = User.objects.get(
+            username=self.request.user)
+        submission.under_review = False
+        submission.save()
+        return HttpResponseRedirect(self.success_url)
+
 class LoginRequiredMixin(object):
     # mixin from https://gist.github.com/robgolding/3092600
     """
@@ -544,14 +557,14 @@ class AnnouncementList(StaffRequiredMixin, ListView):
         return context
 
 
-class AnnouncementCreate(StaffRequiredMixin, CreateView):
+class AnnouncementCreate(StaffRequiredMixin, NoNeedReviewMixin, CreateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
 
 
-class AnnouncementUpdate(StaffRequiredMixin, UpdateView):
+class AnnouncementUpdate(StaffRequiredMixin, NoNeedReviewMixin, UpdateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
@@ -796,26 +809,28 @@ class ProfileDelete(StaffRequiredMixin, DeleteView):
 class ProfileDetailFrontEndView(DetailView):
     template_name = 'newswire/profile-detail.html'
 
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileDetailFrontEndView,
+                        self).get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['profile'] = self.request.user.profile
+        return context
+
     def get_object(self):
         return get_object_or_404(User, pk=self.request.user.id)
 
 
 class ProfileUpdateFrontEndView(UpdateView):
+    model = Profile
     form_class = ProfileFrontEndForm
     template_name = 'newswire/profile-update.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ProfileUpdateFrontEndView,
-                        self).get_context_data(**kwargs)
-        context['user'] = UserFormFrontEndForm(self.request.GET)
-        context['profile'] = ProfileFrontEndForm(self.request.GET)
-        return context
 
     def get_success_url(self):
         return reverse('profile_front_end_detail')
 
     def get_object(self):
-        return get_object_or_404(User, pk=self.request.user.id)
+        return Profile.objects.get(user=self.request.user)
 
 
 class AttendanceSummary(StaffRequiredMixin, ListView):
@@ -831,14 +846,14 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         return context
 
 
-class AttendanceCreate(StaffRequiredMixin,  CreateView):
+class AttendanceCreate(StaffRequiredMixin, NoNeedReviewMixin, CreateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_new')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
 
-class AttendanceUpdate(StaffRequiredMixin, UpdateView):
+class AttendanceUpdate(StaffRequiredMixin, NoNeedReviewMixin, UpdateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_summary')
     form_class = AttendanceForm

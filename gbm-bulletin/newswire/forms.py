@@ -14,19 +14,17 @@ class UserFormFrontEndForm(ModelForm):
         model = User
         fields = ['first_name', 'last_name']
 
-    def __init__(self, *args, **kwargs):
-        super(UserFormFrontEndForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.form_tag = False
-
 
 class ProfileFrontEndForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProfileFrontEndForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.form_tag = False
         self.helper.layout = Layout(
+            Field(
+                'first_name',
+                'last_name'
+            ),
             PrependedText('email', '<i class="fa fa-envelope"></i>',
                           type="email"),
             Field(
@@ -51,21 +49,19 @@ class ProfileFrontEndForm(ModelForm):
                 'address_street',
                 'address_unit',
                 'country',
-                'postal_code',
-                'is_regular',
-                'is_member'
+                'postal_code'
             ),
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
-                    '<a class="btn" href={% url "profile_list" %}>Cancel</a>'),
+                    '<a class="btn" href={% url "profile_front_end_detail" %}>Cancel</a>'),
             )
         )
         gender = forms.ChoiceField(choices=(('M', 'Male'), ('F', 'Female')))
 
     class Meta:
         model = Profile
-        fields = ['prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
+        fields = ['first_name', 'last_name', 'prefered_name', 'maiden_name', 'gender', 'date_of_birth', 'date_of_marriage', 'date_of_baptism',
                   'mobile_number', 'home_number', 'address_block', 'address_street', 'address_unit', 'country', 'postal_code']
 
 
