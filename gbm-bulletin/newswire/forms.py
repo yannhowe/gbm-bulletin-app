@@ -281,7 +281,7 @@ class CategoryForm(forms.ModelForm):
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
-                    '<a class="btn" href={% url "category_list" %}>Cancel</a>'),
+                    '<a class="btn" href={% url "announcement_list" %}>Cancel</a>'),
             )
         )
 
