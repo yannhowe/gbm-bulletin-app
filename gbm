@@ -4,7 +4,6 @@ DATE=`date +%Y-%m-%d-%H-%M-%S`
 
 case "$1" in
         start)
-            docker-compose pull
             docker-compose build
             docker-compose up -d
             docker-compose ps
@@ -15,23 +14,20 @@ case "$1" in
             ;;
         restart)
             docker-compose down
-            docker-compose pull
             docker-compose build
             docker-compose up -d
             docker-compose ps
             ;;
         rebuild)
             docker-compose down
-            docker-compose pull
             docker-compose build --no-cache
-            docker-compose up -d --force-recreate
+            docker-compose up -d
             docker-compose ps
             ;;
         dev)
             docker-compose down
-            docker-compose pull
-            docker-compose build --no-cache
-            docker-compose -f docker-compose.dev.yml up  --force-recreate -d
+            docker-compose build
+            docker-compose -f docker-compose.dev.yml up -d
             docker-compose ps
             ;;
         status)
@@ -52,14 +48,16 @@ case "$1" in
             docker-compose run --rm bulletin python manage.py migrate
             echo creating superuser
             docker-compose run --rm bulletin python manage.py createsuperuser --email admin@gbm.sg --username admin
+            echo loading initial data into database
+            docker-compose run --rm bulletin python manage.py loaddata initial_data.json
             ;;
         migrate)
             docker-compose run --rm bulletin python manage.py makemigrations
             docker-compose run --rm bulletin python manage.py migrate
             ;;
         dump_live)
-            #pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
-            #pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
+            pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
+            pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
             pg_dump -v -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.full.dump
             ;;
         *)

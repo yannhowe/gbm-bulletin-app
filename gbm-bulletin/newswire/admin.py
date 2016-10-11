@@ -3,7 +3,7 @@ from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
 
-from newswire.models import Announcement, Category, Setting, ReadAnnouncement, Event, Signup, OrderOfService, Unsubscription, Profile, Relationship, Group, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
+from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -48,32 +48,6 @@ class CategoryAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(Category, CategoryAdmin)
-
-
-class SettingResource(resources.ModelResource):
-
-    class Meta:
-        model = Setting
-
-
-class SettingAdmin(ImportExportModelAdmin):
-    resource_class = SettingResource
-    pass
-
-admin.site.register(Setting, SettingAdmin)
-
-
-class ReadAnnouncementResource(resources.ModelResource):
-
-    class Meta:
-        model = ReadAnnouncement
-
-
-class ReadAnnouncementAdmin(ImportExportModelAdmin):
-    resource_class = ReadAnnouncementResource
-    pass
-
-admin.site.register(ReadAnnouncement, ReadAnnouncementAdmin)
 
 
 class EventResource(resources.ModelResource):
@@ -125,19 +99,6 @@ class OrderOfServiceAdmin(ImportExportModelAdmin):
 admin.site.register(OrderOfService, OrderOfServiceAdmin)
 
 
-class UnsubscriptionResource(resources.ModelResource):
-
-    class Meta:
-        model = Unsubscription
-
-
-class UnsubscriptionAdmin(ImportExportModelAdmin):
-    resource_class = UnsubscriptionResource
-    pass
-
-admin.site.register(Unsubscription, UnsubscriptionAdmin)
-
-
 class RelationshipResource(resources.ModelResource):
 
     class Meta:
@@ -176,26 +137,6 @@ class ProfileAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(Profile, ProfileAdmin)
-
-
-class GroupResource(resources.ModelResource):
-
-    class Meta:
-        model = Group
-
-
-class GroupForm(ModelForm):
-
-    class Meta:
-        model = Group
-        fields = '__all__'
-
-
-class GroupAdmin(ImportExportModelAdmin):
-    resource_class = GroupResource
-    pass
-
-admin.site.register(Group, GroupAdmin)
 
 
 class WeeklyVerseResource(resources.ModelResource):

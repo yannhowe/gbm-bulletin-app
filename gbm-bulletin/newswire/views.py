@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
-from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, ReadAnnouncement, Setting, Unsubscription, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
 from datetime import datetime, timedelta
 import datetime
 
@@ -9,7 +9,7 @@ from django.utils import timezone
 from django import template
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core import mail, serializers
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -34,11 +34,14 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 
+
 def get_today():
     return datetime.datetime(timezone.now().year, timezone.now().month, timezone.now().day)
 
+
 def get_now():
     return timezone.now()
+
 
 def get_upcoming_birthdays(person_list, days, from_date=get_today()):
     person_list = person_list.distinct()  # ensure persons are only in the list once
@@ -86,6 +89,14 @@ def updated_or_not(object_date, expected_date):
         return True
     else:
         return False
+
+
+def is_contributor(user):
+    return user.groups.filter(name='contributor').exists()
+
+
+def is_editor(user):
+    return user.groups.filter(name='editor').exists()
 
 
 def template_email(template_name, extra_context=None, *args, **kwargs):
@@ -203,7 +214,6 @@ class NeedsReviewMixin(object):
         return HttpResponseRedirect(self.success_url)
 
 
-
 class NoNeedReviewMixin(object):
 
     def form_valid(self, form):
@@ -216,6 +226,7 @@ class NoNeedReviewMixin(object):
         submission.save()
         return HttpResponseRedirect(self.success_url)
 
+
 class LoginRequiredMixin(object):
     # mixin from https://gist.github.com/robgolding/3092600
     """
@@ -226,18 +237,32 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(self, request, *args, **kwargs)
 
 
-class StaffRequiredMixin(object):
+class ContributorRequiredMixin(object):
     # mixin from https://gist.github.com/robgolding/3092600
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
+        if not is_contributor(request.user):
             messages.error(
                 request,
                 'You do not have the permission required to perform the '
                 'requested operation.')
             return redirect(settings.LOGIN_URL)
-        return super(StaffRequiredMixin, self).dispatch(request, *args, **kwargs)
+        return super(ContributorRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+class EditorRequiredMixin(object):
+    # mixin from https://gist.github.com/robgolding/3092600
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not is_editor(request.user):
+            messages.error(
+                request,
+                'You do not have the permission required to perform the '
+                'requested operation.')
+            return redirect(settings.LOGIN_URL)
+        return super(EditorRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
 class SuperUserRequiredMixin(object):
@@ -284,7 +309,8 @@ class UnderReviewListView(ListView):
             announcements = None
 
         if announcements:
-            announcements_under_review = announcements.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=True)
+            announcements_under_review = announcements.filter(
+                publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=True)
             announcements_under_review_count = announcements_under_review.count()
             context['announcements_under_review'] = announcements_under_review
             context[
@@ -344,7 +370,8 @@ class BulletinListView(ListView):
                 coming_sunday_order_of_service.date, coming_sunday)
 
         try:
-            published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now()).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
+            published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now(
+            )).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
         except Announcement.DoesNotExist:
             published_announcements = None
 
@@ -471,7 +498,7 @@ class BulletinHomePageView(BulletinListView):
     template_name = 'newswire/home.html'
 
 
-class BulletinPrintView(StaffRequiredMixin, BulletinListView):
+class BulletinPrintView(EditorRequiredMixin, BulletinListView):
     template_name = 'newswire/cp/bulletin_print.html'
 
 
@@ -492,7 +519,7 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         return response
 
 
-class OrderOfServiceList(StaffRequiredMixin, ListView):
+class OrderOfServiceList(EditorRequiredMixin, ListView):
     model = OrderOfService
     # queryset = OrderOfService.objects.order_by('-date')
     template_name = 'newswire/cp/orderofservice_list.html'
@@ -521,27 +548,27 @@ class OrderOfServiceList(StaffRequiredMixin, ListView):
         return qs
 
 
-class OrderOfServiceCreate(StaffRequiredMixin, CreateView):
+class OrderOfServiceCreate(EditorRequiredMixin, CreateView):
     model = OrderOfService
     success_url = reverse_lazy('orderofservice_list')
     form_class = OrderOfServiceForm
     template_name = 'newswire/cp/orderofservice_form.html'
 
 
-class OrderOfServiceUpdate(StaffRequiredMixin, UpdateView):
+class OrderOfServiceUpdate(EditorRequiredMixin, UpdateView):
     model = OrderOfService
     success_url = reverse_lazy('orderofservice_list')
     form_class = OrderOfServiceForm
     template_name = 'newswire/cp/orderofservice_form.html'
 
 
-class OrderOfServiceDelete(StaffRequiredMixin, DeleteView):
+class OrderOfServiceDelete(EditorRequiredMixin, DeleteView):
     model = OrderOfService
     success_url = reverse_lazy('orderofservice_list')
     template_name = 'newswire/cp/orderofservice_confirm_delete.html'
 
 
-class AnnouncementList(StaffRequiredMixin, ListView):
+class AnnouncementList(EditorRequiredMixin, ListView):
     queryset = Announcement.objects.order_by(
         '-publish_start_date', 'publish_end_date')
     template_name = 'newswire/cp/announcement_list.html'
@@ -557,21 +584,21 @@ class AnnouncementList(StaffRequiredMixin, ListView):
         return context
 
 
-class AnnouncementCreate(StaffRequiredMixin, NoNeedReviewMixin, CreateView):
+class AnnouncementCreate(EditorRequiredMixin, NoNeedReviewMixin, CreateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
 
 
-class AnnouncementUpdate(StaffRequiredMixin, NoNeedReviewMixin, UpdateView):
+class AnnouncementUpdate(EditorRequiredMixin, NoNeedReviewMixin, UpdateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
 
 
-class UnderReviewFrontEndListView(ListView):
+class UnderReviewFrontEndListView(ContributorRequiredMixin, ListView):
     model = Announcement
     template_name = 'newswire/submissions_under_review.html'
 
@@ -609,7 +636,7 @@ class UnderReviewFrontEndListView(ListView):
         return context
 
 
-class AnnouncementFrontEndCreate(NeedsReviewMixin, CreateView):
+class AnnouncementFrontEndCreate(ContributorRequiredMixin, NeedsReviewMixin, CreateView):
     model = Announcement
     success_url = reverse_lazy('under_review_front_end')
     form_class = AnnouncementFormFrontEnd
@@ -627,7 +654,7 @@ class AnnouncementFrontEndCreate(NeedsReviewMixin, CreateView):
         return context
 
 
-class AnnouncementFrontEndUpdate(NeedsReviewMixin, UpdateView):
+class AnnouncementFrontEndUpdate(ContributorRequiredMixin, NeedsReviewMixin, UpdateView):
     model = Announcement
     success_url = reverse_lazy('under_review_front_end')
     form_class = AnnouncementFormFrontEnd
@@ -645,7 +672,7 @@ class AnnouncementFrontEndUpdate(NeedsReviewMixin, UpdateView):
         return context
 
 
-class AnnouncementFrontEndDelete(DeleteView):
+class AnnouncementFrontEndDelete(ContributorRequiredMixin, DeleteView):
     model = Announcement
     success_url = reverse_lazy('under_review_front_end')
     template_name = 'newswire/delete-form.html'
@@ -662,7 +689,7 @@ class AnnouncementFrontEndDelete(DeleteView):
         return context
 
 
-class AnnouncementDelete(StaffRequiredMixin, DeleteView):
+class AnnouncementDelete(EditorRequiredMixin, DeleteView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     template_name = 'newswire/cp/announcement_confirm_delete.html'
@@ -731,76 +758,76 @@ class UnderReviewApproveView(DetailView):
         return get_object_or_404(User, pk=self.request.user.id)
 
 
-class EventList(StaffRequiredMixin, ListView):
+class EventList(EditorRequiredMixin, ListView):
     queryset = Event.objects.order_by('-date_start')
     template_name = 'newswire/cp/event_list.html'
 
 
-class EventCreate(StaffRequiredMixin, CreateView):
+class EventCreate(EditorRequiredMixin, CreateView):
     model = Event
     success_url = reverse_lazy('event_list')
     form_class = EventForm
     template_name = 'newswire/cp/event_form.html'
 
 
-class EventUpdate(StaffRequiredMixin, UpdateView):
+class EventUpdate(EditorRequiredMixin, UpdateView):
     model = Event
     success_url = reverse_lazy('event_list')
     form_class = EventForm
     template_name = 'newswire/cp/event_form.html'
 
 
-class EventDelete(StaffRequiredMixin, DeleteView):
+class EventDelete(EditorRequiredMixin, DeleteView):
     model = Event
     success_url = reverse_lazy('event_list')
     template_name = 'newswire/cp/event_confirm_delete.html'
 
 
-class CategoryList(StaffRequiredMixin, ListView):
+class CategoryList(EditorRequiredMixin, ListView):
     queryset = Category.objects.all()
     template_name = 'newswire/cp/category_list.html'
 
 
-class CategoryCreate(StaffRequiredMixin, CreateView):
+class CategoryCreate(EditorRequiredMixin, CreateView):
     model = Category
     success_url = reverse_lazy('announcement_list')
     form_class = CategoryForm
     template_name = 'newswire/cp/category_form.html'
 
 
-class CategoryUpdate(StaffRequiredMixin, UpdateView):
+class CategoryUpdate(EditorRequiredMixin, UpdateView):
     model = Category
     success_url = reverse_lazy('announcement_list')
     form_class = CategoryForm
     template_name = 'newswire/cp/category_form.html'
 
 
-class CategoryDelete(StaffRequiredMixin, DeleteView):
+class CategoryDelete(EditorRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('announcement_list')
     template_name = 'newswire/cp/category_confirm_delete.html'
 
 
-class ProfileList(StaffRequiredMixin, ListView):
+class ProfileList(EditorRequiredMixin, ListView):
     queryset = Profile.objects.all()
     template_name = 'newswire/cp/profile_list.html'
 
 
-class ProfileCreate(StaffRequiredMixin, CreateView):
+class ProfileCreate(EditorRequiredMixin, CreateView):
     model = Profile
     success_url = reverse_lazy('profile_list')
     form_class = ProfileForm
     template_name = 'newswire/cp/profile_form.html'
 
 
-class ProfileUpdate(StaffRequiredMixin, UpdateView):
+class ProfileUpdate(EditorRequiredMixin, UpdateView):
     model = Profile
     success_url = reverse_lazy('profile_list')
     form_class = ProfileForm
     template_name = 'newswire/cp/profile_form.html'
 
 
-class ProfileDelete(StaffRequiredMixin, DeleteView):
+class ProfileDelete(EditorRequiredMixin, DeleteView):
     model = Profile
     success_url = reverse_lazy('profile_list')
     template_name = 'newswire/cp/profile_confirm_delete.html'
@@ -808,7 +835,6 @@ class ProfileDelete(StaffRequiredMixin, DeleteView):
 
 class ProfileDetailFrontEndView(DetailView):
     template_name = 'newswire/profile-detail.html'
-
 
     def get_context_data(self, **kwargs):
         context = super(ProfileDetailFrontEndView,
@@ -833,7 +859,7 @@ class ProfileUpdateFrontEndView(UpdateView):
         return Profile.objects.get(user=self.request.user)
 
 
-class AttendanceSummary(StaffRequiredMixin, ListView):
+class AttendanceSummary(EditorRequiredMixin, ListView):
     queryset = SundayAttendance.objects.all()
     template_name = 'newswire/cp/attendance_summary.html'
 
@@ -846,27 +872,27 @@ class AttendanceSummary(StaffRequiredMixin, ListView):
         return context
 
 
-class AttendanceCreate(StaffRequiredMixin, NoNeedReviewMixin, CreateView):
+class AttendanceCreate(EditorRequiredMixin, NoNeedReviewMixin, CreateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_new')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
 
-class AttendanceUpdate(StaffRequiredMixin, NoNeedReviewMixin, UpdateView):
+class AttendanceUpdate(EditorRequiredMixin, NoNeedReviewMixin, UpdateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_summary')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
 
-class AttendanceDelete(StaffRequiredMixin, DeleteView):
+class AttendanceDelete(EditorRequiredMixin, DeleteView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_summary')
     template_name = 'newswire/cp/attendance_confirm_delete.html'
 
 
-class AttendanceFrontEndCreate(NeedsReviewMixin, CreateView):
+class AttendanceFrontEndCreate(ContributorRequiredMixin, NeedsReviewMixin, CreateView):
     model = SundayAttendance
     success_url = reverse_lazy('under_review_front_end')
     form_class = AttendanceFormFrontEnd
@@ -884,7 +910,7 @@ class AttendanceFrontEndCreate(NeedsReviewMixin, CreateView):
         return context
 
 
-class AttendanceFrontEndUpdate(NeedsReviewMixin, UpdateView):
+class AttendanceFrontEndUpdate(ContributorRequiredMixin, NeedsReviewMixin, UpdateView):
     model = SundayAttendance
     success_url = reverse_lazy('under_review_front_end')
     form_class = AttendanceFormFrontEnd
@@ -896,7 +922,7 @@ class AttendanceFrontEndUpdate(NeedsReviewMixin, UpdateView):
     })
 
 
-class AttendanceFrontEndDelete(DeleteView):
+class AttendanceFrontEndDelete(ContributorRequiredMixin, DeleteView):
     model = SundayAttendance
     success_url = reverse_lazy('under_review_front_end')
     template_name = 'newswire/delete-form.html'
@@ -907,32 +933,32 @@ class AttendanceFrontEndDelete(DeleteView):
     })
 
 
-class WeeklyVerseList(StaffRequiredMixin, ListView):
+class WeeklyVerseList(EditorRequiredMixin, ListView):
     queryset = WeeklyVerse.objects.all()
     template_name = 'newswire/cp/weeklyverse_list.html'
 
 
-class WeeklyVerseCreate(StaffRequiredMixin, CreateView):
+class WeeklyVerseCreate(EditorRequiredMixin, CreateView):
     model = WeeklyVerse
     success_url = reverse_lazy('weeklyverse_list')
     form_class = WeeklyVerseForm
     template_name = 'newswire/cp/weeklyverse_form.html'
 
 
-class WeeklyVerseUpdate(StaffRequiredMixin, UpdateView):
+class WeeklyVerseUpdate(EditorRequiredMixin, UpdateView):
     model = WeeklyVerse
     success_url = reverse_lazy('weeklyverse_list')
     form_class = WeeklyVerseForm
     template_name = 'newswire/cp/weeklyverse_form.html'
 
 
-class WeeklyVerseDelete(StaffRequiredMixin, DeleteView):
+class WeeklyVerseDelete(EditorRequiredMixin, DeleteView):
     model = WeeklyVerse
     success_url = reverse_lazy('weeklyverse_list')
     template_name = 'newswire/cp/weeklyverse_confirm_delete.html'
 
 
-class BuildingFundList(StaffRequiredMixin, ListView):
+class BuildingFundList(EditorRequiredMixin, ListView):
     model = BuildingFundCollection
     template_name = 'newswire/cp/buildingfund.html'
 
@@ -966,61 +992,61 @@ class BuildingFundList(StaffRequiredMixin, ListView):
         return context
 
 
-class BuildingFundCollectionCreate(StaffRequiredMixin, CreateView):
+class BuildingFundCollectionCreate(EditorRequiredMixin, CreateView):
     model = BuildingFundCollection
     success_url = reverse_lazy('buildingfund_list')
     form_class = BuildingFundCollectionForm
     template_name = 'newswire/cp/buildingfundcollection_form.html'
 
 
-class BuildingFundCollectionUpdate(StaffRequiredMixin, UpdateView):
+class BuildingFundCollectionUpdate(EditorRequiredMixin, UpdateView):
     model = BuildingFundCollection
     success_url = reverse_lazy('buildingfund_list')
     form_class = BuildingFundCollectionForm
     template_name = 'newswire/cp/buildingfundcollection_form.html'
 
 
-class BuildingFundCollectionDelete(StaffRequiredMixin, DeleteView):
+class BuildingFundCollectionDelete(EditorRequiredMixin, DeleteView):
     model = BuildingFundCollection
     success_url = reverse_lazy('buildingfund_list')
     template_name = 'newswire/cp/buildingfundcollection_confirm_delete.html'
 
 
-class BuildingFundYearPledgeCreate(StaffRequiredMixin, CreateView):
+class BuildingFundYearPledgeCreate(EditorRequiredMixin, CreateView):
     model = BuildingFundYearPledge
     success_url = reverse_lazy('buildingfund_list')
     form_class = BuildingFundYearPledgeForm
     template_name = 'newswire/cp/buildingfundyearpledge_form.html'
 
 
-class BuildingFundYearPledgeUpdate(StaffRequiredMixin, UpdateView):
+class BuildingFundYearPledgeUpdate(EditorRequiredMixin, UpdateView):
     model = BuildingFundYearPledge
     success_url = reverse_lazy('buildingfund_list')
     form_class = BuildingFundYearPledgeForm
     template_name = 'newswire/cp/buildingfundyearpledge_form.html'
 
 
-class BuildingFundYearPledgeDelete(StaffRequiredMixin, DeleteView):
+class BuildingFundYearPledgeDelete(EditorRequiredMixin, DeleteView):
     model = BuildingFundYearPledge
     success_url = reverse_lazy('buildingfund_list')
     template_name = 'newswire/cp/buildingfundyearpledge_confirm_delete.html'
 
 
-class BuildingFundYearGoalCreate(StaffRequiredMixin, CreateView):
+class BuildingFundYearGoalCreate(EditorRequiredMixin, CreateView):
     model = BuildingFundYearGoal
     success_url = reverse_lazy('buildingfund_list')
     form_class = BuildingFundYearGoalForm
     template_name = 'newswire/cp/buildingfundyeargoal_form.html'
 
 
-class BuildingFundYearGoalUpdate(StaffRequiredMixin, UpdateView):
+class BuildingFundYearGoalUpdate(EditorRequiredMixin, UpdateView):
     model = BuildingFundYearGoal
     success_url = reverse_lazy('buildingfund_list')
     form_class = BuildingFundYearGoalForm
     template_name = 'newswire/cp/buildingfundyeargoal_form.html'
 
 
-class BuildingFundYearGoalDelete(StaffRequiredMixin, DeleteView):
+class BuildingFundYearGoalDelete(EditorRequiredMixin, DeleteView):
     model = BuildingFundYearGoal
     success_url = reverse_lazy('buildingfund_list')
     template_name = 'newswire/cp/buildingfundyeargoal_confirm_delete.html'
@@ -1079,7 +1105,7 @@ class RsvpUpdateView(DetailView):
         return get_object_or_404(User, pk=self.request.user.id)
 
 
-class RsvpListView(StaffRequiredMixin, ListView):
+class RsvpListView(EditorRequiredMixin, ListView):
 
     model = Signup
     template_name = 'newswire/cp/rsvp_list.html'
@@ -1094,7 +1120,7 @@ class RsvpListView(StaffRequiredMixin, ListView):
         return context
 
 
-class RsvpListViewRaw(StaffRequiredMixin, ListView):
+class RsvpListViewRaw(EditorRequiredMixin, ListView):
 
     model = Signup
     template_name = 'newswire/cp/rsvp_list_raw.html'
@@ -1109,7 +1135,7 @@ class RsvpListViewRaw(StaffRequiredMixin, ListView):
         return context
 
 
-class ControlPanelHomeView(StaffRequiredMixin, ListView):
+class ControlPanelHomeView(EditorRequiredMixin, ListView):
 
     model = Announcement
     template_name = 'newswire/cp/home.html'

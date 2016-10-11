@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.admin import User
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.shortcuts import get_object_or_404
 from paintstore.fields import ColorPickerField
 from datetime import datetime, timedelta
 import calendar
@@ -11,6 +13,7 @@ from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from constance import config
 
 class Category(models.Model):
 
@@ -59,37 +62,6 @@ class Announcement(models.Model):
 
     def __str__(self):
         return '%s - %s: %s' % (self.publish_start_date, self.publish_end_date, self.title)
-
-# Stores all user settings
-
-
-class Setting(models.Model):
-    user = models.ForeignKey(User, db_index=True)
-    key = models.CharField(max_length=40, db_index=True)
-    value = models.CharField(max_length=160, db_index=True)
-
-    def __str__(self):
-        return '%s %s %s' % (self.user, self.key, self.value)
-
-# Stores read announcements
-
-
-class ReadAnnouncement(models.Model):
-    user = models.ForeignKey(User, db_index=True)
-    announcement = models.ForeignKey(Announcement, db_index=True)
-
-    def __str__(self):
-        return 'User "%s" read "%s"' % (self.user, self.announcement)
-
-# Stores user unsubscribed categories
-
-
-class Unsubscription(models.Model):
-    user = models.ForeignKey(User, db_index=True)
-    category = models.ForeignKey(Category, db_index=True)
-
-    def __str__(self):
-        return '%s %s' % (self.user, self.category)
 
 # Stores event list
 
@@ -171,21 +143,6 @@ class OrderOfService(models.Model):
         return '%s %s' % (self.date, self.service_name)
 
 
-class Group(models.Model):
-    GROUP_TYPE_CHOICES = (
-        ('finance', 'Finance'),
-        ('management', 'Management'),
-        ('committee', 'Committee'),
-        ('ministry', 'Ministry'),
-        ('cg', 'Community Group'),
-        ('tech', 'Technology'),
-    )
-    name = models.CharField(max_length=80)
-    type = models.CharField(
-        max_length=32, choices=GROUP_TYPE_CHOICES)
-    notes = models.TextField(max_length=300, null=True, blank=True)
-
-
 # Add member details
 class Profile(models.Model):
     M = 'm'
@@ -197,8 +154,6 @@ class Profile(models.Model):
 
     user = models.OneToOneField(
         User, null=True, blank=True)
-    group = models.ManyToManyField(
-        Group, blank=True, related_name="group_profile")
     first_name = models.CharField("First Name", max_length=80, null=True, blank=True)
     last_name = models.CharField("Last Name", max_length=80, null=True, blank=True)
     email = models.EmailField("Email Address", max_length=254, null=True, blank=True)
@@ -242,7 +197,21 @@ def create_user_profile(sender, instance, created, **kwargs):
         if instance.email==None:
             return none
         else:
-            email_matching=Profile.objects.filter(email=instance.email).first()
+            editor_list = config.EDITOR_LIST.split()
+            try:
+                if any(instance.email in s for s in editor_list):
+                    instance.groups.add(Group.objects.get(name='editor'))
+            except Group.DoesNotExist:
+                pass
+
+            contributor_list = config.CONTRIBUTOR_LIST.split()
+            try:
+                if any(instance.email in s for s in contributor_list):
+                    instance.groups.add(Group.objects.get(name='contributor'))
+            except Group.DoesNotExist:
+                pass
+                
+            email_matching = Profile.objects.filter(email=instance.email).first()
             if email_matching!=None:
                 email_matching.user=instance
                 email_matching.save()

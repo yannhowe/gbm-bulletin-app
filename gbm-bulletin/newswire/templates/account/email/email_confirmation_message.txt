@@ -1,6 +1,7 @@
-{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}Hello from {{ site_name }}!
+{% load account %}{% user_display user as user_display %}{% load i18n %}
 
-To verify your email address for your account, go to {{ activate_url }}.
+{% autoescape off %}Hello,
+
+Thanks for signing up at the GBM Bulletin. To verify your email address for your account, go to {{ activate_url }}.
 {% endautoescape %}
-{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}Thanks!!
-{{ site_domain }}{% endblocktrans %}
+Thanks!!
