@@ -66,8 +66,6 @@ def get_coming_sunday(date):
         coming_sunday += datetime.timedelta(1)
     return coming_sunday
 
-coming_sunday = get_coming_sunday(get_today())
-
 
 def ahead_or_behind(collection, goal):
     if collection > goal:
@@ -359,7 +357,7 @@ class BulletinListView(ListView):
         if order_of_service:
             try:
                 coming_sunday_order_of_service = order_of_service.order_by(
-                    'date').filter(date=coming_sunday)[:1].get()
+                    'date').filter(date=get_coming_sunday(get_today()))[:1].get()
             except OrderOfService.DoesNotExist:
                 coming_sunday_order_of_service = None
 
@@ -367,7 +365,7 @@ class BulletinListView(ListView):
             context[
                 'coming_sunday_order_of_service'] = coming_sunday_order_of_service
             context['orderofservice_updated_or_not'] = updated_or_not(
-                coming_sunday_order_of_service.date, coming_sunday)
+                coming_sunday_order_of_service.date, get_coming_sunday(get_today()))
 
         try:
             published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now(
@@ -395,7 +393,7 @@ class BulletinListView(ListView):
         if all_birthdays is not None:
             context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
             context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
-                all_birthdays, 7, coming_sunday)
+                all_birthdays, 7, get_coming_sunday(get_today()))
 
         SundayAttendanceApproved = SundayAttendance.objects.exclude(
             under_review=True)
@@ -411,7 +409,7 @@ class BulletinListView(ListView):
         except WeeklyVerse.DoesNotExist:
             latest_weeklyverse = None
 
-        if all_birthdays is not None:
+        if latest_weeklyverse is not None:
             context['weeklyverse'] = latest_weeklyverse
 
         try:
@@ -510,7 +508,7 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         template = self.get_template_names()[0]
         html_string = render_to_string(template, context)
         rendered_html = HTML(string=html_string)
-        filename = coming_sunday.strftime('%Y%m%d') + '_gbm_bulletin.pdf'
+        filename = get_coming_sunday(get_today()).strftime('%Y%m%d') + '_gbm_bulletin.pdf'
         pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(
             settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
         response = HttpResponse(pdf_file, content_type='application/pdf')
@@ -1143,7 +1141,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
 
-        context['coming_sunday'] = coming_sunday.date
+        context['coming_sunday'] = get_coming_sunday(get_today()).date
 
         try:
             announcements = Announcement.objects.all()
@@ -1192,7 +1190,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
         if order_of_service:
             try:
                 coming_sunday_order_of_service = order_of_service.order_by(
-                    'date').filter(date=coming_sunday)[:1].get()
+                    'date').filter(date=get_coming_sunday(get_today()))[:1].get()
             except OrderOfService.DoesNotExist:
                 coming_sunday_order_of_service = None
 
@@ -1200,7 +1198,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
             context[
                 'coming_sunday_order_of_service'] = coming_sunday_order_of_service
             context['orderofservice_updated_or_not'] = updated_or_not(
-                coming_sunday_order_of_service.date, coming_sunday.date)
+                coming_sunday_order_of_service.date, get_coming_sunday(get_today()).date)
             context['orderofservice_print'] = coming_sunday_order_of_service
 
         try:
@@ -1215,7 +1213,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
         context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
         context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
-            all_birthdays, 7, coming_sunday)
+            all_birthdays, 7, get_coming_sunday(get_today()))
 
         try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
