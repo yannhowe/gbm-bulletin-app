@@ -7,6 +7,13 @@ stages:
   - build
 
 before_script:
+  - apk update
+  - apk upgrade
+  - apk add python python-dev py-pip build-base
+  - curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose
+  - pip install docker-compose
+  - docker-compose -v
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
 build:
@@ -14,5 +21,5 @@ build:
   tags:
     - docker
   script:
-    - docker-compose build -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF .
-    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+    - docker-compose build --pull
+    - docker images
