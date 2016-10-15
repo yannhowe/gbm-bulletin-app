@@ -125,7 +125,17 @@ class AttendanceForm(ModelForm):
         super(AttendanceForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
 
-        self.helper.layout.append(
+        self.helper.layout = Layout(
+            PrependedText('date', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            Field('english_congregation',
+                  'chinese_congregation',
+                  'childrens_church',
+                  'preschoolers',
+                  'nursery',
+                  'under_review',
+                  'notes'
+                  ),
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
@@ -135,7 +145,7 @@ class AttendanceForm(ModelForm):
 
     class Meta:
         model = SundayAttendance
-        exclude = ['user']
+        exclude = ['submitter', 'approver']
 
 
 class AttendanceFormFrontEnd(ModelForm):
@@ -148,32 +158,13 @@ class AttendanceFormFrontEnd(ModelForm):
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
-                    '<a class="btn" href={% url "attendance_summary" %}>Cancel</a>'),
+                    '<a class="btn" href={% url "under_review_front_end" %}>Cancel</a>'),
             )
         )
 
     class Meta:
         model = SundayAttendance
         exclude = ['submitter', 'approver', 'under_review']
-
-
-class AttendanceForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super(AttendanceForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-
-        self.helper.layout.append(
-            FormActions(
-                Submit('save', 'Save changes'),
-                HTML(
-                    '<a class="btn" href={% url "weeklyverse_list" %}>Cancel</a>'),
-            )
-        )
-
-    class Meta:
-        model = SundayAttendance
-        fields = '__all__'
 
 
 class WeeklyVerseForm(ModelForm):
@@ -261,7 +252,7 @@ class AnnouncementFormFrontEnd(forms.ModelForm):
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
-                    '<a class="btn" href={% url "announcement_list" %}>Cancel</a>'),
+                    '<a class="btn" href={% url "under_review_front_end" %}>Cancel</a>'),
             )
         )
 
