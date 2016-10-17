@@ -92,7 +92,7 @@ urlpatterns = (
 
     # Profile
     url(r'^people/summary/$',
-        views.ProfileList.as_view(), name='profile_summary'),
+        views.ProfileSummary.as_view(), name='profile_summary'),
     url(r'^people/$',
         views.ProfileList.as_view(), name='profile_list'),
     url(r'^people/new$',
