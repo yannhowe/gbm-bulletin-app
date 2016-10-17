@@ -74,21 +74,6 @@ def ahead_or_behind(collection, goal):
         return "behind"
 
 
-def updated_or_not(object_date, expected_date):
-    try:
-        a = object_date.date()
-    except Exception as e:
-        a = object_date
-    try:
-        b = expected_date.date()
-    except Exception as e:
-        b = expected_date
-    if a == b:
-        return True
-    else:
-        return False
-
-
 def is_contributor(user):
     return user.groups.filter(name='contributor').exists()
 
@@ -362,24 +347,19 @@ class BulletinListView(ListView):
                 coming_sunday_order_of_service = None
 
         if coming_sunday_order_of_service is not None:
-            context[
-                'coming_sunday_order_of_service'] = coming_sunday_order_of_service
-            context['orderofservice_updated_or_not'] = updated_or_not(
-                coming_sunday_order_of_service.date, get_coming_sunday(get_today()))
+            context['coming_sunday_order_of_service'] = coming_sunday_order_of_service
+            context['orderofservice_updated_or_not'] = True if get_coming_sunday(get_today()).strftime('%b. %d, %Y') == coming_sunday_order_of_service.date.strftime('%b. %d, %Y') else False
 
         try:
-            published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now(
-            )).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
+            published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now()).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
         except Announcement.DoesNotExist:
             published_announcements = None
 
         if published_announcements is not None:
             context['announcements'] = published_announcements
             max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
-            context['announcements_print'] = published_announcements[
-                :max_print_annoucements]
-            context['more_annoucements_online_count'] = published_announcements.count(
-            ) - max_print_annoucements
+            context['announcements_print'] = published_announcements[:max_print_annoucements]
+            context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
 
         context['theme'] = {'this_year_theme': config.THIS_YEAR_THEME,
                             'this_year_theme_verse': config.THIS_YEAR_THEME_VERSE,
@@ -508,7 +488,8 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         template = self.get_template_names()[0]
         html_string = render_to_string(template, context)
         rendered_html = HTML(string=html_string)
-        filename = get_coming_sunday(get_today()).strftime('%Y%m%d') + '_gbm_bulletin.pdf'
+        filename = get_coming_sunday(get_today()).strftime(
+            '%Y%m%d') + '_gbm_bulletin.pdf'
         pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(
             settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
         response = HttpResponse(pdf_file, content_type='application/pdf')
@@ -806,6 +787,27 @@ class CategoryDelete(EditorRequiredMixin, DeleteView):
     template_name = 'newswire/cp/category_confirm_delete.html'
 
 
+class ProfileSummary(EditorRequiredMixin, ListView):
+    queryset = Profile.objects.all()
+    template_name = 'newswire/cp/profile_summary.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileSummary, self).get_context_data(**kwargs)
+
+        try:
+            all_profiles = Profile.objects.all()
+        except Profile.DoesNotExist:
+            all_profiles = none
+
+        context['all_profiles'] = all_profiles
+        context['members'] = all_profiles.filter(is_member=True)
+        context['non_members'] = all_profiles.filter(is_member=False)
+        context['regular_non_members'] = all_profiles.filter(is_regular=True, is_member=False)
+        context['non_regular_members'] = all_profiles.filter(is_regular=False, is_member=True)
+
+        return context
+
+
 class ProfileList(EditorRequiredMixin, ListView):
     queryset = Profile.objects.all()
     template_name = 'newswire/cp/profile_list.html'
@@ -932,7 +934,7 @@ class AttendanceFrontEndDelete(ContributorRequiredMixin, DeleteView):
 
 
 class WeeklyVerseList(EditorRequiredMixin, ListView):
-    queryset = WeeklyVerse.objects.all()
+    queryset = WeeklyVerse.objects.order_by('-date')
     template_name = 'newswire/cp/weeklyverse_list.html'
 
 
@@ -1140,7 +1142,6 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
-
         context['coming_sunday'] = get_coming_sunday(get_today()).date
 
         try:
@@ -1190,15 +1191,13 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
         if order_of_service:
             try:
                 coming_sunday_order_of_service = order_of_service.order_by(
-                    'date').filter(date=get_coming_sunday(get_today()))[:1].get()
+                    '-date')[:1].get()
             except OrderOfService.DoesNotExist:
                 coming_sunday_order_of_service = None
 
         if coming_sunday_order_of_service:
-            context[
-                'coming_sunday_order_of_service'] = coming_sunday_order_of_service
-            context['orderofservice_updated_or_not'] = updated_or_not(
-                coming_sunday_order_of_service.date, get_coming_sunday(get_today()).date)
+            context['coming_sunday_order_of_service'] = coming_sunday_order_of_service
+            context['orderofservice_updated_or_not'] = True if get_coming_sunday(get_today()).strftime('%b. %d, %Y') == coming_sunday_order_of_service.date.strftime('%b. %d, %Y') else False
             context['orderofservice_print'] = coming_sunday_order_of_service
 
         try:
@@ -1222,8 +1221,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
 
         if latest_weeklyverse:
             context['weeklyverse'] = latest_weeklyverse
-            context['weeklyverse_updated_or_not'] = updated_or_not(
-                latest_weeklyverse.date, get_today().date)
+            context['weeklyverse_updated_or_not'] = True if latest_weeklyverse.date.strftime('%b. %d, %Y') == coming_sunday_order_of_service.date.strftime('%b. %d, %Y') else False
 
         try:
             active_events = Event.objects.filter(
