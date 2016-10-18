@@ -1197,7 +1197,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
 
         if coming_sunday_order_of_service:
             context['coming_sunday_order_of_service'] = coming_sunday_order_of_service
-            context['orderofservice_updated_or_not'] = True if get_coming_sunday(get_today()).strftime('%b. %d, %Y') == coming_sunday_order_of_service.date.strftime('%b. %d, %Y') else False
+            context['orderofservice_updated_or_not'] = True if coming_sunday_order_of_service.date.strftime('%b. %d, %Y') == get_coming_sunday(get_today()).strftime('%b. %d, %Y') else False
             context['orderofservice_print'] = coming_sunday_order_of_service
 
         try:
@@ -1221,7 +1221,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
 
         if latest_weeklyverse:
             context['weeklyverse'] = latest_weeklyverse
-            context['weeklyverse_updated_or_not'] = True if latest_weeklyverse.date.strftime('%b. %d, %Y') == coming_sunday_order_of_service.date.strftime('%b. %d, %Y') else False
+            context['weeklyverse_updated_or_not'] = True if latest_weeklyverse.date.strftime('%b. %d, %Y') == get_coming_sunday(get_today()).strftime('%b. %d, %Y') else False
 
         try:
             active_events = Event.objects.filter(
