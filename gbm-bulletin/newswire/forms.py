@@ -154,7 +154,16 @@ class AttendanceFormFrontEnd(ModelForm):
         super(AttendanceFormFrontEnd, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
 
-        self.helper.layout.append(
+        self.helper.layout = Layout(
+            PrependedText('date', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            Field('english_congregation',
+                  'chinese_congregation',
+                  'childrens_church',
+                  'preschoolers',
+                  'nursery',
+                  'notes'
+                  ),
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
