@@ -59,7 +59,7 @@ def get_upcoming_birthdays(person_list, days, from_date=get_today()):
     return doblist
 
 
-def get_coming_sunday(date):
+def get_coming_sunday(date=get_today()):
     # coming sunday's date
     coming_sunday = date
     while coming_sunday.weekday() != 6:
@@ -371,9 +371,9 @@ class BulletinListView(ListView):
             all_birthdays = None
 
         if all_birthdays is not None:
-            context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+            context['birthdays'] = get_upcoming_birthdays(all_birthdays, 6)
             context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
-                all_birthdays, 7, get_coming_sunday(get_today()))
+                all_birthdays, 6, get_coming_sunday(get_today()))
 
         SundayAttendanceApproved = SundayAttendance.objects.exclude(
             under_review=True)
@@ -402,6 +402,7 @@ class BulletinListView(ListView):
 
         context['now'] = get_now()
         context['today'] = get_today()
+        context['coming_sunday'] = get_coming_sunday()
 
         try:
             building_fund_year_goal = BuildingFundYearGoal.objects.all()
@@ -1210,9 +1211,9 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
         context['announcements'] = active_announcements
 
         all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 7)
+        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 6)
         context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
-            all_birthdays, 7, get_coming_sunday(get_today()))
+            all_birthdays,5, get_coming_sunday(get_today()))
 
         try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
