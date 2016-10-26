@@ -197,15 +197,12 @@ class NeedsReviewMixin(object):
         return HttpResponseRedirect(self.success_url)
 
 
-class NoNeedReviewMixin(object):
+class RecordSubmitterMixin(object):
 
     def form_valid(self, form):
         submission = form.save(commit=False)
         submission.submitter = User.objects.get(
             username=self.request.user)
-        submission.approver = User.objects.get(
-            username=self.request.user)
-        submission.under_review = False
         submission.save()
         return HttpResponseRedirect(self.success_url)
 
@@ -564,14 +561,14 @@ class AnnouncementList(EditorRequiredMixin, ListView):
         return context
 
 
-class AnnouncementCreate(EditorRequiredMixin, NoNeedReviewMixin, CreateView):
+class AnnouncementCreate(EditorRequiredMixin, RecordSubmitterMixin, CreateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
     template_name = 'newswire/cp/announcement_form.html'
 
 
-class AnnouncementUpdate(EditorRequiredMixin, NoNeedReviewMixin, UpdateView):
+class AnnouncementUpdate(EditorRequiredMixin, RecordSubmitterMixin, UpdateView):
     model = Announcement
     success_url = reverse_lazy('announcement_list')
     form_class = AnnouncementForm
@@ -873,14 +870,14 @@ class AttendanceSummary(EditorRequiredMixin, ListView):
         return context
 
 
-class AttendanceCreate(EditorRequiredMixin, NoNeedReviewMixin, CreateView):
+class AttendanceCreate(EditorRequiredMixin, RecordSubmitterMixin, CreateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_new')
     form_class = AttendanceForm
     template_name = 'newswire/cp/attendance_form.html'
 
 
-class AttendanceUpdate(EditorRequiredMixin, NoNeedReviewMixin, UpdateView):
+class AttendanceUpdate(EditorRequiredMixin, RecordSubmitterMixin, UpdateView):
     model = SundayAttendance
     success_url = reverse_lazy('attendance_summary')
     form_class = AttendanceForm
