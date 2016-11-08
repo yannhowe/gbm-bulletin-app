@@ -319,10 +319,18 @@ class BuildingFundCollectionForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(BuildingFundCollectionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        try:
+            latestBuildingFundYearPledge = BuildingFundYearPledge.objects.latest('date')
+        except BuildingFundYearPledge.DoesNotExist:
+            latestBuildingFundYearPledge = None
+        try:
+            latestBuildingFundYearGoal = BuildingFundYearGoal.objects.latest('date')
+        except BuildingFundYearGoal.DoesNotExist:
+            latestBuildingFundYearGoal = None
 
         self.initial = {
-            'building_fund_year_pledge': BuildingFundYearPledge.objects.latest('date'),
-            'building_fund_year_goal': BuildingFundYearGoal.objects.latest('date')
+            'building_fund_year_pledge': latestBuildingFundYearPledge,
+            'building_fund_year_goal': latestBuildingFundYearGoal
         }
 
         self.helper.layout.append(
