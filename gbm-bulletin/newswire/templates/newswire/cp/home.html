@@ -100,6 +100,29 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Building Fund</h3>
+                    <div class="box-tools pull-right">
+                        <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    {% include "newswire/cp/includes/bulletin_building_fund.html" %}
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Attendance</h3>
+                    <div class="box-tools pull-right">
+                        <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    {% include "newswire/cp/includes/bulletin_attendance.html" %}
+                </div>
+            </div>
 
             {% regroup signups by event as signup_list_by_event %}
             {% for event in signup_list_by_event %}
@@ -207,30 +230,6 @@
                     </div>
                     <div class="box-body">
                         {% include "newswire/cp/includes/bulletin_birthdays.html" %}
-                    </div>
-                </div>
-
-                <div class="box">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Building Fund</h3>
-                        <div class="box-tools pull-right">
-                            <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        {% include "newswire/cp/includes/bulletin_building_fund.html" %}
-                    </div>
-                </div>
-
-                <div class="box">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Attendance</h3>
-                        <div class="box-tools pull-right">
-                            <a href="javascript:void(0)" class="btn btn-sm">View Details</a>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        {% include "newswire/cp/includes/bulletin_attendance.html" %}
                     </div>
                 </div>
             </div>
