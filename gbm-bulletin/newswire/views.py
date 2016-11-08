@@ -417,8 +417,8 @@ class BulletinListView(ListView):
             building_fund_collection = None
 
         if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
-            building_fund_collection_ytd = building_fund_collection.filter(
-                date__year=get_now().year).aggregate(Sum('amount')).values()[0]
+            building_fund_collection_ytd = list(building_fund_collection.filter(
+                date__year=get_now().year).aggregate(Sum('amount')).values())[0]
             building_fund_pledged_ytd = building_fund_year_pledge.latest(
                 'date').amount / 365 * get_now().timetuple().tm_yday
             building_fund_year_goal = building_fund_year_goal.latest(
@@ -1245,8 +1245,8 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
             building_fund_collection = None
 
         if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
-            building_fund_collection_ytd = building_fund_collection.filter(
-                date__year=get_now().year).aggregate(Sum('amount')).values()[0]
+            building_fund_collection_ytd = list(building_fund_collection.filter(
+                date__year=get_now().year).aggregate(Sum('amount')).values())[0]
             building_fund_pledged_ytd = building_fund_year_pledge.latest(
                 'date').amount / 365 * get_now().timetuple().tm_yday
             building_fund_year_goal = building_fund_year_goal.latest(
