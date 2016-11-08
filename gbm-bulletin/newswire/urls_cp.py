@@ -2,7 +2,7 @@ from django.conf.urls import url
 from newswire import views
 from newswire.views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView
 from django.contrib.auth.decorators import login_required
-
+from django.views.generic import TemplateView
 
 urlpatterns = (
     url(r'^$',
@@ -18,6 +18,7 @@ urlpatterns = (
     #    url(r'^bulletin/print/pdf$', login_required(BulletinPdfView.as_view()),
     #        name='cp_bulletin_print'),
     url(r'^bulletin/print/pdf$', BulletinPdfView.as_view(), name='cp_bulletin_pdf'),
+    url(r'^bulletin/pdf/preview/$', TemplateView.as_view(template_name='newswire/cp/bulletin_preview.html'), name='cp_bulletin_pdf_preview'),
     url(r'^bulletin/under-review/$',
         views.UnderReviewListView.as_view(), name='underreview_list'),
     url(r'^bulletin/under-review/approve/$',
