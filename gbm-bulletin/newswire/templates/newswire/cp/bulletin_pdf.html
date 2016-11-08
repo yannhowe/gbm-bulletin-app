@@ -270,9 +270,9 @@
                     <h2 class="text-center">Upcoming Birthdays</h2>
                     {% include "newswire/cp/includes/bulletin_birthdays_print.html" %}
                 {% endif %}
-                {% if graph_sunday_attendance or building_fund_received %}
+                {% if graph_sunday_attendance or building_fund_collection_latest %}
                     <h2 class="text-center">Weekly Summary</h2>
-                    {% if building_fund_received %}
+                    {% if building_fund_collection_latest %}
                         {% include "newswire/cp/includes/bulletin_building_fund_pdf.html" %}
                     {% endif %}
                     {% if graph_sunday_attendance %}
