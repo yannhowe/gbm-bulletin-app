@@ -289,12 +289,10 @@ class UnderReviewListView(ListView):
             announcements = None
 
         if announcements:
-            announcements_under_review = announcements.filter(
-                publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=True)
+            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
             announcements_under_review_count = announcements_under_review.count()
             context['announcements_under_review'] = announcements_under_review
-            context[
-                'announcements_under_review_count'] = announcements_under_review_count
+            context['announcements_under_review_count'] = announcements_under_review_count
 
         try:
             sunday_attendance = SundayAttendance.objects.all()
@@ -590,8 +588,7 @@ class UnderReviewFrontEndListView(ContributorRequiredMixin, ListView):
             announcements = None
 
         if announcements:
-            announcements_under_review = announcements.filter(
-                under_review=True)
+            announcements_under_review = announcements.filter(under_review=True)
             announcements_approved = announcements.filter(under_review=False)
             context['announcements_under_review'] = announcements_under_review
             context['announcements_approved'] = announcements_approved
@@ -1148,12 +1145,10 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView):
             announcements = None
 
         if announcements:
-            announcements_under_review = announcements.filter(
-                publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=True)
+            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
             announcements_under_review_count = announcements_under_review.count()
             context['announcements_under_review'] = announcements_under_review
-            context[
-                'announcements_under_review_count'] = announcements_under_review_count
+            context['announcements_under_review_count'] = announcements_under_review_count
 
         try:
             sunday_attendance = SundayAttendance.objects.all()
