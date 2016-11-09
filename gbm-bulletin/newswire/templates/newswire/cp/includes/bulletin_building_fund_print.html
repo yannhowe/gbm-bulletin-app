@@ -10,7 +10,7 @@
     </div>
     <p class="small">Giving through
         {{ building_fund_collection_latest.date|date:"j M, o" }}
-        is currently
+        was
         <strong>${{building_fund_collection_ytd|default_if_none:'0'|floatformat:"0"|intcomma}}</strong>
         . We'll need to receive
         <strong>${{building_goal_and_ytd_collection_difference|default_if_none:'0'|floatformat:"0"|intcomma}}</strong>
