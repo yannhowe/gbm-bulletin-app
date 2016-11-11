@@ -543,7 +543,7 @@ class BulletinPdfSendView(BulletinApproverRequiredMixin, TemplateView, BulletinC
                 recipients.append(self.request.user.profile.email)
 
             email = EmailMessage(
-                'GBM Bulletin: %s is ready for print' % (get_coming_sunday(get_today()).strftime('%b. %d, %Y')),
+                'GBM Bulletin: Bulletin for %s is ready for print' % (get_coming_sunday(get_today()).strftime('%b. %d, %Y')),
                 'Attached is the bulletin approved by %s for print' % (approver_name),
                 'bulletin@gbm.sg',
                 recipients,
