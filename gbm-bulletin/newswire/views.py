@@ -225,6 +225,36 @@ class BulletinContextMixin(ContextMixin):
             context['announcements_print'] = published_announcements[:max_print_annoucements]
             context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
 
+        try:
+            announcements = Announcement.objects.all()
+        except Announcement.DoesNotExist:
+            announcements = None
+
+        if announcements:
+            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
+            announcements_under_review_count = announcements_under_review.count()
+            context['announcements_under_review'] = announcements_under_review
+            context['announcements_under_review_count'] = announcements_under_review_count
+
+        try:
+            sunday_attendance = SundayAttendance.objects.all()
+        except SundayAttendance.DoesNotExist:
+            sunday_attendance = None
+
+        if sunday_attendance:
+            sunday_attendance_under_review = sunday_attendance.filter(under_review=True)
+            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
+            context['sunday_attendance_under_review'] = sunday_attendance_under_review
+            context['graph_sunday_attendance'] = sunday_attendance.order_by('-date')[:25]
+            context['recent_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:4]
+            context[
+                'sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
+
+        if sunday_attendance and announcements:
+            context['total_under_review_count'] = announcements_under_review_count + \
+                sunday_attendance_under_review_count
+
         context['theme'] = {'this_year_theme': config.THIS_YEAR_THEME,
                             'this_year_theme_verse': config.THIS_YEAR_THEME_VERSE,
                             'this_year_theme_year': config.THIS_YEAR_THEME_YEAR}
@@ -239,14 +269,10 @@ class BulletinContextMixin(ContextMixin):
             context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
                 all_birthdays, 6, get_coming_sunday(get_today()))
 
-        SundayAttendanceApproved = SundayAttendance.objects.exclude(
-            under_review=True)
-        context['graph_sunday_attendance'] = SundayAttendanceApproved.order_by(
-            '-date')[:25]
-        context['recent_sunday_attendance'] = SundayAttendanceApproved.order_by(
-            '-date')[:4]
-        context['latest_sunday_attendance'] = SundayAttendanceApproved.order_by(
-            '-date')[:1]
+        SundayAttendanceApproved = SundayAttendance.objects.exclude(under_review=True)
+        context['graph_sunday_attendance'] = SundayAttendanceApproved.order_by('-date')[:25]
+        context['recent_sunday_attendance'] = SundayAttendanceApproved.order_by('-date')[:4]
+        context['latest_sunday_attendance'] = SundayAttendanceApproved.order_by('-date')[:1]
 
         try:
             latest_weeklyverse = WeeklyVerse.objects.latest('date')
@@ -467,12 +493,10 @@ class UnderReviewListView(EditorRequiredMixin, ListView):
             sunday_attendance = None
 
         if sunday_attendance:
-            sunday_attendance_under_review = sunday_attendance.filter(
-                under_review=True)
+            sunday_attendance_under_review = sunday_attendance.filter(under_review=True)
             sunday_attendance_under_review_count = sunday_attendance_under_review.count()
             context['sunday_attendance_under_review'] = sunday_attendance_under_review
-            context['graph_sunday_attendance'] = sunday_attendance.order_by(
-                '-date')[:25]
+            context['graph_sunday_attendance'] = sunday_attendance.order_by('-date')[:25]
             context['recent_sunday_attendance'] = sunday_attendance.order_by(
                 '-date')[:4]
             context[
