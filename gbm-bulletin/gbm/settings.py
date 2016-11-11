@@ -242,4 +242,5 @@ CONSTANCE_CONFIG = {
     'UNDER_REVIEW_ADMINS': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to send alerts for new items to review, one each line'),
     'EDITOR_LIST': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to add to editor list upon signup'),
     'CONTRIBUTOR_LIST': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to add to contributor list upon signup'),
+    'BULLETIN_PRINT_ADMIN_LIST': ("yannhowe@gmail.com pch@gbm.sg", 'Admins who recieve the bulletin sent from the PDF preview page for printing'),
 }

@@ -23,6 +23,7 @@ from django.template.response import TemplateResponse
 from django.template import Context
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
+from django.views.generic.base import ContextMixin
 from django.core.urlresolvers import reverse_lazy
 import os
 import json
@@ -33,6 +34,8 @@ from weasyprint import HTML, CSS
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
+
+from django.core.mail import EmailMessage
 
 
 def get_today():
@@ -80,6 +83,10 @@ def is_contributor(user):
 
 def is_editor(user):
     return user.groups.filter(name='editor').exists()
+
+
+def is_bulletin_approver(user):
+    return user.groups.filter(name='bulletin_approver').exists()
 
 
 def template_email(template_name, extra_context=None, *args, **kwargs):
@@ -179,154 +186,17 @@ def send_bulletin(request):
     return HttpResponseRedirect(reverse('home'))
 
 
-class NeedsReviewMixin(object):
-
-    def form_valid(self, form):
-        submission = form.save(commit=False)
-        submission.submitter = User.objects.get(
-            username=self.request.user)
-        submission.approver = None
-        submission.under_review = True
-        submission.save()
-        # TODO Email admins that new announcement has been submitted for review
-        message = template_email(
-            template_name='emails/new_item_for_review',
-            to=config.UNDER_REVIEW_ADMINS.split()
-        )
-        message.send()
-        return HttpResponseRedirect(self.success_url)
-
-
-class RecordSubmitterMixin(object):
-
-    def form_valid(self, form):
-        submission = form.save(commit=False)
-        submission.submitter = User.objects.get(
-            username=self.request.user)
-        submission.save()
-        return HttpResponseRedirect(self.success_url)
-
-
-class LoginRequiredMixin(object):
-    # mixin from https://gist.github.com/robgolding/3092600
-    """
-    View mixin which requires that the user is authenticated.
-    """
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(self, request, *args, **kwargs)
-
-
-class ContributorRequiredMixin(object):
-    # mixin from https://gist.github.com/robgolding/3092600
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        if not is_contributor(request.user):
-            messages.error(
-                request,
-                'You do not have the permission required to perform the '
-                'requested operation.')
-            return redirect(settings.LOGIN_URL)
-        return super(ContributorRequiredMixin, self).dispatch(request, *args, **kwargs)
-
-
-class EditorRequiredMixin(object):
-    # mixin from https://gist.github.com/robgolding/3092600
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        if not is_editor(request.user):
-            messages.error(
-                request,
-                'You do not have the permission required to perform the '
-                'requested operation.')
-            return redirect(settings.LOGIN_URL)
-        return super(EditorRequiredMixin, self).dispatch(request, *args, **kwargs)
-
-
-class SuperUserRequiredMixin(object):
-    # mixin from https://gist.github.com/robgolding/3092600
-    """
-    View mixin which requires that the authenticated user is a super user
-    (i.e. `is_superuser` is True).
-    """
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
-            messages.error(
-                request,
-                'You do not have the permission required to perform the '
-                'requested operation.')
-            return redirect(settings.LOGIN_URL)
-        return super(SuperUserRequiredMixin, self).dispatch(request,
-                                                            *args, **kwargs)
-
-
-class PdfResponseMixin(object, ):
-
-    def render_to_response(self, context, **response_kwargs):
-        context = self.get_context_data()
-        template = self.get_template_names()[0]
-        html_string = render_to_string(template, context)
-        rendered_html = HTML(string=html_string)
-        pdf_file = rendered_html.write_pdf()
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'filename="mypdf.pdf"'
-        return response
-
-
-class UnderReviewListView(ListView):
-    model = Announcement
-    template_name = 'newswire/cp/under_review_list.html'
+class BulletinContextMixin(ContextMixin):
 
     def get_context_data(self, **kwargs):
-        context = super(UnderReviewListView, self).get_context_data(**kwargs)
-
-        try:
-            announcements = Announcement.objects.all()
-        except Announcement.DoesNotExist:
-            announcements = None
-
-        if announcements:
-            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
-            announcements_under_review_count = announcements_under_review.count()
-            context['announcements_under_review'] = announcements_under_review
-            context['announcements_under_review_count'] = announcements_under_review_count
-
-        try:
-            sunday_attendance = SundayAttendance.objects.all()
-        except SundayAttendance.DoesNotExist:
-            sunday_attendance = None
-
-        if sunday_attendance:
-            sunday_attendance_under_review = sunday_attendance.filter(
-                under_review=True)
-            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
-            context['sunday_attendance_under_review'] = sunday_attendance_under_review
-            context['graph_sunday_attendance'] = sunday_attendance.order_by(
-                '-date')[:25]
-            context['recent_sunday_attendance'] = sunday_attendance.order_by(
-                '-date')[:4]
-            context[
-                'sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
-
-        if sunday_attendance and announcements:
-            context['total_under_review_count'] = announcements_under_review_count + \
-                sunday_attendance_under_review_count
-
-        return context
-
-
-class BulletinListView(ListView):
-    model = Announcement
-    template_name = 'newswire/home.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(BulletinListView, self).get_context_data(**kwargs)
+        context = super(BulletinContextMixin, self).get_context_data(**kwargs)
 
         order_of_service = None
         coming_sunday_order_of_service = None
+
+        context['is_bulletin_approver'] = is_bulletin_approver(self.request.user)
+        context['is_editor'] = is_editor(self.request.user)
+        context['is_contributor'] = is_contributor(self.request.user)
 
         try:
             order_of_service = OrderOfService.objects.all()
@@ -336,8 +206,7 @@ class BulletinListView(ListView):
 
         if order_of_service:
             try:
-                coming_sunday_order_of_service = order_of_service.order_by(
-                    'date').filter(date=get_coming_sunday(get_today()))[:1].get()
+                coming_sunday_order_of_service = order_of_service.order_by('date').filter(date=get_coming_sunday(get_today()))[:1].get()
             except OrderOfService.DoesNotExist:
                 coming_sunday_order_of_service = None
 
@@ -462,6 +331,164 @@ class BulletinListView(ListView):
         context['categories'] = Category.objects.all()
         return context
 
+
+class NeedsReviewMixin(object):
+
+    def form_valid(self, form):
+        submission = form.save(commit=False)
+        submission.submitter = User.objects.get(
+            username=self.request.user)
+        submission.approver = None
+        submission.under_review = True
+        submission.save()
+        # TODO Email admins that new announcement has been submitted for review
+        message = template_email(
+            template_name='emails/new_item_for_review',
+            to=config.UNDER_REVIEW_ADMINS.split()
+        )
+        message.send()
+        return HttpResponseRedirect(self.success_url)
+
+
+class RecordSubmitterMixin(object):
+
+    def form_valid(self, form):
+        submission = form.save(commit=False)
+        submission.submitter = User.objects.get(
+            username=self.request.user)
+        submission.save()
+        return HttpResponseRedirect(self.success_url)
+
+
+class LoginRequiredMixin(object):
+    # mixin from https://gist.github.com/robgolding/3092600
+    """
+    View mixin which requires that the user is authenticated.
+    """
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(self, request, *args, **kwargs)
+
+
+class ContributorRequiredMixin(object):
+    # mixin from https://gist.github.com/robgolding/3092600
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not is_contributor(request.user):
+            messages.error(
+                request,
+                'You do not have the permission required to perform the '
+                'requested operation.')
+            return redirect(settings.LOGIN_URL)
+        return super(ContributorRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+class EditorRequiredMixin(object):
+    # mixin from https://gist.github.com/robgolding/3092600
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not is_editor(request.user):
+            messages.error(
+                request,
+                'You do not have the permission required to perform the '
+                'requested operation.')
+            return redirect(settings.LOGIN_URL)
+        return super(EditorRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+class BulletinApproverRequiredMixin(object):
+    # mixin from https://gist.github.com/robgolding/3092600
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not is_bulletin_approver(request.user):
+            messages.error(
+                request,
+                'You do not have the permission required to perform the '
+                'requested operation.')
+            return redirect(settings.LOGIN_URL)
+        return super(BulletinApproverRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+class SuperUserRequiredMixin(object):
+    # mixin from https://gist.github.com/robgolding/3092600
+    """
+    View mixin which requires that the authenticated user is a super user
+    (i.e. `is_superuser` is True).
+    """
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            messages.error(
+                request,
+                'You do not have the permission required to perform the '
+                'requested operation.')
+            return redirect(settings.LOGIN_URL)
+        return super(SuperUserRequiredMixin, self).dispatch(request,
+                                                            *args, **kwargs)
+
+
+class PdfResponseMixin(object, ):
+
+    def render_to_response(self, context, **response_kwargs):
+        context = self.get_context_data()
+        template = self.get_template_names()[0]
+        html_string = render_to_string(template, context)
+        rendered_html = HTML(string=html_string)
+        pdf_file = rendered_html.write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="mypdf.pdf"'
+        return response
+
+
+class UnderReviewListView(ListView):
+    model = Announcement
+    template_name = 'newswire/cp/under_review_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UnderReviewListView, self).get_context_data(**kwargs)
+
+        try:
+            announcements = Announcement.objects.all()
+        except Announcement.DoesNotExist:
+            announcements = None
+
+        if announcements:
+            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
+            announcements_under_review_count = announcements_under_review.count()
+            context['announcements_under_review'] = announcements_under_review
+            context['announcements_under_review_count'] = announcements_under_review_count
+
+        try:
+            sunday_attendance = SundayAttendance.objects.all()
+        except SundayAttendance.DoesNotExist:
+            sunday_attendance = None
+
+        if sunday_attendance:
+            sunday_attendance_under_review = sunday_attendance.filter(
+                under_review=True)
+            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
+            context['sunday_attendance_under_review'] = sunday_attendance_under_review
+            context['graph_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:25]
+            context['recent_sunday_attendance'] = sunday_attendance.order_by(
+                '-date')[:4]
+            context[
+                'sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
+
+        if sunday_attendance and announcements:
+            context['total_under_review_count'] = announcements_under_review_count + \
+                sunday_attendance_under_review_count
+
+        return context
+
+
+class BulletinListView(ListView, BulletinContextMixin):
+    model = Announcement
+    template_name = 'newswire/home.html'
+
     def get_queryset(self):
         # do not show archived instances.
         qs = super(ListView, self).get_queryset()
@@ -484,14 +511,53 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         template = self.get_template_names()[0]
         html_string = render_to_string(template, context)
         rendered_html = HTML(string=html_string)
-        filename = get_coming_sunday(get_today()).strftime(
-            '%Y%m%d') + '_gbm_bulletin.pdf'
-        pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(
-            settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
+        pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
         response = HttpResponse(pdf_file, content_type='application/pdf')
-        response[
-            'Content-Disposition'] = 'filename="{}"'.format(filename)
+        response['Content-Disposition'] = 'filename="mypdf.pdf"'
         return response
+
+
+class BulletinPdfPreviewView(BulletinListView):
+    template_name = 'newswire/cp/bulletin_preview.html'
+
+
+class BulletinPdfSendView(BulletinApproverRequiredMixin, TemplateView, BulletinContextMixin):
+    template_name = 'newswire/cp/bulletin_pdf.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            context = self.get_context_data()
+            template = self.get_template_names()[0]
+            html_string = render_to_string(template, context)
+            rendered_html = HTML(string=html_string)
+            filename = get_coming_sunday(get_today()).strftime('%Y%m%d') + '_gbm_bulletin.pdf'
+            pdf_file = rendered_html.write_pdf(stylesheets=[CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/bootstrap.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/font-awesome.min.css'), CSS(settings.BASE_DIR + '/newswire/static/newswire/cp/css/gbm_bulletin_pdf.css')])
+
+            if self.request.user.profile.first_name or self.request.user.profile.last_name:
+                approver_name = self.request.user.profile.first_name + ', ' + self.request.user.profile.last_name
+            else:
+                approver_name = 'an admin'
+
+            recipients = config.BULLETIN_PRINT_ADMIN_LIST.split()
+            if self.request.user.profile.email:
+                recipients.append(self.request.user.profile.email)
+
+            email = EmailMessage(
+                'GBM Bulletin: %s is ready for print' % (get_coming_sunday(get_today()).strftime('%b. %d, %Y')),
+                'Attached is the bulletin approved by %s for print' % (approver_name),
+                'bulletin@gbm.sg',
+                recipients,
+                [''],
+                reply_to=['bulletin@gbm.sg'],
+            )
+            email.attach(filename, pdf_file)
+            email.send(fail_silently=False)
+        return HttpResponseRedirect(reverse('cp_bulletin_pdf_preview'))
+
+    def get_queryset(self):
+        # do not show archived instances.
+        qs = super(ListView, self).get_queryset()
+        return qs
 
 
 class OrderOfServiceList(EditorRequiredMixin, ListView):
@@ -1101,7 +1167,6 @@ class RsvpUpdateView(DetailView):
 
 
 class RsvpListView(EditorRequiredMixin, ListView):
-
     model = Signup
     template_name = 'newswire/cp/rsvp_list.html'
 
@@ -1116,7 +1181,6 @@ class RsvpListView(EditorRequiredMixin, ListView):
 
 
 class RsvpListViewRaw(EditorRequiredMixin, ListView):
-
     model = Signup
     template_name = 'newswire/cp/rsvp_list_raw.html'
 
@@ -1130,162 +1194,9 @@ class RsvpListViewRaw(EditorRequiredMixin, ListView):
         return context
 
 
-class ControlPanelHomeView(EditorRequiredMixin, ListView):
-
+class ControlPanelHomeView(EditorRequiredMixin, ListView, BulletinContextMixin):
     model = Announcement
     template_name = 'newswire/cp/home.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ControlPanelHomeView, self).get_context_data(**kwargs)
-        context['coming_sunday'] = get_coming_sunday(get_today()).date
-
-        try:
-            announcements = Announcement.objects.all()
-        except Announcement.DoesNotExist:
-            announcements = None
-
-        if announcements:
-            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
-            announcements_under_review_count = announcements_under_review.count()
-            context['announcements_under_review'] = announcements_under_review
-            context['announcements_under_review_count'] = announcements_under_review_count
-
-        try:
-            sunday_attendance = SundayAttendance.objects.all()
-        except SundayAttendance.DoesNotExist:
-            sunday_attendance = None
-
-        if sunday_attendance:
-            sunday_attendance_under_review = sunday_attendance.filter(
-                under_review=True)
-            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
-            context['sunday_attendance_under_review'] = sunday_attendance_under_review
-            context['graph_sunday_attendance'] = sunday_attendance.order_by(
-                '-date')[:25]
-            context['recent_sunday_attendance'] = sunday_attendance.order_by(
-                '-date')[:4]
-            context[
-                'sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
-
-        if sunday_attendance and announcements:
-            context['total_under_review_count'] = announcements_under_review_count + \
-                sunday_attendance_under_review_count
-
-        try:
-            context['signups'] = Signup.objects.order_by('event', 'rsvp')
-        except Event.DoesNotExist:
-            pass
-
-        try:
-            order_of_service = OrderOfService.objects.all()
-        except OrderOfService.DoesNotExist:
-            order_of_service = None
-
-        if order_of_service:
-            try:
-                coming_sunday_order_of_service = order_of_service.order_by(
-                    '-date')[:1].get()
-            except OrderOfService.DoesNotExist:
-                coming_sunday_order_of_service = None
-
-        if coming_sunday_order_of_service:
-            context['coming_sunday_order_of_service'] = coming_sunday_order_of_service
-            context['orderofservice_updated_or_not'] = True if coming_sunday_order_of_service.date.strftime('%b. %d, %Y') == get_coming_sunday(get_today()).strftime('%b. %d, %Y') else False
-            context['orderofservice_print'] = coming_sunday_order_of_service
-
-        try:
-            order_of_service = OrderOfService.objects.all()
-        except OrderOfService.DoesNotExist:
-            order_of_service = None
-
-        active_announcements = Announcement.objects.filter(
-            publish_start_date__lte=get_now(), publish_end_date__gte=get_now(), under_review=False)
-        context['announcements'] = active_announcements
-
-        all_birthdays = Profile.objects.exclude(date_of_birth=None)
-        context['birthdays'] = get_upcoming_birthdays(all_birthdays, 6)
-        context['birthdays_after_coming_sunday'] = get_upcoming_birthdays(
-            all_birthdays,5, get_coming_sunday(get_today()))
-
-        try:
-            latest_weeklyverse = WeeklyVerse.objects.latest('date')
-        except WeeklyVerse.DoesNotExist:
-            latest_weeklyverse = None
-
-        if latest_weeklyverse:
-            context['weeklyverse'] = latest_weeklyverse
-            context['weeklyverse_updated_or_not'] = True if latest_weeklyverse.date.strftime('%b. %d, %Y') == get_coming_sunday(get_today()).strftime('%b. %d, %Y') else False
-
-        try:
-            active_events = Event.objects.filter(
-                Q(date_end__gte=get_now()) | Q(date_start__gte=get_now()))
-        except Event.DoesNotExist:
-            active_events = None
-        context['events'] = active_events.extra(
-            order_by=['date_start'])
-
-        try:
-            building_fund_year_goal = BuildingFundYearGoal.objects.all()
-        except BuildingFundYearGoal.DoesNotExist:
-            building_fund_year_goal = None
-
-        try:
-            building_fund_year_pledge = BuildingFundYearPledge.objects.all()
-        except BuildingFundYearPledge.DoesNotExist:
-            building_fund_year_pledge = None
-
-        try:
-            building_fund_collection = BuildingFundCollection.objects.all()
-        except BuildingFundCollection.DoesNotExist:
-            building_fund_collection = None
-
-        if building_fund_year_goal and building_fund_year_pledge and building_fund_collection:
-            building_fund_collection_ytd = list(building_fund_collection.filter(
-                date__year=get_now().year).aggregate(Sum('amount')).values())[0]
-            building_fund_pledged_ytd = building_fund_year_pledge.latest(
-                'date').amount / 365 * get_now().timetuple().tm_yday
-            building_fund_year_goal = building_fund_year_goal.latest(
-                'date').amount
-            building_pledge_and_ytd_collection_difference = building_fund_pledged_ytd - \
-                building_fund_collection_ytd
-            building_goal_and_ytd_collection_difference = building_fund_year_goal - \
-                building_fund_collection_ytd
-            building_goal_and_ytd_collection_percent = building_fund_collection_ytd / \
-                building_fund_year_goal * 100
-            ahead_or_behind_goal = ahead_or_behind(
-                building_fund_collection_ytd, building_fund_year_goal)
-
-            context['building_fund_collection_latest'] = building_fund_collection.latest(
-                'date')
-            context['building_fund_collection_ytd'] = building_fund_collection_ytd
-            context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
-            context['building_fund_year_goal'] = building_fund_year_goal
-            context['building_pledge_and_ytd_collection_difference'] = abs(
-                building_pledge_and_ytd_collection_difference)
-            context['building_goal_and_ytd_collection_difference'] = abs(
-                building_goal_and_ytd_collection_difference)
-            context[
-                'building_goal_and_ytd_collection_percent'] = building_goal_and_ytd_collection_percent
-            context['ahead_or_behind'] = ahead_or_behind_goal
-
-        if self.request.user.is_authenticated():
-            try:
-                signup_list = Signup.objects.filter(
-                    event__in=active_events).filter(user=self.request.user)
-            except Signup.DoesNotExist:
-                signup_list = None
-        context['signups'] = signup_list.all()
-
-        if self.request.user.is_authenticated():
-            try:
-                signup_id_list = Signup.objects.filter(
-                    event__in=active_events).filter(user=self.request.user).values_list('event_id', flat=True)
-            except Signup.DoesNotExist:
-                signup_id_list = None
-            context['signup_id_list'] = signup_id_list.all()
-
-        context['categories'] = Category.objects.all()
-        return context
 
     def get_queryset(self):
         # do not show archived instances.

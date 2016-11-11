@@ -1,5 +1,45 @@
 $(function() {
 
+    // Attach a submit handler to the form
+    $("#sendForPrint").submit(function(event) {
+        // Stop form from submitting normally
+        event.preventDefault();
+        console.log("send for print clicked!") // sanity check
+        $('#sendForPrintButton').addClass("disabled");
+        $('#sendForPrintButton').html('<i class="fa fa-paper-plane"></i>&nbsp;Sending...');
+            // Get some values from elements on the page:
+        var $form = $(this),
+            url = $form.attr("action");
+        // Send the data using post
+        send_bulletin(url);
+    });
+
+    // AJAX for sending bulletin
+    function send_bulletin(post_url) {
+        console.log("send_bulletin triggered!") // sanity check
+        $.ajax({
+            url: post_url, // the endpoint
+            type: "POST", // http method
+            data: {
+                //the_post: $('#post-text').val()
+            }, // data sent with the post request
+
+            // handle a successful response
+            success: function(json) {
+                $('#sendForPrintButton').html('<i class="fa fa-paper-plane"></i>&nbsp;Sent!'); // remove the value from the input
+                //console.log(json); // log the returned json to the console
+                console.log("success"); // another sanity check
+            },
+
+            // handle a non-successful response
+            error: function(xhr, errmsg, err) {
+                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    };
+
     $('form').on('click', 'button[type=submit]', function(e) {
         $(this.form).data('clicked', this.value);
         console.log("BUTTON VALUE: " + this.value); // another sanity check

@@ -1,7 +1,8 @@
 {% extends "newswire/cp/__base.html" %}
 {% load humanize %}
 {% block header_title %}Bulletin PDF Preview - Grace Baptist Ministries{% endblock %}
-{% block content_header %}Bulletin PDF Preview {% endblock %}
+{% block content_header %}Bulletin PDF Preview
+{% endblock %}
 {% block content_sub_header %}{% endblock %}
 
 {% block header_includes %}{% endblock %}
@@ -15,14 +16,19 @@
                     <h3 class="box-title">Bulletin PDF Preview
                     </h3>
                     <div class="box-tools pull-right">
-                        <a href="" type="button" class="btn btn-sm btn-primary disabled">
-                            <i class="fa fa-paper-plane"></i>
-                            &nbsp;Send to admin for print</a>
+                        {% if is_bulletin_approver %}
+                            <form action="{% url 'cp_bulletin_pdf_send' %}" method="post" id="sendForPrint">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-block btn-primary btn-sm" id="sendForPrintButton">
+                                    <i class="fa fa-paper-plane"></i>
+                                    &nbsp;Send to admin for print</button>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                  <iframe width="100%" height="1200px" src="/bulletin/pdf/"></iframe>
+                    <iframe width="100%" height="1200px" src="{% url 'cp_bulletin_pdf' %}"></iframe>
                 </div>
                 <!-- /.box-body -->
             </div>

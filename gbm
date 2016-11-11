@@ -55,6 +55,11 @@ case "$1" in
             docker-compose run --rm bulletin python manage.py makemigrations
             docker-compose run --rm bulletin python manage.py migrate
             ;;
+        dump_dev)
+            pg_dump -v -a -h preview.gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
+            pg_dump -v -s -h preview.gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
+            pg_dump -v -h preview.gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.full.dump
+            ;;
         dump_live)
             pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
             pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
@@ -63,5 +68,5 @@ case "$1" in
         *)
             echo $"Usage: $0 {start|stop|restart|rebuild|dev|status|clean|nuke|init|migrate|dump_live}"
             exit 1
-
+date
 esac

@@ -57,4 +57,10 @@
     "fields": {
         "name": "contributor"
     }
+}, {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "bulletin_approver"
+    }
 }]
