@@ -17,11 +17,11 @@ urlpatterns = (
         name='cp_bulletin_print'),
     #    url(r'^bulletin/print/pdf$', login_required(BulletinPdfView.as_view()),
     #        name='cp_bulletin_print'),
-    url(r'^bulletin/pdf/$', BulletinPdfView.as_view(), name='cp_bulletin_pdf'),
-    url(r'^bulletin/pdf/preview/$', BulletinPdfPreviewView.as_view(), name='cp_bulletin_pdf_preview'),
-    url(r'^bulletin/pdf/send/$', BulletinPdfSendView.as_view(), name='cp_bulletin_pdf_send'),
-    url(r'^bulletin/under-review/$', views.UnderReviewListView.as_view(), name='underreview_list'),
-    url(r'^bulletin/under-review/approve/$', views.UnderReviewApproveView.as_view(), name='underreview_approve'),
+    url(r'^bulletin/pdf/$', login_required(BulletinPdfView.as_view()), name='cp_bulletin_pdf'),
+    url(r'^bulletin/pdf/preview/$', login_required(BulletinPdfPreviewView.as_view()), name='cp_bulletin_pdf_preview'),
+    url(r'^bulletin/pdf/send/$', login_required(BulletinPdfSendView.as_view()), name='cp_bulletin_pdf_send'),
+    url(r'^bulletin/under-review/$', login_required(views.UnderReviewListView.as_view()), name='underreview_list'),
+    url(r'^bulletin/under-review/approve/$', login_required(views.UnderReviewApproveView.as_view()), name='underreview_approve'),
 
     # OrderOfService
     url(r'^bulletin/orderofservice/$',
