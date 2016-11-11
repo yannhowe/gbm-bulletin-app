@@ -443,7 +443,7 @@ class PdfResponseMixin(object, ):
         return response
 
 
-class UnderReviewListView(ListView):
+class UnderReviewListView(EditorRequiredMixin, ListView):
     model = Announcement
     template_name = 'newswire/cp/under_review_list.html'
 
@@ -503,7 +503,7 @@ class BulletinPrintView(EditorRequiredMixin, BulletinListView):
     template_name = 'newswire/cp/bulletin_print.html'
 
 
-class BulletinPdfView(PdfResponseMixin, BulletinListView):
+class BulletinPdfView(EditorRequiredMixin, PdfResponseMixin, BulletinListView):
     template_name = 'newswire/cp/bulletin_pdf.html'
 
     def render_to_response(self, context, **response_kwargs):
@@ -517,7 +517,7 @@ class BulletinPdfView(PdfResponseMixin, BulletinListView):
         return response
 
 
-class BulletinPdfPreviewView(BulletinListView):
+class BulletinPdfPreviewView(EditorRequiredMixin, BulletinListView):
     template_name = 'newswire/cp/bulletin_preview.html'
 
 
@@ -735,7 +735,7 @@ class AnnouncementDelete(EditorRequiredMixin, DeleteView):
     template_name = 'newswire/cp/announcement_confirm_delete.html'
 
 
-class UnderReviewApproveView(DetailView):
+class UnderReviewApproveView(EditorRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
