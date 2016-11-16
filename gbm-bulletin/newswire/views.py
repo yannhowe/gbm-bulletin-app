@@ -281,6 +281,7 @@ class BulletinContextMixin(ContextMixin):
 
         if latest_weeklyverse is not None:
             context['weeklyverse'] = latest_weeklyverse
+            context['weeklyverse_updated_or_not'] = True if get_coming_sunday(get_today()).strftime('%b. %d, %Y') == latest_weeklyverse.date.strftime('%b. %d, %Y') else False
 
         try:
             active_events = Event.objects.filter(
