@@ -44,6 +44,7 @@
                                 <th class="text-center">Title</th>
                                 <th class="text-center">Start Date</th>
                                 <th class="text-center">End Date</th>
+                                <th class="text-center">Display</th>
                                 <th class="text-center">RSVP Tracking</th>
                             </tr>
                         </thead>
@@ -64,6 +65,7 @@
                                     </td>
                                     <td class="text-right">{{ event.date_start }}</td>
                                     <td class="text-right">{{ event.date_end }}</td>
+                                    <td class="text-right">{{ event.display_override }}</td>
                                     <td class="text-center">
                                         {% if event.track_rsvp %}
                                             <i class="fa fa-check" aria-hidden="true"></i>
@@ -80,6 +82,7 @@
                                 <th class="text-center">title</th>
                                 <th class="text-center">Start Date</th>
                                 <th class="text-center">End Date</th>
+                                <th class="text-center">Display</th>
                                 <th class="text-center">RSVP Tracking</th>
                             </tr>
                         </tfoot>

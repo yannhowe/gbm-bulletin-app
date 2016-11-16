@@ -67,11 +67,22 @@ class Announcement(models.Model):
 
 
 class Event(models.Model):
+    # Display Override
+    DEFAULT = 'default'
+    HIDE = 'hide'
+    SHOW = 'show'
+    CHOICES = (
+        (DEFAULT, 'Default: Displays 60 days in advance'),
+        (HIDE, 'Hide Event'),
+        (SHOW, 'Show Event'),
+    )
+
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=400, null=True, blank=True)
     date_start = models.DateField(default=datetime.now)
     date_end = models.DateField(blank=True, null=True)
     track_rsvp = models.BooleanField(default=False)
+    display_override = models.CharField(max_length=30, choices=CHOICES, default=CHOICES[0][0], null=True, blank=True)
 
     def __str__(self):
         return '%s - %s to %s' % (self.title, self.date_start, self.date_end)
@@ -90,8 +101,7 @@ class Signup(models.Model):
 
     user = models.ForeignKey(User, db_index=True)
     event = models.ForeignKey(Event, db_index=True)
-    rsvp = models.CharField(
-        max_length=30, choices=CHOICES, default=CHOICES[0][0])
+    rsvp = models.CharField(max_length=30, choices=CHOICES, default=CHOICES[0][0])
 
     def __str__(self):
         return '%s - %s - %s' % (self.event, self.user, self.rsvp)
@@ -210,7 +220,7 @@ def create_user_profile(sender, instance, created, **kwargs):
                     instance.groups.add(Group.objects.get(name='contributor'))
             except Group.DoesNotExist:
                 pass
-                
+
             email_matching = Profile.objects.filter(email=instance.email).first()
             if email_matching!=None:
                 email_matching.user=instance

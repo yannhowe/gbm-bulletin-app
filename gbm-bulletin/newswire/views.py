@@ -45,6 +45,8 @@ def get_today():
 def get_now():
     return timezone.now()
 
+def get_future(days_into_future):
+    return get_now() + datetime.timedelta(days_into_future)
 
 def get_upcoming_birthdays(person_list, days, from_date=get_today()):
     person_list = person_list.distinct()  # ensure persons are only in the list once
@@ -284,12 +286,11 @@ class BulletinContextMixin(ContextMixin):
             context['weeklyverse_updated_or_not'] = True if get_coming_sunday(get_today()).strftime('%b. %d, %Y') == latest_weeklyverse.date.strftime('%b. %d, %Y') else False
 
         try:
-            active_events = Event.objects.filter(
-                Q(date_end__gte=get_now()) | Q(date_start__gte=get_now()))
+            active_events = Event.objects.filter(Q(date_end__gte=get_now()) | Q(date_start__gte=get_now()))
         except Event.DoesNotExist:
             active_events = None
-        context['events'] = active_events.extra(
-            order_by=['date_start'])
+
+        context['events'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])
 
         context['now'] = get_now()
         context['today'] = get_today()

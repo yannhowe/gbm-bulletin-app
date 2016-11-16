@@ -301,6 +301,7 @@ class EventForm(forms.ModelForm):
                           css_class="dateinput"),
             PrependedText('date_end', '<i class="fa fa-calendar"></i>',
                           css_class="dateinput"),
+            Field('display_override', title="Display"),
             Field('track_rsvp', title="Enable RSVP"),
             FormActions(
                 Submit('save', 'Save changes'),
@@ -311,7 +312,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'date_start', 'date_end', 'track_rsvp']
+        fields = ['title', 'date_start', 'date_end', 'display_override', 'track_rsvp']
 
 
 class BuildingFundCollectionForm(ModelForm):
