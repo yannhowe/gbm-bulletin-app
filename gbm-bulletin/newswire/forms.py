@@ -297,6 +297,7 @@ class EventForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Field('title'),
+            Field('description'),
             PrependedText('date_start', '<i class="fa fa-calendar"></i>',
                           css_class="dateinput"),
             PrependedText('date_end', '<i class="fa fa-calendar"></i>',
@@ -312,7 +313,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'date_start', 'date_end', 'display_override', 'track_rsvp']
+        fields = ['title', 'description', 'date_start', 'date_end', 'display_override', 'track_rsvp']
 
 
 class BuildingFundCollectionForm(ModelForm):
