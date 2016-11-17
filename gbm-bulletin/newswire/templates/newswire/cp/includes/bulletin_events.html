@@ -1,83 +1,77 @@
 {% load newswire_extras %}
-<table class="table">
-    <tbody>
-        {% for event in events %}
-            <div class="no-print modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class=" modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h2 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h2>
-                        </div>
-                        <div class="modal-body">
-                            <p>
-                                <strong>Date:</strong>
-                                {% format_date_range event.date_start event.date_end %}
-                            </p>
-                            <p>
-                                {{ event.description }}
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            {% if request.user.is_authenticated %}
-                                {% if event.track_rsvp %}
-                                    <form action="{% url 'home' %}" method="POST" id="rsvp-form">
-                                        {% csrf_token %}
-                                        <div class="fieldWrapper"></div>
-                                        <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-notgoing pull-left">Not Going</button>
-                                        <button id="btn-interested-{{event.pk}}" type="submit" value="interested-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-interested pull-left">Interested</button>
-                                        <button id="btn-going-{{event.pk}}" type="submit" value="going-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-going pull-left">Going</button>
-                                    </form>
-                                {% endif %}
-                            {% else %}
-                                {% if event.track_rsvp %}
-                                    <a href="http://preview.gbm.sg/accounts/login/" class="btn btn-xs pull-left">Login to RSVP</a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
+{% for event in events %}
+    <div class="no-print modal fade" id="rsvpModal-{{event.pk}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class=" modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h2 class="modal-title" id="event-title-{{event.pk}}">{{ event.title }}</h2>
                 </div>
-            </div>
-            <tr>
-                <td class="text-right">
-                    <strong>{{ event.title }}</strong>
-                </td>
-                <td class="text-left">
-                    <i>{% format_date_range event.date_start event.date_end %}</i>
+                <div class="modal-body">
+                    <p>
+                        <strong>Date:</strong>
+                        {% format_date_range event.date_start event.date_end %}
+                    </p>
+                    <p>
+                        {{ event.description }}
+                    </p>
+                </div>
+                <div class="modal-footer">
                     {% if request.user.is_authenticated %}
                         {% if event.track_rsvp %}
-                            {% for signup in signups %}
-                                {% if signup.user.pk == request.user.pk and signup.event.pk == event.pk %}
-                                    <button type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-light rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                        {{ signup.rsvp }}
-                                    </button>
-                                {% endif %}
-                            {% endfor %}
-                            {% if event.id not in signup_id_list %}
-                                <a id="rsvpbtn-{{event.pk}}" class="no-print" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                    (Details &amp; RSVP)
-                                </button>
-                            {% endif %}
-                        {% else %}
-                            <a id="rsvpbtn-{{event.pk}}" class="no-print" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                (Details)
-                            </a>
+                            <form action="rsvp/update/" method="POST" id="rsvp-form">
+                                {% csrf_token %}
+                                <div class="fieldWrapper"></div>
+                                <button id="btn-notgoing-{{event.pk}}" type="submit" value="notgoing-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-notgoing pull-left">Not Going</button>
+                                <button id="btn-interested-{{event.pk}}" type="submit" value="interested-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-interested pull-left">Interested</button>
+                                <button id="btn-going-{{event.pk}}" type="submit" value="going-{{event.pk}}" form="rsvp-form" class="rsvp-response btn btn-xs rsvp rsvp-going pull-left">Going</button>
+                            </form>
                         {% endif %}
                     {% else %}
                         {% if event.track_rsvp %}
-                            <a id="rsvpbtn-{{event.pk}}" class="no-print" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                (Details &amp; RSVP)
-                            </button>
-                        {% else %}
-                            <a id="rsvpbtn-{{event.pk}}" class="no-print" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
-                                (Details)
-                            </a>
+                            <a href="/accounts/login/" class="btn btn-xs pull-left">Login to RSVP</a>
                         {% endif %}
                     {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-preview {{ announcement.category.name }}-hide">
+        <p class="post-meta pull-right">
+            <em>{% format_date_range event.date_start event.date_end %}</em>
+        </p>
+        <h3 class="post-title">
+            {{ event.title }}
+            {% if request.user.is_authenticated %}
+                {% if event.track_rsvp %}
+                    {% for signup in signups %}
+                        {% if signup.user.pk == request.user.pk and signup.event.pk == event.pk %}
+                            <a type="button" id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-default rsvp-{{ signup.rsvp|lower }}" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                                {{ signup.rsvp }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if event.id not in signup_id_list %}
+                        <a id="rsvpbtn-{{event.pk}}" class="no-print btn btn-xs btn-default" data-toggle="modal" data-target="#rsvpModal-{{event.pk}}">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            RSVP
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% if event.track_rsvp %}
+                    <a href="/accounts/login/" class="no-print btn btn-xs btn-default">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        Log in to RSVP
+                    </a>
+                {% endif %}
+            {% endif %}
+        </h3>
+        <p class="post-subtitle">
+            {{ event.description }}
+        </p>
+        <hr class="no-print">
+    </div>
+{% endfor %}

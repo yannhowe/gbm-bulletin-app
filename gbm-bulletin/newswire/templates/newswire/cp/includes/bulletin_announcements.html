@@ -1,7 +1,8 @@
 {% for announcement in announcements %}
-        <div class="post-preview {{ announcement.category.name }}-hide">
-            <p class="post-meta pull-right">
-                <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">{{ announcement.category }}</small>
+    <div class="post-preview {{ announcement.category.name }}-hide">
+        <p class="post-meta pull-right">
+            <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">
+                <small>{{ announcement.category }}</small>
             </button>
         </p>
         <h3 class="post-title">

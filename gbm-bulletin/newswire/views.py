@@ -45,8 +45,10 @@ def get_today():
 def get_now():
     return timezone.now()
 
+
 def get_future(days_into_future):
     return get_now() + datetime.timedelta(days_into_future)
+
 
 def get_upcoming_birthdays(person_list, days, from_date=get_today()):
     person_list = person_list.distinct()  # ensure persons are only in the list once
@@ -1158,6 +1160,7 @@ class RsvpUpdateView(DetailView):
                 signup.pk = the_pk
             except:
                 pass
+
             signup.user = the_user
             signup.event = the_event
             signup.rsvp = the_rsvp

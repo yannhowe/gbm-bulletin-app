@@ -32,7 +32,7 @@ $(function() {
             // handle a successful response
             success: function(json) {
                 $('#rsvpbtn-' + the_event).addClass('rsvp-' + the_rsvp + '');
-                $('#rsvpbtn-' + the_event).replaceWith('<button type="button" id="rsvpbtn-' + the_event + '" class="btn btn-default btn-xs rsvp rsvp-' + the_rsvp + '" data-toggle="modal" data-target="#rsvpModal-' + the_event + '">' + the_rsvp + '</button>');
+                $('#rsvpbtn-' + the_event).replaceWith('<a type="button" id="rsvpbtn-' + the_event + '" class="btn btn-default btn-xs rsvp rsvp-' + the_rsvp + '" data-toggle="modal" data-target="#rsvpModal-' + the_event + '">' + the_rsvp + '</a>');
                 console.log(json); // log the returned json to the console
                 console.log("success"); // another sanity check
             },
