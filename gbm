@@ -61,8 +61,8 @@ case "$1" in
             pg_dump -v -h preview.gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.full.dump
             ;;
         dump_live)
-            pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
-            pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
+            #pg_dump -v -a -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.data.dump
+            #pg_dump -v -s -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.schema.dump
             pg_dump -v -h gbm.sg -Fc -o -U postgres postgres > prod_db.$DATE.full.dump
             ;;
         *)

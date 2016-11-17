@@ -48,8 +48,8 @@ services:
     expose:
       - "8000"
     depends_on:
-        - bulletin-postgres
-        - bulletin-static
+      - bulletin-postgres
+      - bulletin-static
     links:
       - bulletin-postgres
     env_file: .env
