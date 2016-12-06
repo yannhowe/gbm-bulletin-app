@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from newswire import views
-from newswire.views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView, BulletinPdfPreviewView, BulletinPdfSendView
+from newswire.views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView, BulletinPdfPreviewView, BulletinPdfSendView, GroupListView, GroupCreateView, GroupUpdateView, GroupListView
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
@@ -122,4 +122,15 @@ urlpatterns = (
         views.AttendanceUpdate.as_view(), name='attendance_edit'),
     url(r'^attendance/delete/(?P<pk>\d+)$',
         views.AttendanceDelete.as_view(), name='attendance_delete'),
+
+    # Group Input
+    url(r'^groups/$',
+        views.GroupListView.as_view(), name='group_list'),
+    url(r'^groups/new$',
+        views.GroupCreateView.as_view(), name='group_new'),
+    url(r'^groups/edit/(?P<pk>\d+)$',
+        views.GroupUpdateView.as_view(), name='group_edit'),
+    url(r'^groups/delete/(?P<pk>\d+)$',
+        views.GroupDeleteView.as_view(), name='group_delete'),
+
 )

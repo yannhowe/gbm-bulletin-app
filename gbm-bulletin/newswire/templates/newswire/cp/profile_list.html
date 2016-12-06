@@ -40,7 +40,7 @@
                                 <th>postal_code</th>
                                 <th>is_regular</th>
                                 <th>is_member</th>
-                                <th>Attached to User</th>
+                                <th>Attached to username</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,7 +75,7 @@
                                     <td>{{ profile.postal_code }}</td>
                                     <td>{{ profile.is_regular }}</td>
                                     <td>{{ profile.is_member }}</td>
-                                    <td>{{ profile.member }}</td>
+                                    <td>{{ profile.user.username }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

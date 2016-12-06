@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from newswire.models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from newswire.models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, IndividualGroup, IndividualAttendance
 
 
 class UserFormFrontEndForm(ModelForm):
@@ -384,3 +384,32 @@ class BuildingFundYearGoalForm(ModelForm):
     class Meta:
         model = BuildingFundYearGoal
         fields = '__all__'
+
+
+class ExtendedGroupForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ExtendedGroupForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Field('name', title="Group Type"),
+            Field('group_type', title="Group Type"),
+            Field('notes', title="Notes"),
+            PrependedText('date_formed', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            PrependedText('date_dissolved', '<i class="fa fa-calendar"></i>',
+                          css_class="dateinput"),
+            Field('meeting_day', title="Display"),
+            PrependedText('meeting_time', '<i class="fa fa-clock-o"></i>',
+                          css_class="timeinput", title='Time in 24 hour format (eg. 13:00 for 1pm)'),
+            Field('active', title="Active Group"),
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "group_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model=ExtendedGroup
+        fields=['name', 'group_type', 'notes', 'date_formed', 'date_dissolved', 'meeting_day', 'meeting_time', 'active']

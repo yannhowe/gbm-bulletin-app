@@ -104,9 +104,9 @@
             </li>
         </ul>
     </li>
-    <li class="{% if 'people' in request.path %}active{% endif %} treeview">
+    <li class="{% if 'people' in request.path or 'groups' in request.path %}active{% endif %} treeview">
         <a href="#">
-            <i class="fa fa-users"></i>
+            <i class="fa fa-user"></i>
             <span>People</span>
             <i class="fa fa-angle-left pull-right"></i>
         </a>
@@ -116,10 +116,15 @@
                     <i class="fa fa-bar-chart-o"></i>
                     Summary</a>
             </li>
-            <li class="{% if 'people' and not 'summary' in request.path %}active{% endif %}">
+            <li class="{% if 'people' and not 'summary' in request.path and not  'groups' in request.path %}active{% endif %}">
                 <a href="{% url 'profile_list' %}">
                     <i class="fa fa-sitemap"></i>
                     Directory</a>
+            </li>
+            <li class="{% if 'groups' in request.path %}active{% endif %}">
+                <a href="{% url 'group_list' %}">
+                    <i class="fa fa-group"></i>
+                    Groups</a>
             </li>
         </ul>
     </li>

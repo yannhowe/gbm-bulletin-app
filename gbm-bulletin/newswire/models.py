@@ -15,6 +15,7 @@ from django.dispatch import receiver
 
 from constance import config
 
+
 class Category(models.Model):
 
     class Meta:
@@ -37,16 +38,12 @@ def get_default_publish_end_date():
 
 
 class Announcement(models.Model):
-    submitter = models.ForeignKey(
-        User, db_index=True, related_name="announcement_submitter", null=True, blank=True, default=None)
-    approver = models.ForeignKey(
-        User, db_index=True, related_name="announcement_approver", null=True, blank=True, default=None)
+    submitter = models.ForeignKey(User, db_index=True, related_name="announcement_submitter", null=True, blank=True, default=None)
+    approver = models.ForeignKey(User, db_index=True, related_name="announcement_approver", null=True, blank=True, default=None)
     title = models.CharField(max_length=200, default='')
     body = models.TextField(max_length=1200, default='')
-    publish_start_date = models.DateField(
-        'Date to start publishing', default=datetime.now)
-    publish_end_date = models.DateField(
-        'Date to end publishing', default=get_default_publish_end_date)
+    publish_start_date = models.DateField('Date to start publishing', default=datetime.now)
+    publish_end_date = models.DateField('Date to end publishing', default=get_default_publish_end_date)
     category = models.ForeignKey(Category, default='')
     link = models.CharField(max_length=400, blank=True, default='')
     hidden = models.BooleanField(default=False)
@@ -162,8 +159,7 @@ class Profile(models.Model):
         (F, 'Female'),
     )
 
-    user = models.OneToOneField(
-        User, null=True, blank=True)
+    user = models.OneToOneField(User, null=True, blank=True)
     first_name = models.CharField("First Name", max_length=80, null=True, blank=True)
     last_name = models.CharField("Last Name", max_length=80, null=True, blank=True)
     email = models.EmailField("Email Address", max_length=254, null=True, blank=True)
@@ -171,11 +167,9 @@ class Profile(models.Model):
     prefered_name = models.CharField("Preferred Name", max_length=120, null=True, blank=True, help_text="We will use this name around the site instead of a combination of last+first name.")
     maiden_name = models.CharField("Maiden Name", max_length=80, null=True, blank=True)
 
-    gender = models.CharField("Gender",
-        max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+    gender = models.CharField("Gender", max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 
-    date_record_updated = models.DateField(
-        null=True, blank=True, default=datetime.now)
+    date_record_updated = models.DateField(null=True, blank=True, default=datetime.now)
 
     # important dates
     date_of_birth = models.DateField(null=True, blank=True)
@@ -204,7 +198,7 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        if instance.email==None:
+        if instance.email == None:
             return none
         else:
             editor_list = config.EDITOR_LIST.split()
@@ -222,11 +216,11 @@ def create_user_profile(sender, instance, created, **kwargs):
                 pass
 
             email_matching = Profile.objects.filter(email=instance.email).first()
-            if email_matching!=None:
-                email_matching.user=instance
+            if email_matching != None:
+                email_matching.user = instance
                 email_matching.save()
-                instance.first_name=email_matching.first_name
-                instance.last_name=email_matching.last_name
+                instance.first_name = email_matching.first_name
+                instance.last_name = email_matching.last_name
                 instance.save()
             else:
                 Profile.objects.create(user=instance)
@@ -255,18 +249,15 @@ class Relationship(models.Model):
 
     user = models.OneToOneField(User, null=True, related_name='user_relationship')
     person = models.ForeignKey(User, null=True, related_name='person_relationship')
-    relationship = models.CharField(
-        max_length=10, choices=MEMBER_RELATIONSHIP_CHOICES)
+    relationship = models.CharField(max_length=10, choices=MEMBER_RELATIONSHIP_CHOICES)
 
     def __str__(self):
         return '%s, %s, %s' % (self.person, self.user, self.relationship)
 
 
 class SundayAttendance(models.Model):
-    submitter = models.ForeignKey(
-        User, db_index=True, related_name="sunday_attendance_submitter", null=True, blank=True, default=None)
-    approver = models.ForeignKey(
-        User, db_index=True, related_name="sunday_attendance_approver", null=True, blank=True, default=None)
+    submitter = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_submitter", null=True, blank=True, default=None)
+    approver = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_approver", null=True, blank=True, default=None)
     date = models.DateField(default=datetime.now)
     english_congregation = models.PositiveSmallIntegerField(default=0)
     chinese_congregation = models.PositiveSmallIntegerField(default=0)
@@ -321,3 +312,79 @@ class WeeklyVerse(models.Model):
 
     def __str__(self):
         return '%s - %s' % (self.date, self.reference)
+
+
+class ExtendedGroup(Group):
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
+    IRREGULAR = 7
+
+    DAYS_OF_WEEK = (
+        (MONDAY, 'Monday'),
+        (TUESDAY, 'Tuesday'),
+        (WEDNESDAY, 'Wednesday'),
+        (THURSDAY, 'Thursday'),
+        (FRIDAY, 'Friday'),
+        (SATURDAY, 'Saturday'),
+        (SUNDAY, 'Sunday'),
+        (IRREGULAR, 'Irregular'),
+    )
+
+    COMMUNITY = 0
+    MANAGEMENT = 1
+    COMMITTEE = 2
+
+    GROUP_TYPE = (
+        (COMMUNITY, 'Community Group'),
+        (MANAGEMENT, 'Management'),
+        (COMMITTEE, 'Committee'),
+    )
+
+    group_type = models.IntegerField(choices=GROUP_TYPE)
+    notes = models.TextField(max_length=300, null=True, blank=True)
+    date_formed = models.DateField(default=datetime.now, null=True, blank=True)
+    date_dissolved = models.DateField(null=True, blank=True)
+    meeting_day = models.IntegerField(choices=DAYS_OF_WEEK, null=True, blank=True, help_text="Day of the week the group regularly meets if any")
+    meeting_time = models.TimeField(null=True, blank=True, help_text="Meeting time of the the group in 24hr format ie. 13:00 for 1pm")
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return '%s' % (self.name)
+
+
+class IndividualAttendance(models.Model):
+    PRESENT = 0
+    ABSENT = 1
+    EXCUSED = 2
+    UNKNOWN = 3
+
+    ATTENDANCE_CHOICES = (
+        (PRESENT, 'Present'),
+        (ABSENT, 'Absent'),
+        (EXCUSED, 'Excused'),
+        (UNKNOWN, 'Unknown'),
+    )
+
+    person = models.ForeignKey(Profile)
+    group = models.ForeignKey(ExtendedGroup)
+    date = models.DateField(default=datetime.now)
+    attendance = models.IntegerField(choices=ATTENDANCE_CHOICES)
+
+    def __str__(self):
+        return '%s , %s , %s , %s' % (self.person.first_name, self.group, self.date, self.attendance)
+
+
+class IndividualGroup(models.Model):
+    person = models.ForeignKey(Profile)
+    group = models.ForeignKey(ExtendedGroup)
+    date_joined = models.DateField(default=datetime.now, null=True, blank=True)
+    date_left = models.DateField(null=True, blank=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return '%s , %s , %s , %s , %s' % (self.person.first_name, self.group, self.date_joined, self.date_left, self.active)

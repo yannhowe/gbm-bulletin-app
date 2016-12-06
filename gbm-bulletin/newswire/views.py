@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
-from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm, ExtendedGroupForm
+from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, IndividualGroup, IndividualAttendance
+
 from datetime import datetime, timedelta
 import datetime
 
@@ -1204,7 +1205,7 @@ class RsvpListView(EditorRequiredMixin, ListView):
         event_signups = []
         try:
             context['signups'] = Signup.objects.order_by('event', 'rsvp')
-        except Event.DoesNotExist:
+        except Signup.DoesNotExist:
             pass
         return context
 
@@ -1218,7 +1219,7 @@ class RsvpListViewRaw(EditorRequiredMixin, ListView):
         event_signups = []
         try:
             context['signups'] = Signup.objects.order_by('event', 'rsvp')
-        except Event.DoesNotExist:
+        except Signup.DoesNotExist:
             pass
         return context
 
@@ -1231,3 +1232,90 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView, BulletinContextMixin):
         # do not show archived instances.
         qs = super(ListView, self).get_queryset()
         return qs
+
+
+class GroupListView(EditorRequiredMixin, ListView):
+    model = IndividualGroup
+    template_name = 'newswire/cp/extendedgroup_list.html'
+
+    page = Context({
+        'title': 'Groups - ',
+        'header': 'Groups',
+        'description': 'Lists all groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupListView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+
+        try:
+            context['individual_group_sorted'] = IndividualGroup.objects.order_by('group')
+        except IndividualGroup.DoesNotExist:
+            pass
+        return context
+
+
+class GroupCreateView(ContributorRequiredMixin, NeedsReviewMixin, CreateView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/extendedgroup_form.html'
+
+    success_url = reverse_lazy('group_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Create Group - ',
+        'header': 'Create Group',
+        'description': 'Use this to create new groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupCreateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+
+        try:
+            context['all_users_not_in_group'] = Profile.objects.all()
+        except Profile.DoesNotExist:
+            pass
+        return context
+
+
+class GroupUpdateView(ContributorRequiredMixin, NeedsReviewMixin, UpdateView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/extendedgroup_form.html'
+
+    success_url = reverse_lazy('group_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Update Group - ',
+        'header': 'Update Group',
+        'description': 'Use this to update group details'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupUpdateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+
+        try:
+            context['all_users_not_in_group'] = Profile.objects.all()
+        except Profile.DoesNotExist:
+            pass
+        return context
+
+
+class GroupDeleteView(ContributorRequiredMixin, DeleteView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/_base_delete.html'
+
+    success_url = reverse_lazy('group_list')
+
+    page = Context({
+        'title': 'Delete Group - ',
+        'header': 'Delete Group',
+        'description': 'Use this to delete groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupDeleteView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context

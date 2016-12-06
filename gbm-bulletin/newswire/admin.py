@@ -3,7 +3,7 @@ from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
 
-from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
+from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection, ExtendedGroup, IndividualGroup, IndividualAttendance
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -237,3 +237,63 @@ class BuildingFundCollectionAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(BuildingFundCollection, BuildingFundCollectionAdmin)
+
+
+class ExtendedGroupResource(resources.ModelResource):
+
+    class Meta:
+        model = ExtendedGroup
+
+
+class ExtendedGroupForm(ModelForm):
+
+    class Meta:
+        model = ExtendedGroup
+        fields = '__all__'
+
+
+class ExtendedGroupAdmin(ImportExportModelAdmin):
+    resource_class = ExtendedGroupResource
+    pass
+
+admin.site.register(ExtendedGroup, ExtendedGroupAdmin)
+
+
+class IndividualGroupResource(resources.ModelResource):
+
+    class Meta:
+        model = IndividualGroup
+
+
+class IndividualGroupForm(ModelForm):
+
+    class Meta:
+        model = IndividualGroup
+        fields = '__all__'
+
+
+class IndividualGroupAdmin(ImportExportModelAdmin):
+    resource_class = IndividualGroupResource
+    pass
+
+admin.site.register(IndividualGroup, IndividualGroupAdmin)
+
+
+class IndividualAttendanceResource(resources.ModelResource):
+
+    class Meta:
+        model = IndividualAttendance
+
+
+class IndividualAttendanceForm(ModelForm):
+
+    class Meta:
+        model = IndividualAttendance
+        fields = '__all__'
+
+
+class IndividualAttendanceAdmin(ImportExportModelAdmin):
+    resource_class = IndividualAttendanceResource
+    pass
+
+admin.site.register(IndividualAttendance, IndividualAttendanceAdmin)
