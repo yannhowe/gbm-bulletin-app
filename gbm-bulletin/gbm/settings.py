@@ -239,7 +239,7 @@ CONSTANCE_CONFIG = {
     'MAX_PRINT_ANNOUCEMENTS': ('6', 'Maximum number of annoucements to print', int),
     'ORDER_OF_SERVICE_TIP_LINES': (28, 'Number of lines before the tip is triggered'),
     'ORDER_OF_SERVICE_WARNING_LINES': (30, 'Number of lines before the warning is triggered'),
-    'UNDER_REVIEW_ADMINS': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to send alerts for new items to review, one each line'),
+    'UNDER_REVIEW_ADMINS': ("yannhowe@gmail.com", 'List of emails to send alerts for new items to review, one each line'),
     'EDITOR_LIST': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to add to editor list upon signup'),
     'CONTRIBUTOR_LIST': ("yannhowe@gmail.com pch@gbm.sg", 'List of emails to add to contributor list upon signup'),
     'BULLETIN_PRINT_ADMIN_LIST': ("yannhowe@gmail.com pch@gbm.sg", 'Admins who recieve the bulletin sent from the PDF preview page for printing'),

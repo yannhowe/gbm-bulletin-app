@@ -24,38 +24,37 @@
         <!-- /.box-header -->
         <div class="box-body" style="display: none;"></div>
     </div>
-    {% regroup individual_group_sorted by group as individual_group_list_by_group %}
-    {% for profile in individual_group_list_by_group %}
-        <div class="box box-defaultx">
+    {% for group in object_list %}
+        <div class="box box-default {% if not group.individualgroup_set.all %}collapsed-box{% endif %}">
             <div class="box-header with-border">
-                <h3 class="box-title {% if not profile.grouper.active %}text-muted{% endif %}">
-                    <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-left">
-                        {% if not profile.grouper.active %}
-                            <button type="button" class="btn btn-xs pull-left">
-                                Inactive</button>
+                <h3 class="box-title {% if not group.individualgroup_set.all %}text-muted{% endif %}">
+                    <strong>{{ group }}&nbsp</strong>
+                    <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-right">
+
+                        {% if not group.individualgroup_set.all %}
+                            <button type="button" class="btn btn-xs pull-right">
+                                Empty</button>
                         {% endif %}
                     </div>
-                    <strong>{{ profile.grouper }}&nbsp;
-                    </strong>
                 </h3>
                 <!-- Buttons, labels, and many other things can be placed here! -->
                 <!-- Here is a label for example -->
                 <div class="box-tools pull-right">
-                    <a href="{% url 'group_edit' profile.grouper.id %}">
+                    <a href="{% url 'group_edit' group.id %}">
                         <i class="fa fa-pencil"></i>
                         Edit
                     </a>
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                        <i class="fa fa-minus"></i>
+                        <i class="fa {% if not group.individualgroup_set.all %}fa-plus{% else %}fa-minus{% endif %}"></i>
                     </button>
                 </div>
                 <!-- /.box-tools -->
             </div>
             <!-- /.box-header -->
-            <div class="box-body {% if not profile.grouper.active %}text-muted{% endif %}">
+            <div class="box-body {% if not group.individualgroup_set.all %}text-muted{% endif %}">
                 <ul>
-                    {% for group in profile.list %}
-                        <li>{{ group.person.user.username }}</li>
+                    {% for member in group.individualgroup_set.all %}
+                        <li>{{ member.person }}</li>
                     {% endfor %}
                 </ul>
             </div>

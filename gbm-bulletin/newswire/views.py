@@ -1235,7 +1235,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView, BulletinContextMixin):
 
 
 class GroupListView(EditorRequiredMixin, ListView):
-    model = IndividualGroup
+    model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_list.html'
 
     page = Context({
@@ -1248,14 +1248,10 @@ class GroupListView(EditorRequiredMixin, ListView):
         context = super(GroupListView, self).get_context_data(**kwargs)
         context['page'] = self.page
 
-        try:
-            context['individual_group_sorted'] = IndividualGroup.objects.order_by('group')
-        except IndividualGroup.DoesNotExist:
-            pass
         return context
 
 
-class GroupCreateView(ContributorRequiredMixin, NeedsReviewMixin, CreateView):
+class GroupCreateView(CreateView):
     model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_form.html'
 
@@ -1271,7 +1267,7 @@ class GroupCreateView(ContributorRequiredMixin, NeedsReviewMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super(GroupCreateView, self).get_context_data(**kwargs)
         context['page'] = self.page
-
+        
         try:
             context['all_users_not_in_group'] = Profile.objects.all()
         except Profile.DoesNotExist:
@@ -1279,7 +1275,7 @@ class GroupCreateView(ContributorRequiredMixin, NeedsReviewMixin, CreateView):
         return context
 
 
-class GroupUpdateView(ContributorRequiredMixin, NeedsReviewMixin, UpdateView):
+class GroupUpdateView(UpdateView):
     model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_form.html'
 
@@ -1295,6 +1291,7 @@ class GroupUpdateView(ContributorRequiredMixin, NeedsReviewMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(GroupUpdateView, self).get_context_data(**kwargs)
         context['page'] = self.page
+        context['all_user_ids_in_group'] = self.object.individualgroup_set.values_list('person_id', flat=True)
 
         try:
             context['all_users_not_in_group'] = Profile.objects.all()
@@ -1303,7 +1300,7 @@ class GroupUpdateView(ContributorRequiredMixin, NeedsReviewMixin, UpdateView):
         return context
 
 
-class GroupDeleteView(ContributorRequiredMixin, DeleteView):
+class GroupDeleteView(DeleteView):
     model = ExtendedGroup
     template_name = 'newswire/cp/_base_delete.html'
 

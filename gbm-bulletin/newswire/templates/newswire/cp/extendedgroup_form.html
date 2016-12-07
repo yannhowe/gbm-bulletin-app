@@ -27,10 +27,12 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body">
+          ALL USERS IN GROUP
+      {{ all_user_ids_in_group }}
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Add Users to Group</label>
+                        <label>Members</label>
                         <select class="form-control select2" multiple="multiple" data-placeholder="Select users to add" style="width: 100%;"></select>
                     </div>
                     <!-- /.form-group -->
@@ -46,7 +48,6 @@
             for more examples and information about the plugin.
         </div>
     </div>
-
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">
@@ -75,8 +76,8 @@
         var data = [
             {% for user in all_users_not_in_group %}
                 {
-                    id: {{ forloop.counter0 }},
-                    text: '{{user.first_name}} {{user.last_name}}'
+                    id: {{ user.pk }},
+                    text: '{{ user }}: {{user.first_name}} {{user.last_name}}'
                 }
                 {% if not forloop.last %},
                 {% endif %}
@@ -86,7 +87,7 @@
         $(document).ready(function() {
             $('.dateinput').datepicker({format: "yyyy-mm-dd"});
             $('.timeinput').timepicker({template: false, showInputs: false, showMeridian: false, minuteStep: 15});
-            $('select').select2({data: data});
+            $('select').select2({data: data}).val({{all_user_ids_in_group}}).trigger('change');
         });
     </script>
 {% endblock %}
