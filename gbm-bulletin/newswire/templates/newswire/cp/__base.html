@@ -905,6 +905,15 @@
         <!-- FastClick -->
         <script src="{% static 'newswire/cp/plugins/fastclick/fastclick.min.js' %}"></script>
         <!-- AdminLTE App -->
+        <script>
+            var AdminLTEOptions = {
+                //Enable sidebar expand on hover effect for sidebar mini This option is forced to true if both the fixed layout and sidebar mini are used together
+                sidebarExpandOnHover: true,
+                //Bootstrap.js tooltip
+                enableBSToppltip: true
+            };
+        </script>
         <script src="{% static 'newswire/cp/js/app.min.js' %}"></script>
+        <script src="{% static 'newswire/cp/plugins/sparkline/jquery.sparkline.min.js' %}"></script>
     </body>
 </html>

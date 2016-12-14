@@ -25,13 +25,13 @@
         <div class="box-body" style="display: none;"></div>
     </div>
     {% for group in object_list %}
-        <div class="box box-default {% if not group.individualgroup_set.all %}collapsed-box{% endif %}">
+        <div class="box box-default {% if not group.member.all %}collapsed-box{% endif %}">
             <div class="box-header with-border">
-                <h3 class="box-title {% if not group.individualgroup_set.all %}text-muted{% endif %}">
+                <h3 class="box-title {% if not group.member.all %}text-muted{% endif %}">
                     <strong>{{ group }}&nbsp</strong>
                     <div style="margin: -0.1em 0.2em 0 -0.2em;" class="btn-toolbar pull-right">
 
-                        {% if not group.individualgroup_set.all %}
+                        {% if not group.member.all %}
                             <button type="button" class="btn btn-xs pull-right">
                                 Empty</button>
                         {% endif %}
@@ -45,23 +45,38 @@
                         Edit
                     </a>
                     <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                        <i class="fa {% if not group.individualgroup_set.all %}fa-plus{% else %}fa-minus{% endif %}"></i>
+                        <i class="fa {% if not group.member.all %}fa-plus{% else %}fa-minus{% endif %}"></i>
                     </button>
                 </div>
                 <!-- /.box-tools -->
             </div>
             <!-- /.box-header -->
-            <div class="box-body {% if not group.individualgroup_set.all %}text-muted{% endif %}">
-                <ul>
-                    {% for member in group.individualgroup_set.all %}
-                        <li>{{ member.person }}</li>
-                    {% endfor %}
-                </ul>
+            <div class="box-body {% if not group.member.all %}text-muted{% endif %}">
+                <p><strong>Leader(s)</strong>
+                    <ul>
+                        {% for leader in group.leader.all %}
+                            <li>{{leader}}</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+                <p><strong>Member(s)</strong>
+                    <ul>
+                        {% for member in group.member.all %}
+                            <li>{{member}}</li>
+                        {% endfor %}
+                    </ul>
+                    </p>
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
+                <div class="pull-left">
+                    <a class="btn text-default pull-right" href="{% url 'groupattendance_edit' group.id %}">
+                        <i class="fa fa-plus"></i>
+                        Add Attendance
+                    </a>
+                </div>
                 <div class="pull-right">
-                    <a class="btn text-danger pull-right" href="#">
+                    <a class="btn text-danger pull-right" href="{% url 'group_delete' group.id %}">
                         <i class="fa fa-trash"></i>
                         Delete
                     </a>

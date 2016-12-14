@@ -12,42 +12,6 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="box box-default">
-        <div class="box-header with-border">
-            <h3 class="box-title">Select2</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                    <i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove">
-                    <i class="fa fa-remove"></i>
-                </button>
-            </div>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-          ALL USERS IN GROUP
-      {{ all_user_ids_in_group }}
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Members</label>
-                        <select class="form-control select2" multiple="multiple" data-placeholder="Select users to add" style="width: 100%;"></select>
-                    </div>
-                    <!-- /.form-group -->
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.box-body -->
-        <div class="box-footer">
-            Visit
-            <a href="https://select2.github.io/">Select2 documentation</a>
-            for more examples and information about the plugin.
-        </div>
-    </div>
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">
@@ -73,21 +37,10 @@
 
 {% block footer_includes %}
     <script type="text/javascript">
-        var data = [
-            {% for user in all_users_not_in_group %}
-                {
-                    id: {{ user.pk }},
-                    text: '{{ user }}: {{user.first_name}} {{user.last_name}}'
-                }
-                {% if not forloop.last %},
-                {% endif %}
-            {% endfor %}
-        ];
-
         $(document).ready(function() {
             $('.dateinput').datepicker({format: "yyyy-mm-dd"});
             $('.timeinput').timepicker({template: false, showInputs: false, showMeridian: false, minuteStep: 15});
-            $('select').select2({data: data}).val({{all_user_ids_in_group}}).trigger('change');
+            $('select').select2();
         });
     </script>
 {% endblock %}
