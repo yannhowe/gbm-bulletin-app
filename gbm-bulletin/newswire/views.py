@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm, ExtendedGroupForm
-from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, IndividualGroup, IndividualAttendance
+from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, GroupAttendance
 
 from datetime import datetime, timedelta
 import datetime
@@ -1234,7 +1234,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView, BulletinContextMixin):
         return qs
 
 
-class GroupListView(EditorRequiredMixin, ListView):
+class GroupListView(ListView):
     model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_list.html'
 
@@ -1247,7 +1247,6 @@ class GroupListView(EditorRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(GroupListView, self).get_context_data(**kwargs)
         context['page'] = self.page
-
         return context
 
 
@@ -1267,7 +1266,7 @@ class GroupCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super(GroupCreateView, self).get_context_data(**kwargs)
         context['page'] = self.page
-        
+
         try:
             context['all_users_not_in_group'] = Profile.objects.all()
         except Profile.DoesNotExist:
@@ -1291,7 +1290,8 @@ class GroupUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(GroupUpdateView, self).get_context_data(**kwargs)
         context['page'] = self.page
-        context['all_user_ids_in_group'] = self.object.individualgroup_set.values_list('person_id', flat=True)
+        context['all_user_ids_in_group'] = self.object.member.values_list('id', flat=True)
+        context['all_user_ids_in_group_leaders'] = self.object.leader.values_list('id', flat=True)
 
         try:
             context['all_users_not_in_group'] = Profile.objects.all()
@@ -1314,5 +1314,78 @@ class GroupDeleteView(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super(GroupDeleteView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+
+class GroupAttendanceListView(ListView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/group_attendance_list.html'
+
+    page = Context({
+        'title': 'Attendance - ',
+        'header': 'Attendance',
+        'description': 'Lists all attendance'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceListView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+class GroupAttendanceCreateView(CreateView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/group_attendance_form.html'
+
+    success_url = reverse_lazy('groupattendance_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Create Group - ',
+        'header': 'Create Group',
+        'description': 'Use this to create new groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceCreateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+class GroupAttendanceUpdateView(UpdateView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/attendance_form.html'
+
+    success_url = reverse_lazy('groupattendance_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Update Attendance - ',
+        'header': 'Update Attendance',
+        'description': 'Use this to update attendance details'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceUpdateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+class GroupAttendanceDeleteView(DeleteView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/_base_delete.html'
+
+    success_url = reverse_lazy('groupattendance_list')
+
+    page = Context({
+        'title': 'Delete Attendance - ',
+        'header': 'Delete Attendance',
+        'description': 'Use this to delete attendance'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceDeleteView, self).get_context_data(**kwargs)
         context['page'] = self.page
         return context

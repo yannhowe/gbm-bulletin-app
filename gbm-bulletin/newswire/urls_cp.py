@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from newswire import views
-from newswire.views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView, BulletinPdfPreviewView, BulletinPdfSendView, GroupListView, GroupCreateView, GroupUpdateView, GroupListView
+from newswire.views import ProfileList, ProfileCreate, ProfileUpdate, ProfileDelete, RsvpUpdateView, RsvpListView, RsvpListViewRaw, ControlPanelHomeView,  OrderOfServiceList, OrderOfServiceUpdate, BulletinPrintView, BulletinPdfView, BulletinPdfPreviewView, BulletinPdfSendView, GroupListView, GroupCreateView, GroupUpdateView, GroupListView, GroupAttendanceListView, GroupAttendanceCreateView, GroupAttendanceUpdateView, GroupAttendanceListView
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
@@ -133,4 +133,14 @@ urlpatterns = (
     url(r'^groups/delete/(?P<pk>\d+)$',
         views.GroupDeleteView.as_view(), name='group_delete'),
 
+
+    # GroupAttendance Input
+    url(r'^individual-attendance/$',
+        views.GroupAttendanceListView.as_view(), name='groupattendance_list'),
+    url(r'^individual-attendance/new$',
+        views.GroupAttendanceCreateView.as_view(), name='groupattendance_new'),
+    url(r'^individual-attendance/edit/(?P<pk>\d+)$',
+        views.GroupAttendanceUpdateView.as_view(), name='groupattendance_edit'),
+    url(r'^individual-attendance/delete/(?P<pk>\d+)$',
+        views.GroupAttendanceDeleteView.as_view(), name='groupattendance_delete'),
 )

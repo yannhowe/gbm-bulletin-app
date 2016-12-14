@@ -3,7 +3,7 @@ from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
 
-from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection, ExtendedGroup, IndividualGroup, IndividualAttendance
+from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection, ExtendedGroup, GroupAttendance
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -259,41 +259,21 @@ class ExtendedGroupAdmin(ImportExportModelAdmin):
 admin.site.register(ExtendedGroup, ExtendedGroupAdmin)
 
 
-class IndividualGroupResource(resources.ModelResource):
+class GroupAttendanceResource(resources.ModelResource):
 
     class Meta:
-        model = IndividualGroup
+        model = GroupAttendance
 
 
-class IndividualGroupForm(ModelForm):
+class GroupAttendanceForm(ModelForm):
 
     class Meta:
-        model = IndividualGroup
+        model = GroupAttendance
         fields = '__all__'
 
 
-class IndividualGroupAdmin(ImportExportModelAdmin):
-    resource_class = IndividualGroupResource
+class GroupAttendanceAdmin(ImportExportModelAdmin):
+    resource_class = GroupAttendanceResource
     pass
 
-admin.site.register(IndividualGroup, IndividualGroupAdmin)
-
-
-class IndividualAttendanceResource(resources.ModelResource):
-
-    class Meta:
-        model = IndividualAttendance
-
-
-class IndividualAttendanceForm(ModelForm):
-
-    class Meta:
-        model = IndividualAttendance
-        fields = '__all__'
-
-
-class IndividualAttendanceAdmin(ImportExportModelAdmin):
-    resource_class = IndividualAttendanceResource
-    pass
-
-admin.site.register(IndividualAttendance, IndividualAttendanceAdmin)
+admin.site.register(GroupAttendance, GroupAttendanceAdmin)

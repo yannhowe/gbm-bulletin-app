@@ -345,6 +345,7 @@ class ExtendedGroup(Group):
         (COMMITTEE, 'Committee'),
     )
 
+    leader = models.ManyToManyField(Profile, blank=True, related_name='leader_profile')
     group_type = models.IntegerField(choices=GROUP_TYPE)
     notes = models.TextField(max_length=300, null=True, blank=True)
     date_formed = models.DateField(default=datetime.now, null=True, blank=True)
@@ -352,12 +353,13 @@ class ExtendedGroup(Group):
     meeting_day = models.IntegerField(choices=DAYS_OF_WEEK, null=True, blank=True, help_text="Day of the week the group regularly meets if any")
     meeting_time = models.TimeField(null=True, blank=True, help_text="Meeting time of the the group in 24hr format ie. 13:00 for 1pm")
     active = models.BooleanField(default=True)
+    member = models.ManyToManyField(Profile, blank=True, related_name='leader_member')
 
     def __str__(self):
         return '%s' % (self.name)
 
 
-class IndividualAttendance(models.Model):
+class GroupAttendance(models.Model):
     PRESENT = 0
     ABSENT = 1
     EXCUSED = 2
@@ -377,14 +379,3 @@ class IndividualAttendance(models.Model):
 
     def __str__(self):
         return '%s , %s , %s , %s' % (self.person.first_name, self.group, self.date, self.attendance)
-
-
-class IndividualGroup(models.Model):
-    person = models.ForeignKey(Profile)
-    group = models.ForeignKey(ExtendedGroup)
-    date_joined = models.DateField(default=datetime.now, null=True, blank=True)
-    date_left = models.DateField(null=True, blank=True)
-    active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return '%s , %s , %s , %s , %s' % (self.person.first_name, self.group, self.date_joined, self.date_left, self.active)

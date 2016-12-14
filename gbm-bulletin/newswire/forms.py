@@ -5,7 +5,7 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 
 from django.contrib.auth.models import User
 from django import forms
-from newswire.models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, IndividualGroup, IndividualAttendance
+from newswire.models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, GroupAttendance
 
 
 class UserFormFrontEndForm(ModelForm):
@@ -403,6 +403,8 @@ class ExtendedGroupForm(forms.ModelForm):
             PrependedText('meeting_time', '<i class="fa fa-clock-o"></i>',
                           css_class="timeinput", title='Time in 24 hour format (eg. 13:00 for 1pm)'),
             Field('active', title="Active Group"),
+            Field('leader', css_class="select_leaders", title="Leader(s)"),
+            Field('member', css_class="select_members", title="Member(s)"),
             FormActions(
                 Submit('save', 'Save changes'),
                 HTML(
@@ -412,4 +414,23 @@ class ExtendedGroupForm(forms.ModelForm):
 
     class Meta:
         model=ExtendedGroup
-        fields=['name', 'group_type', 'notes', 'date_formed', 'date_dissolved', 'meeting_day', 'meeting_time', 'active']
+        fields=['leader', 'name', 'group_type', 'notes', 'date_formed', 'date_dissolved', 'meeting_day', 'meeting_time', 'active', 'member']
+
+
+class GroupAttendanceForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(GroupAttendanceForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        self.helper.layout.append(
+            FormActions(
+                Submit('save', 'Save changes'),
+                HTML(
+                    '<a class="btn" href={% url "attendance_list" %}>Cancel</a>'),
+            )
+        )
+
+    class Meta:
+        model = BuildingFundYearGoal
+        fields = '__all__'
