@@ -16,6 +16,33 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
+                    <h3 class="box-title">Individual Attendance Records</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-padding">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th style="width: 10px">Group</th>
+                                <th>Person</th>
+                                <th>Date</th>
+                                <th style="width: 40px">Attendance</th>
+                            </tr>
+                            {% for attendance in object_list %}
+                                <tr>
+                                    <td>{{ attendance.group.name }}</td>
+                                    <td>{{ attendance.person }}</td>
+                                    <td>{{ attendance.date }}</td>
+                                    <td>{{ attendance.get_attendance_display }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <div class="box">
+                <div class="box-header">
                     <h3 class="box-title">Groups</h3>
                 </div>
                 <!-- /.box-header -->
@@ -25,20 +52,26 @@
                             <tr>
                                 <th style="width: 10px">Group</th>
                                 <th>Leader</th>
-                                <th>Last Attendance</th>
-                                <th style="width: 40px">Average Attendance %</th>
+                                <th>Date</th>
+                                <th style="width: 40px">Attendance</th>
                             </tr>
                             <tr>
                                 <td>1.</td>
-                                <td>Soh Beng Yong <button type="button" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Attendance</button>
+                                <td>Soh Beng Yong
+                                    <button type="button" class="btn btn-primary btn-xs">
+                                        <i class="fa fa-plus"></i>
+                                        Attendance</button>
                                 </td>
                                 <td>
-                                    <span id="compositeline"><canvas width="63" height="18" style="display: inline-block; width: 63px; height: 18px; vertical-align: top;"></canvas></span>
+                                    <span id="compositeline">
+                                        <canvas width="63" height="18" style="display: inline-block; width: 63px; height: 18px; vertical-align: top;"></canvas>
+                                    </span>
                                 </td>
                                 <td>
                                     <span class="badge bg-red">55%</span>
                                 </td>
                             </tr>
+
                             <tr>
                                 <td>2.</td>
                                 <td>Clean database</td>
@@ -82,17 +115,18 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block footer_includes %}
-    <script>
-        $(document).ready(function() {
-            $('#memberlist').DataTable({
-                "paging": true,
-                "scrollX": true,
-                "order": [3, 'desc']
-            });
+<script>
+    $(document).ready(function() {
+        $('#memberlist').DataTable({
+            "paging": true,
+            "scrollX": true,
+            "order": [3, 'desc']
         });
-    </script>
-    <script src="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    });
+</script>
+<script src="{% static 'newswire/cp/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 {% endblock %}

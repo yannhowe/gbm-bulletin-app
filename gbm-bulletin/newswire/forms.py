@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from django.forms.formsets import BaseFormSet
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, HTML, Field, Button
 from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
@@ -6,6 +7,9 @@ from crispy_forms.bootstrap import FormActions, PrependedText, InlineRadios
 from django.contrib.auth.models import User
 from django import forms
 from newswire.models import OrderOfService, Announcement, Category, Event, Profile, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, GroupAttendance
+
+
+from django.forms.models import modelformset_factory
 
 
 class UserFormFrontEndForm(ModelForm):
@@ -413,8 +417,8 @@ class ExtendedGroupForm(forms.ModelForm):
         )
 
     class Meta:
-        model=ExtendedGroup
-        fields=['leader', 'name', 'group_type', 'notes', 'date_formed', 'date_dissolved', 'meeting_day', 'meeting_time', 'active', 'member']
+        model = ExtendedGroup
+        fields = ['leader', 'name', 'group_type', 'notes', 'date_formed', 'date_dissolved', 'meeting_day', 'meeting_time', 'active', 'member']
 
 
 class GroupAttendanceForm(ModelForm):
@@ -422,15 +426,29 @@ class GroupAttendanceForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupAttendanceForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-
-        self.helper.layout.append(
-            FormActions(
-                Submit('save', 'Save changes'),
-                HTML(
-                    '<a class="btn" href={% url "attendance_list" %}>Cancel</a>'),
-            )
-        )
+        self.helper.form_tag = False
 
     class Meta:
-        model = BuildingFundYearGoal
+        model = GroupAttendance
         fields = '__all__'
+
+
+class GroupAttendanceForm2(forms.Form):
+    person = forms.ModelChoiceField(Profile)
+    group = forms.ModelChoiceField(ExtendedGroup)
+    date = forms.DateField()
+    attendance = forms.IntegerField()
+
+
+class GroupAttendanceFormSetHelper(FormHelper):
+
+    def __init__(self, *args, **kwargs):
+        super(GroupAttendanceFormSetHelper, self).__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.layout = Layout(
+            'person',
+            'group',
+            'date',
+            'attendance',
+        )
+        self.render_required_fields = True

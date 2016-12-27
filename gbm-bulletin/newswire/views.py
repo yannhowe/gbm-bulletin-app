@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm, ExtendedGroupForm
+from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm, ExtendedGroupForm, GroupAttendanceForm
 from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, GroupAttendance
 
 from datetime import datetime, timedelta
@@ -1318,9 +1318,8 @@ class GroupDeleteView(DeleteView):
         return context
 
 
-
 class GroupAttendanceListView(ListView):
-    model = ExtendedGroup
+    model = GroupAttendance
     template_name = 'newswire/cp/group_attendance_list.html'
 
     page = Context({
@@ -1335,28 +1334,35 @@ class GroupAttendanceListView(ListView):
         return context
 
 
-class GroupAttendanceCreateView(CreateView):
+from django.forms import formset_factory, modelformset_factory
+from django.forms.formsets import formset_factory
+from newswire.forms import GroupAttendanceFormSetHelper
+
+
+class GroupAttendanceCreateView(TemplateView):
     model = GroupAttendance
     template_name = 'newswire/cp/group_attendance_form.html'
-
     success_url = reverse_lazy('groupattendance_list')
-    form_class = ExtendedGroupForm
+    form_class = formset_factory(GroupAttendance, GroupAttendanceForm, extra=3)
 
     page = Context({
-        'title': 'Create Group - ',
-        'header': 'Create Group',
-        'description': 'Use this to create new groups'
+        'title': 'Create Attendance - ',
+        'header': 'Create Attendance',
+        'description': 'Use this to create new attendance'
     })
 
     def get_context_data(self, **kwargs):
         context = super(GroupAttendanceCreateView, self).get_context_data(**kwargs)
+        context['formset'] = formset_factory(GroupAttendance, GroupAttendanceForm, extra=0)
+        context['formset2'] = modelformset_factory(GroupAttendance, fields=("__all__"), extra=0)
+        context['helper'] = GroupAttendanceFormSetHelper()
         context['page'] = self.page
         return context
 
 
 class GroupAttendanceUpdateView(UpdateView):
     model = GroupAttendance
-    template_name = 'newswire/cp/attendance_form.html'
+    template_name = 'newswire/cp/group_attendance_form.html'
 
     success_url = reverse_lazy('groupattendance_list')
     form_class = ExtendedGroupForm
