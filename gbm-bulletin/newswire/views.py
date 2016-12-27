@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm
-from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal
+from newswire.forms import ProfileForm, ProfileFrontEndForm, UserFormFrontEndForm, OrderOfServiceForm, AnnouncementForm, CategoryForm, EventForm, AttendanceForm, WeeklyVerseForm, AttendanceForm, AttendanceFormFrontEnd, AnnouncementFormFrontEnd, BuildingFundCollectionForm, BuildingFundYearPledgeForm, BuildingFundYearGoalForm, ExtendedGroupForm, GroupAttendanceForm
+from newswire.models import Announcement, Category, OrderOfService, Announcement, Event, Signup, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundCollection, BuildingFundYearPledge, BuildingFundYearGoal, ExtendedGroup, GroupAttendance
+
 from datetime import datetime, timedelta
 import datetime
 
@@ -1204,7 +1205,7 @@ class RsvpListView(EditorRequiredMixin, ListView):
         event_signups = []
         try:
             context['signups'] = Signup.objects.order_by('event', 'rsvp')
-        except Event.DoesNotExist:
+        except Signup.DoesNotExist:
             pass
         return context
 
@@ -1218,7 +1219,7 @@ class RsvpListViewRaw(EditorRequiredMixin, ListView):
         event_signups = []
         try:
             context['signups'] = Signup.objects.order_by('event', 'rsvp')
-        except Event.DoesNotExist:
+        except Signup.DoesNotExist:
             pass
         return context
 
@@ -1231,3 +1232,166 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView, BulletinContextMixin):
         # do not show archived instances.
         qs = super(ListView, self).get_queryset()
         return qs
+
+
+class GroupListView(ListView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/extendedgroup_list.html'
+
+    page = Context({
+        'title': 'Groups - ',
+        'header': 'Groups',
+        'description': 'Lists all groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupListView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+class GroupCreateView(CreateView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/extendedgroup_form.html'
+
+    success_url = reverse_lazy('group_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Create Group - ',
+        'header': 'Create Group',
+        'description': 'Use this to create new groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupCreateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+
+        try:
+            context['all_users_not_in_group'] = Profile.objects.all()
+        except Profile.DoesNotExist:
+            pass
+        return context
+
+
+class GroupUpdateView(UpdateView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/extendedgroup_form.html'
+
+    success_url = reverse_lazy('group_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Update Group - ',
+        'header': 'Update Group',
+        'description': 'Use this to update group details'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupUpdateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        context['all_user_ids_in_group'] = self.object.member.values_list('id', flat=True)
+        context['all_user_ids_in_group_leaders'] = self.object.leader.values_list('id', flat=True)
+
+        try:
+            context['all_users_not_in_group'] = Profile.objects.all()
+        except Profile.DoesNotExist:
+            pass
+        return context
+
+
+class GroupDeleteView(DeleteView):
+    model = ExtendedGroup
+    template_name = 'newswire/cp/_base_delete.html'
+
+    success_url = reverse_lazy('group_list')
+
+    page = Context({
+        'title': 'Delete Group - ',
+        'header': 'Delete Group',
+        'description': 'Use this to delete groups'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupDeleteView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+class GroupAttendanceListView(ListView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/group_attendance_list.html'
+
+    page = Context({
+        'title': 'Attendance - ',
+        'header': 'Attendance',
+        'description': 'Lists all attendance'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceListView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+from django.forms import formset_factory, modelformset_factory
+from django.forms.formsets import formset_factory
+from newswire.forms import GroupAttendanceFormSetHelper
+
+
+class GroupAttendanceCreateView(TemplateView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/group_attendance_form.html'
+    success_url = reverse_lazy('groupattendance_list')
+    form_class = formset_factory(GroupAttendance, GroupAttendanceForm, extra=3)
+
+    page = Context({
+        'title': 'Create Attendance - ',
+        'header': 'Create Attendance',
+        'description': 'Use this to create new attendance'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceCreateView, self).get_context_data(**kwargs)
+        context['formset'] = formset_factory(GroupAttendance, GroupAttendanceForm, extra=0)
+        context['formset2'] = modelformset_factory(GroupAttendance, fields=("__all__"), extra=0)
+        context['helper'] = GroupAttendanceFormSetHelper()
+        context['page'] = self.page
+        return context
+
+
+class GroupAttendanceUpdateView(UpdateView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/group_attendance_form.html'
+
+    success_url = reverse_lazy('groupattendance_list')
+    form_class = ExtendedGroupForm
+
+    page = Context({
+        'title': 'Update Attendance - ',
+        'header': 'Update Attendance',
+        'description': 'Use this to update attendance details'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceUpdateView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context
+
+
+class GroupAttendanceDeleteView(DeleteView):
+    model = GroupAttendance
+    template_name = 'newswire/cp/_base_delete.html'
+
+    success_url = reverse_lazy('groupattendance_list')
+
+    page = Context({
+        'title': 'Delete Attendance - ',
+        'header': 'Delete Attendance',
+        'description': 'Use this to delete attendance'
+    })
+
+    def get_context_data(self, **kwargs):
+        context = super(GroupAttendanceDeleteView, self).get_context_data(**kwargs)
+        context['page'] = self.page
+        return context

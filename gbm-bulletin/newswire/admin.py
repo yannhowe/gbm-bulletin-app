@@ -3,7 +3,7 @@ from import_export import resources
 from import_export.admin import ImportExportMixin, ExportActionModelAdmin, ImportExportModelAdmin
 from django.contrib import admin
 
-from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection
+from newswire.models import Announcement, Category, Event, Signup, OrderOfService, Profile, Relationship, WeeklyVerse, SundayAttendance, BuildingFundYearGoal, BuildingFundYearPledge, BuildingFundCollection, ExtendedGroup, GroupAttendance
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -237,3 +237,43 @@ class BuildingFundCollectionAdmin(ImportExportModelAdmin):
     pass
 
 admin.site.register(BuildingFundCollection, BuildingFundCollectionAdmin)
+
+
+class ExtendedGroupResource(resources.ModelResource):
+
+    class Meta:
+        model = ExtendedGroup
+
+
+class ExtendedGroupForm(ModelForm):
+
+    class Meta:
+        model = ExtendedGroup
+        fields = '__all__'
+
+
+class ExtendedGroupAdmin(ImportExportModelAdmin):
+    resource_class = ExtendedGroupResource
+    pass
+
+admin.site.register(ExtendedGroup, ExtendedGroupAdmin)
+
+
+class GroupAttendanceResource(resources.ModelResource):
+
+    class Meta:
+        model = GroupAttendance
+
+
+class GroupAttendanceForm(ModelForm):
+
+    class Meta:
+        model = GroupAttendance
+        fields = '__all__'
+
+
+class GroupAttendanceAdmin(ImportExportModelAdmin):
+    resource_class = GroupAttendanceResource
+    pass
+
+admin.site.register(GroupAttendance, GroupAttendanceAdmin)
