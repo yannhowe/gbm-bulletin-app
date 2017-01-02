@@ -38,10 +38,11 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = os.environ.get('DEBUG', False)
 
 #ADMINS = os.environ['ADMINS']
-ADMINS = [('Yann Howe', 'yannhowe@gmail.com'),]
+ADMINS = [('Yann Howe', 'yannhowe@gmail.com'), ]
 
 ALLOWED_HOSTS = [
     'gbm.sg',
+    'www.gbm.sg',
     'bulletin.gbm.sg',
     'preview.gbm.sg',
     'staging.gbm.sg'
@@ -152,7 +153,7 @@ ABSOLUTE_URL_OVERRIDES = {
 }
 
 SOCIALACCOUNT_QUERY_EMAIL = True
-#SOCIALACCOUNT_PROVIDERS = {
+# SOCIALACCOUNT_PROVIDERS = {
 #    'facebook': {
 #        'SCOPE': ['email'],
 #        'METHOD': 'js_sdk'  # instead of 'oauth2'
