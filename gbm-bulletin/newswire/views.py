@@ -1234,7 +1234,7 @@ class ControlPanelHomeView(EditorRequiredMixin, ListView, BulletinContextMixin):
         return qs
 
 
-class GroupListView(ListView):
+class GroupListView(EditorRequiredMixin, ListView):
     model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_list.html'
 
@@ -1250,7 +1250,7 @@ class GroupListView(ListView):
         return context
 
 
-class GroupCreateView(CreateView):
+class GroupCreateView(EditorRequiredMixin, CreateView):
     model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_form.html'
 
@@ -1274,7 +1274,7 @@ class GroupCreateView(CreateView):
         return context
 
 
-class GroupUpdateView(UpdateView):
+class GroupUpdateView(EditorRequiredMixin, UpdateView):
     model = ExtendedGroup
     template_name = 'newswire/cp/extendedgroup_form.html'
 
@@ -1300,7 +1300,7 @@ class GroupUpdateView(UpdateView):
         return context
 
 
-class GroupDeleteView(DeleteView):
+class GroupDeleteView(EditorRequiredMixin, DeleteView):
     model = ExtendedGroup
     template_name = 'newswire/cp/_base_delete.html'
 
@@ -1318,7 +1318,7 @@ class GroupDeleteView(DeleteView):
         return context
 
 
-class GroupAttendanceListView(ListView):
+class GroupAttendanceListView(EditorRequiredMixin, ListView):
     model = GroupAttendance
     template_name = 'newswire/cp/group_attendance_list.html'
 
@@ -1339,7 +1339,7 @@ from django.forms.formsets import formset_factory
 from newswire.forms import GroupAttendanceFormSetHelper
 
 
-class GroupAttendanceCreateView(TemplateView):
+class GroupAttendanceCreateView(EditorRequiredMixin, TemplateView):
     model = GroupAttendance
     template_name = 'newswire/cp/group_attendance_form.html'
     success_url = reverse_lazy('groupattendance_list')
@@ -1360,7 +1360,7 @@ class GroupAttendanceCreateView(TemplateView):
         return context
 
 
-class GroupAttendanceUpdateView(UpdateView):
+class GroupAttendanceUpdateView(EditorRequiredMixin, UpdateView):
     model = GroupAttendance
     template_name = 'newswire/cp/group_attendance_form.html'
 
@@ -1379,7 +1379,7 @@ class GroupAttendanceUpdateView(UpdateView):
         return context
 
 
-class GroupAttendanceDeleteView(DeleteView):
+class GroupAttendanceDeleteView(EditorRequiredMixin, DeleteView):
     model = GroupAttendance
     template_name = 'newswire/cp/_base_delete.html'
 
