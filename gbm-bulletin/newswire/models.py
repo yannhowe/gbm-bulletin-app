@@ -78,7 +78,7 @@ class Event(models.Model):
     HIDE = 'hide'
     SHOW = 'show'
     CHOICES = (
-        (DEFAULT, 'Default: Displays 60 days in advance'),
+        (DEFAULT, 'Default: Displays 14 days in advance'),
         (HIDE, 'Hide Event'),
         (SHOW, 'Show Event'),
     )
