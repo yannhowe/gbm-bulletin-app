@@ -292,8 +292,9 @@ class BulletinContextMixin(ContextMixin):
         except Event.DoesNotExist:
             active_events = None
 
-        context['events'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(14)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])
-        context['events_print'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(7)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:7]
+        context['events'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:20]
+        context['events_in_future_all'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])
+        context['events_print'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:7]
 
         context['now'] = get_now()
         context['today'] = get_today()
@@ -852,6 +853,23 @@ class EventDelete(EditorRequiredMixin, DeleteView):
     model = Event
     success_url = reverse_lazy('event_list')
     template_name = 'newswire/cp/event_confirm_delete.html'
+
+
+class EventListFrontEndView(ListView):
+    model = Event
+    template_name = 'newswire/event-list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EventListFrontEndView,
+                        self).get_context_data(**kwargs)
+        try:
+            active_events = Event.objects.filter(Q(date_end__gte=get_now()) | Q(date_start__gte=get_now()))
+        except Event.DoesNotExist:
+            active_events = None
+
+        if active_events:
+            context['events_in_future_all'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])
+        return context
 
 
 class CategoryList(EditorRequiredMixin, ListView):

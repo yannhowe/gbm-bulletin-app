@@ -1,12 +1,15 @@
 from django.conf.urls import include, url
 from newswire import views
-from newswire.views import BulletinHomePageView, ProfileDetailFrontEndView, ProfileUpdateFrontEndView, RsvpUpdateView, RsvpListView, RsvpListViewRaw, AttendanceFrontEndCreate, AttendanceFrontEndUpdate, AttendanceFrontEndDelete, AnnouncementFrontEndCreate, AnnouncementFrontEndUpdate, AnnouncementFrontEndDelete, BulletinPdfView, UnderReviewFrontEndListView
+from newswire.views import BulletinHomePageView, ProfileDetailFrontEndView, ProfileUpdateFrontEndView, RsvpUpdateView, RsvpListView, RsvpListViewRaw, AttendanceFrontEndCreate, AttendanceFrontEndUpdate, AttendanceFrontEndDelete, AnnouncementFrontEndCreate, AnnouncementFrontEndUpdate, AnnouncementFrontEndDelete, BulletinPdfView, UnderReviewFrontEndListView, EventListFrontEndView
 from django.contrib.auth.decorators import login_required
 
 from django.views.generic import TemplateView
 
 urlpatterns = (
     url(r'^bulletin/$', BulletinHomePageView.as_view(), name='home'),
+
+    url(r'^bulletin/events/$', EventListFrontEndView.as_view(), name='events_front_end'),
+
     url(r'^bulletin/rsvp/update/$',
         login_required(RsvpUpdateView.as_view()), name='update-rsvp'),
     url(r'^bulletin/send/bulletin/',
