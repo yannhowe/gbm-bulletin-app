@@ -1,4 +1,4 @@
-{% for announcement in announcements %}
+{% for announcement in published_announcements %}
     <div class="post-preview {{ announcement.category.name }}-hide">
         <p class="post-meta pull-right">
             <button type="button" class="btn btn-default btn-xs btn-light" style="background-color: {{ announcement.category.color }}; border: 1px solid  {{ announcement.category.color }};">
@@ -6,7 +6,7 @@
             </button>
         </p>
         <h3 class="post-title">
-            {{ announcement.title }}
+            <strong>{{ announcement.title }}</strong>
         </h3>
         <p class="post-subtitle">
             {{ announcement.body }}

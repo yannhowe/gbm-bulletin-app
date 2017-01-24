@@ -40,7 +40,7 @@ It has been a journey in which I see the hand of God moving in my family. I than
 ### Deacons
 
 * Benjamin Soh
-* Daniel Lai
+* Jacob Loh
 * Jayson Cahinosayan
 * Joseph Choo
 * Kim Wai Guan

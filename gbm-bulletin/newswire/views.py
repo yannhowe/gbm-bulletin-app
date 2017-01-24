@@ -220,17 +220,6 @@ class BulletinContextMixin(ContextMixin):
             context['orderofservice_updated_or_not'] = True if get_coming_sunday(get_today()).strftime('%b. %d, %Y') == coming_sunday_order_of_service.date.strftime('%b. %d, %Y') else False
 
         try:
-            published_announcements = Announcement.objects.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now()).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
-        except Announcement.DoesNotExist:
-            published_announcements = None
-
-        if published_announcements is not None:
-            context['announcements'] = published_announcements
-            max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
-            context['announcements_print'] = published_announcements[:max_print_annoucements]
-            context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
-
-        try:
             announcements = Announcement.objects.all()
         except Announcement.DoesNotExist:
             announcements = None
@@ -238,8 +227,18 @@ class BulletinContextMixin(ContextMixin):
         if announcements:
             announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
             announcements_under_review_count = announcements_under_review.count()
+
+            context['all_announcements'] = announcements
             context['announcements_under_review'] = announcements_under_review
             context['announcements_under_review_count'] = announcements_under_review_count
+
+            published_announcements = announcements.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now()).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
+
+            if published_announcements is not None:
+                context['published_announcements'] = published_announcements
+                max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
+                context['announcements_print'] = published_announcements[:max_print_annoucements]
+                context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
 
         try:
             sunday_attendance = SundayAttendance.objects.all()
@@ -318,59 +317,59 @@ class BulletinContextMixin(ContextMixin):
             building_fund_collection_ytd = list(building_fund_collection.filter(date__year=get_now().year).aggregate(Sum('amount')).values())[0]
 
             context['building_fund_collection_latest'] = building_fund_collection.latest('date')
-            context['building_fund_collection_ytd']=building_fund_collection_ytd
+            context['building_fund_collection_ytd'] = building_fund_collection_ytd
 
             if building_fund_year_goal:
-                building_fund_year_goal=building_fund_year_goal.latest('date').amount
-                building_goal_and_ytd_collection_difference=building_fund_year_goal - building_fund_collection_ytd
-                building_goal_and_ytd_collection_percent=building_fund_collection_ytd / building_fund_year_goal * 100
-                ahead_or_behind_goal=ahead_or_behind(building_fund_collection_ytd, building_fund_year_goal)
+                building_fund_year_goal = building_fund_year_goal.latest('date').amount
+                building_goal_and_ytd_collection_difference = building_fund_year_goal - building_fund_collection_ytd
+                building_goal_and_ytd_collection_percent = building_fund_collection_ytd / building_fund_year_goal * 100
+                ahead_or_behind_goal = ahead_or_behind(building_fund_collection_ytd, building_fund_year_goal)
 
-                context['building_fund_year_goal']=building_fund_year_goal
-                context['building_goal_and_ytd_collection_difference']=abs(building_goal_and_ytd_collection_difference)
-                context['building_goal_and_ytd_collection_percent']=building_goal_and_ytd_collection_percent
-                context['ahead_or_behind']=ahead_or_behind_goal
+                context['building_fund_year_goal'] = building_fund_year_goal
+                context['building_goal_and_ytd_collection_difference'] = abs(building_goal_and_ytd_collection_difference)
+                context['building_goal_and_ytd_collection_percent'] = building_goal_and_ytd_collection_percent
+                context['ahead_or_behind'] = ahead_or_behind_goal
 
                 if building_fund_year_pledge:
-                    building_fund_pledged_ytd=building_fund_year_pledge.latest('date').amount / 365 * get_now().timetuple().tm_yday
-                    building_pledge_and_ytd_collection_difference=building_fund_pledged_ytd - building_fund_collection_ytd
+                    building_fund_pledged_ytd = building_fund_year_pledge.latest('date').amount / 365 * get_now().timetuple().tm_yday
+                    building_pledge_and_ytd_collection_difference = building_fund_pledged_ytd - building_fund_collection_ytd
 
-                    context['building_fund_pledged_ytd']=building_fund_pledged_ytd
-                    context['building_pledge_and_ytd_collection_difference']=abs(building_pledge_and_ytd_collection_difference)
-
-        if self.request.user.is_authenticated():
-            try:
-                signup_list=Signup.objects.filter(
-                    event__in = active_events).filter(user = self.request.user)
-            except Signup.DoesNotExist:
-                signup_list=None
-            context['signups']=signup_list.all()
+                    context['building_fund_pledged_ytd'] = building_fund_pledged_ytd
+                    context['building_pledge_and_ytd_collection_difference'] = abs(building_pledge_and_ytd_collection_difference)
 
         if self.request.user.is_authenticated():
             try:
-                signup_id_list=Signup.objects.filter(
-                    event__in = active_events).filter(user = self.request.user).values_list('event_id', flat = True)
+                signup_list = Signup.objects.filter(
+                    event__in=active_events).filter(user=self.request.user)
             except Signup.DoesNotExist:
-                signup_id_list=None
-            context['signup_id_list']=signup_id_list.all()
+                signup_list = None
+            context['signups'] = signup_list.all()
 
-        context['categories']=Category.objects.all()
+        if self.request.user.is_authenticated():
+            try:
+                signup_id_list = Signup.objects.filter(
+                    event__in=active_events).filter(user=self.request.user).values_list('event_id', flat=True)
+            except Signup.DoesNotExist:
+                signup_id_list = None
+            context['signup_id_list'] = signup_id_list.all()
+
+        context['categories'] = Category.objects.all()
         return context
 
 
 class NeedsReviewMixin(object):
 
     def form_valid(self, form):
-        submission=form.save(commit = False)
-        submission.submitter=User.objects.get(
-            username = self.request.user)
-        submission.approver=None
-        submission.under_review=True
+        submission = form.save(commit=False)
+        submission.submitter = User.objects.get(
+            username=self.request.user)
+        submission.approver = None
+        submission.under_review = True
         submission.save()
         # TODO Email admins that new announcement has been submitted for review
-        message=template_email(
-            template_name = 'emails/new_item_for_review',
-            to = config.UNDER_REVIEW_ADMINS.split()
+        message = template_email(
+            template_name='emails/new_item_for_review',
+            to=config.UNDER_REVIEW_ADMINS.split()
         )
         message.send()
         return HttpResponseRedirect(self.success_url)
@@ -379,9 +378,9 @@ class NeedsReviewMixin(object):
 class RecordSubmitterMixin(object):
 
     def form_valid(self, form):
-        submission=form.save(commit = False)
-        submission.submitter=User.objects.get(
-            username = self.request.user)
+        submission = form.save(commit=False)
+        submission.submitter = User.objects.get(
+            username=self.request.user)
         submission.save()
         return HttpResponseRedirect(self.success_url)
 
@@ -459,45 +458,45 @@ class SuperUserRequiredMixin(object):
 class PdfResponseMixin(object, ):
 
     def render_to_response(self, context, **response_kwargs):
-        context=self.get_context_data()
-        template=self.get_template_names()[0]
-        html_string=render_to_string(template, context)
-        rendered_html=HTML(string = html_string)
-        pdf_file=rendered_html.write_pdf()
-        response=HttpResponse(pdf_file, content_type = 'application/pdf')
-        response['Content-Disposition']='filename="mypdf.pdf"'
+        context = self.get_context_data()
+        template = self.get_template_names()[0]
+        html_string = render_to_string(template, context)
+        rendered_html = HTML(string=html_string)
+        pdf_file = rendered_html.write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="mypdf.pdf"'
         return response
 
 
 class UnderReviewListView(EditorRequiredMixin, ListView):
-    model=Announcement
-    template_name='newswire/cp/under_review_list.html'
+    model = Announcement
+    template_name = 'newswire/cp/under_review_list.html'
 
     def get_context_data(self, **kwargs):
-        context=super(UnderReviewListView, self).get_context_data(**kwargs)
+        context = super(UnderReviewListView, self).get_context_data(**kwargs)
 
         try:
-            announcements=Announcement.objects.all()
+            announcements = Announcement.objects.all()
         except Announcement.DoesNotExist:
-            announcements=None
+            announcements = None
 
         if announcements:
-            announcements_under_review=announcements.filter(publish_end_date__gte = get_now(), under_review = True)
-            announcements_under_review_count=announcements_under_review.count()
-            context['announcements_under_review']=announcements_under_review
-            context['announcements_under_review_count']=announcements_under_review_count
+            announcements_under_review = announcements.filter(publish_end_date__gte=get_now(), under_review=True)
+            announcements_under_review_count = announcements_under_review.count()
+            context['announcements_under_review'] = announcements_under_review
+            context['announcements_under_review_count'] = announcements_under_review_count
 
         try:
-            sunday_attendance=SundayAttendance.objects.all()
+            sunday_attendance = SundayAttendance.objects.all()
         except SundayAttendance.DoesNotExist:
-            sunday_attendance=None
+            sunday_attendance = None
 
         if sunday_attendance:
-            sunday_attendance_under_review=sunday_attendance.filter(under_review = True)
-            sunday_attendance_under_review_count=sunday_attendance_under_review.count()
-            context['sunday_attendance_under_review']=sunday_attendance_under_review
-            context['graph_sunday_attendance']=sunday_attendance.order_by('-date')[:25]
-            context['recent_sunday_attendance']=sunday_attendance.order_by('-date')[:4]
+            sunday_attendance_under_review = sunday_attendance.filter(under_review=True)
+            sunday_attendance_under_review_count = sunday_attendance_under_review.count()
+            context['sunday_attendance_under_review'] = sunday_attendance_under_review
+            context['graph_sunday_attendance'] = sunday_attendance.order_by('-date')[:25]
+            context['recent_sunday_attendance'] = sunday_attendance.order_by('-date')[:4]
             context['sunday_attendance_under_review_count'] = sunday_attendance_under_review_count
 
         if sunday_attendance and announcements:
@@ -569,35 +568,35 @@ class BulletinPdfSendView(BulletinApproverRequiredMixin, TemplateView, BulletinC
                 'bulletin@gbm.sg',
                 recipients,
                 [''],
-                reply_to = ['bulletin@gbm.sg'],
+                reply_to=['bulletin@gbm.sg'],
             )
             email.attach(filename, pdf_file)
-            email.send(fail_silently = False)
+            email.send(fail_silently=False)
         return HttpResponseRedirect(reverse('cp_bulletin_pdf_preview'))
 
     def get_queryset(self):
         # do not show archived instances.
-        qs=super(ListView, self).get_queryset()
+        qs = super(ListView, self).get_queryset()
         return qs
 
 
 class OrderOfServiceList(EditorRequiredMixin, ListView):
-    model=OrderOfService
+    model = OrderOfService
     # queryset = OrderOfService.objects.order_by('-date')
-    template_name='newswire/cp/orderofservice_list.html'
+    template_name = 'newswire/cp/orderofservice_list.html'
 
     def get_context_data(self, **kwargs):
-        context=super(OrderOfServiceList, self).get_context_data(**kwargs)
+        context = super(OrderOfServiceList, self).get_context_data(**kwargs)
 
-        liveorderofservice=None
+        liveorderofservice = None
         try:
-            liveorderofservice=OrderOfService.objects.order_by('date').filter(
-                date__gte = get_now())[:1].get()
+            liveorderofservice = OrderOfService.objects.order_by('date').filter(
+                date__gte=get_now())[:1].get()
         except OrderOfService.DoesNotExist:
-            liveorderofservice=None
-        context['live_orderofservice']=liveorderofservice
-        context['orderofservice']=OrderOfService.objects.order_by('-date')
-        context['highlight']={
+            liveorderofservice = None
+        context['live_orderofservice'] = liveorderofservice
+        context['orderofservice'] = OrderOfService.objects.order_by('-date')
+        context['highlight'] = {
             'oos_tip_lines': config.ORDER_OF_SERVICE_TIP_LINES,
             'oos_warning_lines': config.ORDER_OF_SERVICE_WARNING_LINES,
         }
@@ -633,43 +632,53 @@ class OrderOfServiceDelete(EditorRequiredMixin, DeleteView):
 class AnnouncementList(EditorRequiredMixin, ListView):
     queryset = Announcement.objects.order_by(
         '-publish_start_date', 'publish_end_date')
-    template_name='newswire/cp/announcement_list.html'
+    template_name = 'newswire/cp/announcement_list.html'
 
     def get_context_data(self, **kwargs):
-        context=super(AnnouncementList, self).get_context_data(**kwargs)
+        context = super(AnnouncementList, self).get_context_data(**kwargs)
 
         try:
-            categories=Category.objects.all()
+            categories = Category.objects.all()
         except Category.DoesNotExist:
-            categories=None
-        context['categories']=categories
+            categories = None
+        context['categories'] = categories
+
+        try:
+            announcements = Announcement.objects.all()
+        except Announcement.DoesNotExist:
+            announcements = None
+
+        if announcements:
+            context['all_announcements'] = announcements
+            context['all_announcements_sorted'] = announcements.extra(order_by=['-publish_end_date', '-publish_start_date'])
+
         return context
 
 
 class AnnouncementCreate(EditorRequiredMixin, RecordSubmitterMixin, CreateView):
-    model=Announcement
-    success_url=reverse_lazy('announcement_list')
-    form_class=AnnouncementForm
-    template_name='newswire/cp/announcement_form.html'
+    model = Announcement
+    success_url = reverse_lazy('announcement_list')
+    form_class = AnnouncementForm
+    template_name = 'newswire/cp/announcement_form.html'
 
 
 class AnnouncementUpdate(EditorRequiredMixin, RecordSubmitterMixin, UpdateView):
-    model=Announcement
-    success_url=reverse_lazy('announcement_list')
-    form_class=AnnouncementForm
-    template_name='newswire/cp/announcement_form.html'
+    model = Announcement
+    success_url = reverse_lazy('announcement_list')
+    form_class = AnnouncementForm
+    template_name = 'newswire/cp/announcement_form.html'
 
 
 class UnderReviewFrontEndListView(ContributorRequiredMixin, ListView):
-    model=Announcement
-    template_name='newswire/submissions_under_review.html'
+    model = Announcement
+    template_name = 'newswire/submissions_under_review.html'
 
     def get_context_data(self, **kwargs):
-        context=super(UnderReviewFrontEndListView,
+        context = super(UnderReviewFrontEndListView,
                         self).get_context_data(**kwargs)
 
         try:
-            announcements=Announcement.objects.filter(
+            announcements = Announcement.objects.filter(
                 submitter=self.request.user, publish_end_date__gte=get_today() - datetime.timedelta(days=28))
         except Announcement.DoesNotExist:
             announcements = None

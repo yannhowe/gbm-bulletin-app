@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from paintstore.fields import ColorPickerField
 from datetime import datetime, timedelta
 import calendar
+from django.utils import timezone
+import datetime
 
 from django.forms import ModelForm, TextInput, DateInput
 from suit.widgets import EnclosedInput, SuitDateWidget, SuitSplitDateTimeWidget
@@ -28,11 +30,18 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-# Default publish for 7 days from today
+
+def get_today():
+    return datetime.datetime(timezone.now().year, timezone.now().month, timezone.now().day)
 
 
-def get_default_publish_end_date():
-    return datetime.now() + timedelta(days=7)
+def get_coming_monday(date=get_today()):
+    # coming monday's date
+    coming_monday = date
+    while coming_monday.weekday() != 0:
+        coming_monday += datetime.timedelta(1)
+    return coming_monday
+
 
 # Stores announcements for newsvine
 
@@ -42,8 +51,8 @@ class Announcement(models.Model):
     approver = models.ForeignKey(User, db_index=True, related_name="announcement_approver", null=True, blank=True, default=None)
     title = models.CharField(max_length=200, default='')
     body = models.TextField(max_length=1200, default='')
-    publish_start_date = models.DateField('Date to start publishing', default=datetime.now)
-    publish_end_date = models.DateField('Date to end publishing', default=get_default_publish_end_date)
+    publish_start_date = models.DateField('Date to start publishing', default=datetime.datetime.now)
+    publish_end_date = models.DateField('Date to end publishing', default=get_coming_monday())
     category = models.ForeignKey(Category, default='')
     link = models.CharField(max_length=400, blank=True, default='')
     hidden = models.BooleanField(default=False)
@@ -76,7 +85,7 @@ class Event(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=400, null=True, blank=True)
-    date_start = models.DateField(default=datetime.now)
+    date_start = models.DateField(default=datetime.datetime.now)
     date_end = models.DateField(blank=True, null=True)
     track_rsvp = models.BooleanField(default=False)
     display_override = models.CharField(max_length=30, choices=CHOICES, default=CHOICES[0][0], null=True, blank=True)
@@ -113,7 +122,7 @@ class OrderOfService(models.Model):
     CHOICES = (
         (SUN_MORN_ENG, 'Sunday Morning - English Service'),)
 
-    date = models.DateField(default=datetime.now)
+    date = models.DateField(default=datetime.datetime.now)
     text = models.TextField(default='', blank=True)
     service_name = models.CharField(
         max_length=200, choices=CHOICES, default=CHOICES[0][0])
@@ -169,7 +178,7 @@ class Profile(models.Model):
 
     gender = models.CharField("Gender", max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 
-    date_record_updated = models.DateField(null=True, blank=True, default=datetime.now)
+    date_record_updated = models.DateField(null=True, blank=True, default=datetime.datetime.now)
 
     # important dates
     date_of_birth = models.DateField(null=True, blank=True)
@@ -258,7 +267,7 @@ class Relationship(models.Model):
 class SundayAttendance(models.Model):
     submitter = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_submitter", null=True, blank=True, default=None)
     approver = models.ForeignKey(User, db_index=True, related_name="sunday_attendance_approver", null=True, blank=True, default=None)
-    date = models.DateField(default=datetime.now)
+    date = models.DateField(default=datetime.datetime.now)
     english_congregation = models.PositiveSmallIntegerField(default=0)
     chinese_congregation = models.PositiveSmallIntegerField(default=0)
     childrens_church = models.PositiveSmallIntegerField(default=0)
@@ -273,7 +282,7 @@ class SundayAttendance(models.Model):
 
 class BuildingFundYearGoal(models.Model):
     name = models.TextField(max_length=80, null=True, blank=True)
-    date = models.DateField(default=datetime.now)
+    date = models.DateField(default=datetime.datetime.now)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
     description = models.TextField(max_length=300, null=True, blank=True)
 
@@ -284,7 +293,7 @@ class BuildingFundYearGoal(models.Model):
 
 class BuildingFundYearPledge(models.Model):
     name = models.TextField(max_length=80, null=True, blank=True)
-    date = models.DateField(default=datetime.now)
+    date = models.DateField(default=datetime.datetime.now)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
     description = models.TextField(max_length=300, null=True, blank=True)
 
@@ -294,7 +303,7 @@ class BuildingFundYearPledge(models.Model):
 
 
 class BuildingFundCollection(models.Model):
-    date = models.DateField(default=datetime.now)
+    date = models.DateField(default=datetime.datetime.now)
     building_fund_year_pledge = models.ForeignKey(BuildingFundYearPledge)
     building_fund_year_goal = models.ForeignKey(BuildingFundYearGoal)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default='0')
@@ -306,7 +315,7 @@ class BuildingFundCollection(models.Model):
 
 
 class WeeklyVerse(models.Model):
-    date = models.DateField(default=get_default_publish_end_date)
+    date = models.DateField(default=get_coming_monday())
     verse = models.TextField(max_length=1200, default='')
     reference = models.CharField(max_length=40, default='')
 
@@ -348,7 +357,7 @@ class ExtendedGroup(Group):
     leader = models.ManyToManyField(Profile, blank=True, related_name='leader_profile')
     group_type = models.IntegerField(choices=GROUP_TYPE)
     notes = models.TextField(max_length=300, null=True, blank=True)
-    date_formed = models.DateField(default=datetime.now, null=True, blank=True)
+    date_formed = models.DateField(default=datetime.datetime.now, null=True, blank=True)
     date_dissolved = models.DateField(null=True, blank=True)
     meeting_day = models.IntegerField(choices=DAYS_OF_WEEK, null=True, blank=True, help_text="Day of the week the group regularly meets if any")
     meeting_time = models.TimeField(null=True, blank=True, help_text="Meeting time of the the group in 24hr format ie. 13:00 for 1pm")
@@ -374,7 +383,7 @@ class GroupAttendance(models.Model):
 
     person = models.ForeignKey(Profile)
     group = models.ForeignKey(ExtendedGroup)
-    date = models.DateField(default=datetime.now)
+    date = models.DateField(default=datetime.datetime.now)
     attendance = models.IntegerField(choices=ATTENDANCE_CHOICES)
 
     def __str__(self):

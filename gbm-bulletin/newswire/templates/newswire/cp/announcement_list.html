@@ -81,7 +81,7 @@
         <!-- box-footer -->
     </div>
 
-    {% for announcement in object_list %}
+    {% for announcement in all_announcements_sorted %}
         <div class="box collapsed-box">
             <div class="box-header with-border">
                 <h3 class="box-title {% if not announcement.is_published or announcement.hidden or announcement.under_review %}text-muted{% endif %}">

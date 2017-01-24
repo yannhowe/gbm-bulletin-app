@@ -1,7 +1,7 @@
 server {
 
     listen 80;
-    server_name preview.gbm.sg gbm.sg www.gbm.sg;
+    server_name preview.gbm.sg gbm.sg;
     charset utf-8;
 
     access_log  /var/log/nginx/access.log;
