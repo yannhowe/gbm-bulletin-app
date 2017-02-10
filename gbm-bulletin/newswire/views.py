@@ -233,11 +233,12 @@ class BulletinContextMixin(ContextMixin):
             context['announcements_under_review_count'] = announcements_under_review_count
 
             published_announcements = announcements.filter(publish_start_date__lte=get_now(), publish_end_date__gte=get_now()).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
+            published_announcements_print = announcements.filter(publish_start_date__lte=get_coming_sunday(get_today()), publish_end_date__gte=get_coming_sunday(get_today())).filter(hidden=False, under_review=False).extra(order_by=['-publish_start_date', 'publish_end_date'])
 
             if published_announcements is not None:
                 context['published_announcements'] = published_announcements
                 max_print_annoucements = int(config.MAX_PRINT_ANNOUCEMENTS)
-                context['announcements_print'] = published_announcements[:max_print_annoucements]
+                context['announcements_print'] = published_announcements_print[:max_print_annoucements]
                 context['more_annoucements_online_count'] = published_announcements.count() - max_print_annoucements
 
         try:

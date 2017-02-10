@@ -3,10 +3,10 @@
     <tbody>
         {% for event in events_print %}
             <tr style="padding: 0;">
-                <td class="text-right col-xs-6">
+                <td class="text-right col-xs-9">
                     <strong>{{ event.title }}</strong>
                 </td>
-                <td class="text-left col-xs-6">
+                <td class="text-right col-xs-3">
                     <i>{% format_date_range event.date_start event.date_end %}</i>
                 </td>
             </tr>
