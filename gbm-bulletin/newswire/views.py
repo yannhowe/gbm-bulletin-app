@@ -293,9 +293,9 @@ class BulletinContextMixin(ContextMixin):
         except Event.DoesNotExist:
             active_events = None
 
-        context['events'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:20]
+        context['events'] = active_events.exclude(date_start__lt=get_now()).exclude(Q(date_end__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:20]
         context['events_in_future_all'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])
-        context['events_print'] = active_events.exclude(date_end__lt=get_now()).exclude(Q(date_start__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:7]
+        context['events_print'] = active_events.exclude(date_start__lt=get_coming_sunday()).exclude(Q(date_end__gt=get_future(60)) & ~Q(display_override__iexact='SHOW')).exclude(Q(display_override__iexact='HIDE')).extra(order_by=['date_start'])[:7]
 
         context['now'] = get_now()
         context['today'] = get_today()
