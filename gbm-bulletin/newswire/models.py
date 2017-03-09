@@ -53,7 +53,7 @@ class Announcement(models.Model):
     body = models.TextField(max_length=1200, default='')
     publish_start_date = models.DateField('Date to start publishing', default=datetime.datetime.now)
     publish_end_date = models.DateField('Date to end publishing', default=get_coming_monday())
-    category = models.ForeignKey(Category, default='')
+    category = models.ForeignKey(Category, default='', verbose_name='Audience')
     link = models.CharField(max_length=400, blank=True, default='')
     hidden = models.BooleanField(default=False)
     under_review = models.BooleanField(default=True)
