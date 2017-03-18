@@ -29,7 +29,7 @@
         </div>
         <!-- /.box-body -->
     </div>
-    {% for orderofservice in orderofservice %}
+    {% for orderofservice in page_obj %}
         <div class="box
       {% if not orderofservice.id = live_orderofservice.id %}collapsed-box{% endif %}">
             <div class="box-header with-border">
@@ -104,7 +104,29 @@
             </div>
             <!-- box-footer -->
         </div>
-    {% endfor %}
+    {% endfor %} {% if is_paginated %}
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+            {% endif %} {% for i in paginator.page_range %} {% if page_obj.number == i %}
+            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span>
+            </li>
+            {% else %}
+            <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %} {% endfor %} {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block footer_includes %}{% endblock %}

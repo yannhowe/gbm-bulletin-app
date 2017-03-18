@@ -587,6 +587,7 @@ class OrderOfServiceList(EditorRequiredMixin, ListView):
     model = OrderOfService
     # queryset = OrderOfService.objects.order_by('-date')
     template_name = 'newswire/cp/orderofservice_list.html'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(OrderOfServiceList, self).get_context_data(**kwargs)
@@ -633,9 +634,9 @@ class OrderOfServiceDelete(EditorRequiredMixin, DeleteView):
 
 
 class AnnouncementList(EditorRequiredMixin, ListView):
-    queryset = Announcement.objects.order_by(
-        '-publish_start_date', 'publish_end_date')
+    queryset = Announcement.objects.order_by('-publish_end_date', '-publish_start_date')
     template_name = 'newswire/cp/announcement_list.html'
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(AnnouncementList, self).get_context_data(**kwargs)
@@ -653,7 +654,8 @@ class AnnouncementList(EditorRequiredMixin, ListView):
 
         if announcements:
             context['all_announcements'] = announcements
-            context['all_announcements_sorted'] = announcements.extra(order_by=['-publish_end_date', '-publish_start_date'])
+            all_announcements_sorted = announcements.extra(order_by=['-publish_end_date', '-publish_start_date'])
+            context['all_announcements_sorted'] = all_announcements_sorted
 
         return context
 
@@ -1047,6 +1049,7 @@ class AttendanceFrontEndDelete(ContributorRequiredMixin, DeleteView):
 class WeeklyVerseList(EditorRequiredMixin, ListView):
     queryset = WeeklyVerse.objects.order_by('-date')
     template_name = 'newswire/cp/weeklyverse_list.html'
+    paginate_by = 3
 
 
 class WeeklyVerseCreate(EditorRequiredMixin, CreateView):
