@@ -33,9 +33,6 @@
         <!-- Buttons, labels, and many other things can be placed here! -->
         <!-- Here is a label for example -->
         <div class="box-tools pull-right">
-            <a href="{% url 'weeklyverse_edit' weeklyverse.id %}">
-                <i class="fa fa-pencil"></i> Edit
-            </a>
             <button type="button" class="btn btn-box-tool" data-widget="collapse">
                         <i class="fa fa-plus"></i>
                     </button>
@@ -49,9 +46,17 @@
     </div>
     <!-- /.box-body -->
     <div class="box-footer text-right">
-        <a class="btn text-danger" href="{% url 'weeklyverse_delete' weeklyverse.id %}">
-            <i class="fa fa-trash"></i> Delete
-        </a>
+        <div class="btn text-default pull-left">
+            <a href="{% url 'weeklyverse_edit' weeklyverse.id %}">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+        </div>
+
+        <div class="pull-right">
+            <a class="btn text-danger" href="{% url 'weeklyverse_delete' weeklyverse.id %}">
+                <i class="fa fa-trash"></i> Delete
+            </a>
+        </div>
     </div>
     <!-- box-footer -->
 </div>
