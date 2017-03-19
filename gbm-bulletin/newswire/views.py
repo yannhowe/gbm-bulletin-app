@@ -585,7 +585,7 @@ class BulletinPdfSendView(BulletinApproverRequiredMixin, TemplateView, BulletinC
 
 class OrderOfServiceList(EditorRequiredMixin, ListView):
     model = OrderOfService
-    # queryset = OrderOfService.objects.order_by('-date')
+    queryset = OrderOfService.objects.order_by('-date')
     template_name = 'newswire/cp/orderofservice_list.html'
     paginate_by = 5
 
