@@ -20,7 +20,7 @@ Subsequently, I started to put away my past practices of praying to idols, as I 
 
 When I was 18, I was felt God’s calling to full-time service during an evangelistic meeting. On 23rd May 1986, I married my sweetheart, Diana Cheong. We had been working together at Hong Kong Bank. In 1994, I was able to transit into full-time ministry work and have been pastoring the congregation at GBM since 1994. I graduated from International Baptist College (IBC) in Tempe, Arizona (USA) with a M.A. in Biblical Studies and was ordained in 1997. In 2012, I received my honorary doctorate of divinity (D.D.) from South India Baptist Bible College & Seminary.
 
-My wife is currently a home-maker and an excellent cook at that! She is my perfect helpmeet whom God has provided for me as we serve together in GBM. We have two daughters: Charissa, and Cheryl. I enjoy playing racket games and jogging with my wife. My prayer is that God would fill me with a zeal for His glory and enable me to effectively proclaim God’s Word. Also, I pray that He would make me a servant-leader as I shepherd this flock reach the gospel to the lost and grace to the saved.
+My wife is currently a home-maker and an excellent cook at that! She is my perfect helpmeet whom God has provided for me as we serve together in GBM. We have two daughters: Charissa, and Cheryl. I enjoy playing racket games and jogging with my wife. My prayer is that God would fill me with a zeal for His glory and enable me to effectively proclaim God’s Word. Also, I pray that He would make me a servant-leader as I shepherd this flock preach the gospel to the lost and grace to the saved.
 
 ### Communications Pastor
 ## Kwan Chung Howe
