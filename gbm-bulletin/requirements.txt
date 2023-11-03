@@ -1,6 +1,6 @@
 cssselect==0.9.*
 diff-match-patch==20121119
-Django==1.9.*
+Django==3.2.23*
 django-allauth==0.25.*
 django-bootstrap3==7.0.*
 django-constance==1.2
@@ -31,3 +31,4 @@ tinycss==0.3
 virtualenv==15.0.*
 WeasyPrint==0.30
 webencodings==0.5
+pillow>=10.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
