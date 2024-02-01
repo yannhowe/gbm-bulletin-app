@@ -31,3 +31,4 @@ tinycss==0.3
 virtualenv==15.0.*
 WeasyPrint==0.30
 webencodings==0.5
+pillow>=10.2.0 # not directly required, pinned by Snyk to avoid a vulnerability
